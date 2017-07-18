@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Utility Wizards by Solvtopia, LLC.</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+    <!-- see http://webdesign.tutsplus.com/tutorials/htmlcss-tutorials/quick-tip-dont-forget-the-viewport-meta-tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <style>
+        /* following two viewport lines are equivalent to the meta viewport statement above, needed for Windows */
+        /* see http://www.quirksmode.org/blog/archives/2014/05/html5_dev_conf.html and http://dev.w3.org/csswg/css-device-adapt/ */
+        
+        @-ms-viewport {
+            width: 100vw;
+            zoom: 100%;
+        }
+        
+        @viewport {
+            width: 100vw;
+            zoom: 100%;
+        }
+        
+        @-ms-viewport {
+            user-zoom: fixed;
+        }
+        
+        @viewport {
+            user-zoom: fixed;
+        }
+        
+        html,
+        body {
+            height: 100%;
+        }
+        
+        body {
+            overflow: hidden;
+            background-color: white;
+            background-image: url("img/mobile_splash_landscape.png");
+            background-size: auto 100%;
+            background-repeat: no-repeat;
+            background-position: left top;
+            font-family: sans-serif;
+            font-size: 10pt;
+            color: #3b3869;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="background: rgba(255,255,255,0.8); padding: 50px; position: fixed; top: 10px; left: 10px; right: 10px; bottom: 10px;">
+        <center><img src="img/icon_t.png" />
+            <br/>
+            <br/><strong>Connecting to Solvtopia and loading the App</strong>
+            <br/>
+            <br/>
+            <br/>
+            <br/><img src="img/loading.gif" />
+            <br/>
+            <br/>Please Wait ...
+        </center>
+        </center>
+    </div>
+</body>
+
+</html>

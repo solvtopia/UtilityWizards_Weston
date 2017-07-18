@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<!--
+  * Please see the included README.md file for license terms and conditions.
+  -->
+
+<head>
+    <title>Utility Wizards by Solvtopia, LLC.</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+    <!-- see http://webdesign.tutsplus.com/tutorials/htmlcss-tutorials/quick-tip-dont-forget-the-viewport-meta-tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <style>
+        /* following two viewport lines are equivalent to the meta viewport statement above, needed for Windows */
+        /* see http://www.quirksmode.org/blog/archives/2014/05/html5_dev_conf.html and http://dev.w3.org/csswg/css-device-adapt/ */
+        
+        @-ms-viewport {
+            width: 100vw;
+            zoom: 100%;
+        }
+        
+        @viewport {
+            width: 100vw;
+            zoom: 100%;
+        }
+        
+        @-ms-viewport {
+            user-zoom: fixed;
+        }
+        
+        @viewport {
+            user-zoom: fixed;
+        }
+        
+        body {
+            color: #3b3869;
+        }
+    </style>
+
+    <script src="cordova.js"></script>
+    <!-- phantom library, needed for Cordova api calls, added during build -->
+    <script src="js/app.js"></script>
+    <!-- recommended location of your JavaScript code relative to other JS files -->
+    <script src="xdk/init-dev.js"></script>
+    <!-- normalizes device and document ready events, see README for details -->
+</head>
+
+<body>
+
+    <iframe id="myFrame" src="blank.html" style="border: 0; position: absolute; top: 0; left: 0; bottom: 0; right: 0; width: 100%; height: 100%;"></iframe>
+    <script>
+        // change this to the app identifier used in the applauncher.asp page on solvtopia.com
+        var solvtopiaLauncherApp = 'uw';
+
+
+
+
+
+
+
+
+
+        // *********************************************************
+        // *********************************************************
+        // *****     no need to change anything below here     *****
+        // *********************************************************
+        // *********************************************************
+        
+        // this catches the querystring if the app is opend from a link
+        var queryString;
+        function handleOpenURL(url) {
+            setTimeout(function () {
+                if (url !== "") {
+                    queryString = url.substr(url.lastIndexOf('//') + 1, url.length).replace('/','');
+                }
+            }, 0);
+        }
+
+        if (localStorage.getItem(solvtopiaLauncherApp + '_deviceId') === null) {
+            var guid = createGuid();
+            localStorage.setItem(solvtopiaLauncherApp + '_deviceId', guid);
+        }
+        localStorage.setItem(solvtopiaLauncherApp + '_devicePlatform', getPlatform());
+
+        setUrl();
+
+        // create a guid for the device id
+        function createGuid() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0,
+                    v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // set the url of the iFrame
+        function setUrl() {
+            var loaded = false;
+            var time = 3000;
+            var myFrame = document.getElementById('myFrame');
+            var newUrl = 'http://www.solvtopia.com/applauncher.asp?app=' + solvtopiaLauncherApp + '&deviceid=' + localStorage.getItem(solvtopiaLauncherApp + '_deviceId') + '&platform=' + localStorage.getItem(solvtopiaLauncherApp + '_devicePlatform') + '&' + queryString;
+
+            // set the iFrame to the loading page first
+            myFrame.src = 'blank.html';
+
+            // check to see if solvtopia.com is reachable by loading a small image from the site
+            // if it loads the image, redirect to the appLoader
+            // if it doesn't load, redirect to the unavailable page
+            var img = document.body.appendChild(document.createElement("img"));
+            img.onload = function () {
+                loaded = true;
+            };
+            img.onerror = function () {
+                loaded = false;
+            };
+
+            // timer to go to the unavailable page if the image cannot be loaded after a set amount of time
+            setTimeout(function () {
+                if (loaded === false) {
+                    myFrame.contentWindow.location.href = 'unavailable.html';
+                } else {
+                    myFrame.contentWindow.location.href = newUrl;
+                }
+            }, time);
+
+            img.src = "http://solvtopia.com/images/empty.png?" + Math.random();
+        }
+
+        // get the platform from the userAgent
+        function getPlatform() {
+            var agt = navigator.userAgent.toLowerCase();
+
+            if (agt.indexOf('iphone') > 0) {
+                return 'iPhone';
+            } else if (agt.indexOf('ipod') > 0) {
+                return 'iPod';
+            } else if (agt.indexOf('ipad') > 0) {
+                return 'iPad';
+            } else if (agt.indexOf('android') > 0 && agt.indexOf('mobile') > 0) {
+                return 'AndroidPhone';
+            } else if (agt.indexOf('android') > 0) {
+                return 'AndroidTablet';
+            } else if (agt.indexOf('winphone') > 0) {
+                return 'WindowsPhone';
+            } else {
+                return 'Desktop';
+            }
+        }
+    </script>
+
+</body>
+
+</html>
