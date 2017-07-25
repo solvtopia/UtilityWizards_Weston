@@ -17,7 +17,8 @@
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Me.pnlAdminTools.Visible = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Administrator Or
                                       App.CurrentUser.Permissions = Enums.SystemUserPermissions.Solvtopia Or
-                                      App.CurrentUser.Permissions = Enums.SystemUserPermissions.SystemAdministrator)
+                                      App.CurrentUser.Permissions = Enums.SystemUserPermissions.SystemAdministrator Or
+                                      App.CurrentUser.Permissions = Enums.SystemUserPermissions.Supervisor)
 
         ' hide the help and faq for now
         Me.lnkHelp.Visible = False

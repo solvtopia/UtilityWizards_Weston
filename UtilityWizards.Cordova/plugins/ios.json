@@ -1,0 +1,34 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.solvtopia.utilitywizards"
+        },
+        "cordova-plugin-network-information": {
+            "PACKAGE_NAME": "com.solvtopia.utilitywizards"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "com.solvtopia.utilitywizards"
+        },
+        "cordova-plugin-statusbar": {
+            "PACKAGE_NAME": "com.solvtopia.utilitywizards"
+        },
+        "cordova-plugin-urlhandler": {
+            "URL_SCHEME": "utilitywizards",
+            "PACKAGE_NAME": "com.solvtopia.utilitywizards"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.solvtopia.utilitywizards"
+        },
+        "sk.kcorp.cordova.ios-security": {
+            "PACKAGE_NAME": "com.solvtopia.utilitywizards"
+        }
+    },
+    "dependent_plugins": {}
+}
