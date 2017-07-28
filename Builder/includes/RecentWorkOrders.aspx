@@ -29,9 +29,37 @@
         <table style="width: 100%;">
             <tr>
                 <td>
-                    <telerik:RadGrid ID="RadSearchGrid" runat="server" AllowSorting="True" GroupPanelPosition="Top" AutoGenerateEditColumn="True" Skin="Metro" CellSpacing="-1" GridLines="Both">
+                    <telerik:RadGrid ID="RadSearchGrid" runat="server" AllowSorting="True" GroupPanelPosition="Top" Skin="Metro" CellSpacing="-1" GridLines="Both" DataSourceID="SqlDataSource1" AutoGenerateEditColumn="true">
+                        <MasterTableView AutoGenerateColumns="False" DataKeyNames="ID" DataSourceID="SqlDataSource1">
+                            <Columns>
+                                <telerik:GridBoundColumn DataField="ID" DataType="System.Int32" FilterControlAltText="Filter ID column" HeaderText="ID" ReadOnly="True" SortExpression="ID" UniqueName="ID">
+                                </telerik:GridBoundColumn>
+                                <telerik:GridBoundColumn DataField="CustomerAccount" FilterControlAltText="Filter CustomerAccount column" HeaderText="Customer Account" ReadOnly="True" SortExpression="CustomerAccount" UniqueName="CustomerAccount">
+                                </telerik:GridBoundColumn>
+                                <telerik:GridBoundColumn DataField="CustomerName" FilterControlAltText="Filter CustomerName column" HeaderText="Customer Name" SortExpression="CustomerName" UniqueName="CustomerName">
+                                </telerik:GridBoundColumn>
+                                <telerik:GridBoundColumn DataField="Priority" FilterControlAltText="Filter Priority column" HeaderText="Priority" ReadOnly="True" SortExpression="Priority" UniqueName="Priority">
+                                </telerik:GridBoundColumn>
+                                <telerik:GridBoundColumn DataField="Status" DataType="System.Int32" FilterControlAltText="Filter Status column" HeaderText="Status" ReadOnly="True" SortExpression="Status" UniqueName="Status">
+                                </telerik:GridBoundColumn>
+                                <telerik:GridBoundColumn DataField="ModuleID" DataType="System.Int32" FilterControlAltText="Filter ModuleID column" HeaderText="ModuleID" ReadOnly="True" SortExpression="ModuleID" UniqueName="ModuleID" Display="false">
+                                </telerik:GridBoundColumn>
+                                <telerik:GridBoundColumn DataField="ModuleName" FilterControlAltText="Filter ModuleName column" HeaderText="Module Name" ReadOnly="True" SortExpression="ModuleName" UniqueName="ModuleName">
+                                </telerik:GridBoundColumn>
+                                <telerik:GridBoundColumn DataField="ModuleIcon" FilterControlAltText="Filter ModuleIcon column" HeaderText="ModuleIcon" ReadOnly="True" SortExpression="ModuleIcon" UniqueName="ModuleIcon" Display="false">
+                                </telerik:GridBoundColumn>
+                                <telerik:GridBoundColumn DataField="xFolderID" DataType="System.Int32" FilterControlAltText="Filter xFolderID column" HeaderText="xFolderID" ReadOnly="True" SortExpression="xFolderID" UniqueName="xFolderID" Display="false">
+                                </telerik:GridBoundColumn>
+                                <telerik:GridBoundColumn DataField="SupervisorID" DataType="System.Int32" FilterControlAltText="Filter SupervisorID column" HeaderText="SupervisorID" ReadOnly="True" SortExpression="SupervisorID" UniqueName="SupervisorID" Display="false">
+                                </telerik:GridBoundColumn>
+                                <telerik:GridBoundColumn DataField="Updated" DataType="System.DateTime" FilterControlAltText="Filter Updated column" HeaderText="Updated" SortExpression="Updated" UniqueName="Updated">
+                                </telerik:GridBoundColumn>
+                                <telerik:GridBoundColumn DataField="UpdatedBy" FilterControlAltText="Filter UpdatedBy column" HeaderText="Updated By" ReadOnly="True" SortExpression="UpdatedBy" UniqueName="UpdatedBy">
+                                </telerik:GridBoundColumn>
+                            </Columns>
+                        </MasterTableView>
                     </telerik:RadGrid>
-                    <telerik:RadGrid ID="RadSearchGridMobile" runat="server" AutoGenerateColumns="False" DataSourceID="SqlDataSource1" GroupPanelPosition="Top" Skin="MetroTouch">
+                    <telerik:RadGrid ID="RadSearchGridMobile" runat="server" AutoGenerateColumns="False" DataSourceID="SqlDataSource1" GroupPanelPosition="Top" Skin="MetroTouch" CellSpacing="-1" GridLines="Both">
                         <ClientSettings Selecting-AllowRowSelect="true" EnablePostBackOnRowClick="true">
                         </ClientSettings>
                         <MasterTableView DataKeyNames="ID" DataSourceID="SqlDataSource1" ShowHeader="false">
@@ -57,12 +85,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <asp:Label ID='lblDescription' runat='server' ForeColor='White' Text='<%# Eval("CustomerAddress") %>'></asp:Label>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <asp:Label ID='lblAssignedTo' runat='server' ForeColor='White' Text='<%# Eval("AssignedToName") %>'></asp:Label>
+                                                                <asp:Label ID='lblDescription' runat='server' ForeColor='White' Text='<%# Eval("CustomerName") %>'></asp:Label>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -71,26 +94,27 @@
                                         </table>
                                     </ItemTemplate>
                                 </telerik:GridTemplateColumn>
-                                <telerik:GridBoundColumn HeaderText="Priority" UniqueName="Priority" DataField="xPriority" Display="false" />
+                                <telerik:GridBoundColumn HeaderText="Priority" UniqueName="Priority" DataField="Priority" Display="false" />
                                 <telerik:GridBoundColumn HeaderText="ID" UniqueName="ID" DataField="ID" Display="false" />
-                                <telerik:GridBoundColumn HeaderText="ModuleID" UniqueName="xModuleID" DataField="xModuleID" Display="false" />
-                                <telerik:GridBoundColumn HeaderText="FolderID" UniqueName="xFolderID" DataField="xFolderID" Display="false" />
+                                <telerik:GridBoundColumn HeaderText="ModuleID" UniqueName="ModuleID" DataField="ModuleID" Display="false" />
+                                <telerik:GridBoundColumn HeaderText="FolderID" UniqueName="FolderID" DataField="FolderID" Display="false" />
                                 <telerik:GridBoundColumn HeaderText="SupervisorID" UniqueName="SupervisorID" DataField="SupervisorID" Display="false" />
-                                <telerik:GridBoundColumn HeaderText="TechnicianID" UniqueName="TechnicianID" DataField="TechnicianID" Display="false" />
-                                <telerik:GridBoundColumn HeaderText="xCustAcctNum" UniqueName="xCustAcctNum" DataField="xCustAcctNum" Display="false" />
+                                <telerik:GridBoundColumn HeaderText="xCustAcctNum" UniqueName="xCustAcctNum" DataField="CustomerAccount" Display="false" />
                             </Columns>
                         </MasterTableView>
                     </telerik:RadGrid>
-                    <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:UtilityWizardsConnectionString %>"></asp:SqlDataSource>
+                    <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:UtilityWizardsConnectionString %>" SelectCommand="procRecentWorkOrders" SelectCommandType="StoredProcedure">
+                        <SelectParameters>
+                            <asp:ControlParameter ControlID="lblClientID" Name="clientID" PropertyName="Text" Type="Int32" />
+                            <asp:ControlParameter ControlID="lblUserID" Name="userID" PropertyName="Text" Type="Int32" />
+                        </SelectParameters>
+                    </asp:SqlDataSource>
                 </td>
             </tr>
         </table>
         <asp:Panel runat="server" ID="pnlHidden" Visible="false" BackColor="#CC0000">
-            <asp:Label ID="lblFields" runat="server"></asp:Label>
             <asp:Label ID="lblClientID" runat="server"></asp:Label>
-            <asp:Label ID="lblModuleID" runat="server"></asp:Label>
-            <asp:Label ID="lblCustAcctNum" runat="server"></asp:Label>
-            <asp:Label ID="lblFilterID" runat="server"></asp:Label>
+            <asp:Label ID="lblUserID" runat="server"></asp:Label>
         </asp:Panel>
     </form>
 </body>

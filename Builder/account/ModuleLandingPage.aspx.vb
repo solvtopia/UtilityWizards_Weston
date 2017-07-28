@@ -72,7 +72,7 @@ Public Class ModuleLandingPage
         Try
             Me.RadCustomerGrid_New.Visible = True
 
-            Dim cmd As New SqlClient.SqlCommand("procCustomerSearch", cn)
+            Dim cmd As New SqlClient.SqlCommand("procCustomerSearch_new", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             cmd.CommandType = CommandType.StoredProcedure
             Select Case Me.ddlSearchField_New.SelectedValue.ToLower
@@ -145,7 +145,7 @@ Public Class ModuleLandingPage
             Me.RadCustomerGrid_Existing.Visible = True
             Me.imgHelp_Customers_Existing.Visible = True
 
-            Dim cmd As New SqlClient.SqlCommand("procCustomerSearch", cn)
+            Dim cmd As New SqlClient.SqlCommand("procCustomerSearch_new", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             cmd.CommandType = CommandType.StoredProcedure
             Select Case Me.ddlSearchField_New.SelectedValue.ToLower

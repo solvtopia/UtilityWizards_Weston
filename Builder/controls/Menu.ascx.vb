@@ -86,6 +86,8 @@
                 Me.liRegister.Attributes.Add("class", "active")
             Case currentUrl.Contains("customers.aspx")
                 Me.liCustomers.Attributes.Add("class", "active")
+            Case currentUrl.Contains("mobilelandingpage.aspx")
+                Me.liRecentWorkOrders.Attributes.Add("class", "active")
             Case Else
                 Me.liDashboard.Attributes.Add("class", "active")
         End Select
@@ -137,5 +139,9 @@
 
     Private Sub lnkCustomers_Click(sender As Object, e As EventArgs) Handles lnkCustomers.Click
         Response.Redirect("~/admin/Customers.aspx", False)
+    End Sub
+
+    Private Sub lnkRecentWorkOrders_Click(sender As Object, e As EventArgs) Handles lnkRecentWorkOrders.Click
+        Response.Redirect("~/account/MobileLandingPage.aspx", False)
     End Sub
 End Class

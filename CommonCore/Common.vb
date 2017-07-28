@@ -223,7 +223,15 @@ Public Module Common
     Public Function AddressToLatLon(ByVal address As String) As List(Of String)
         Dim retVal As New List(Of String)
 
-        address = Replace(address, " ", "+")
+        If address.Contains("(") And address.Contains(")") Then
+            Dim newAddress As String = ""
+            Dim firstPer As Integer = address.IndexOf("(")
+            Dim lastPer As Integer = address.LastIndexOf(")")
+            If firstPer > 0 And lastPer > 0 Then newAddress = address.Substring(0, firstPer) & " " & address.Substring(lastPer + 1)
+            address = newAddress.Replace("  ", " ")
+        End If
+
+        address = Replace(address, " ", "+").Replace("++", "+")
 
         Dim lookupResponse As String = GetUrlResponse("http://maps.google.com/maps/api/geocode/xml?address=" & address & "&sensor=false").ReadToEnd
         Dim xDoc As New XmlDocument

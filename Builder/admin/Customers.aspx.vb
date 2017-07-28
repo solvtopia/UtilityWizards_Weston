@@ -11,7 +11,7 @@ Public Class Customers
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Try
-            Dim cmd As New SqlClient.SqlCommand("procCustomerSearch", cn)
+            Dim cmd As New SqlClient.SqlCommand("procCustomerSearch_new", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             cmd.CommandType = CommandType.StoredProcedure
             cmd.Parameters.AddWithValue("@CustAcctNum", "")

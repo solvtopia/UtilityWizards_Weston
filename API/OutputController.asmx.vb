@@ -40,7 +40,7 @@ Public Class OutputController
                 Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
                 Try
-                    Dim cmd As New SqlClient.SqlCommand("SELECT [ID] FROM [Customers];", cn)
+                    Dim cmd As New SqlClient.SqlCommand("SELECT [ID] FROM [Customers_new];", cn)
                     If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
                     Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
                     Do While rs.Read

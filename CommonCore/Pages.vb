@@ -200,7 +200,16 @@ Public Class builderPage
     End Property
     Public ReadOnly Property UserId As Integer
         Get
-            Return Request.QueryString("uid").ToInteger
+            Dim retVal As Integer = Request.QueryString("uid").ToInteger
+            If retVal = 0 Then
+                Dim myCookie As HttpCookie = Request.Cookies("UtilityWizards")
+                If myCookie IsNot Nothing Then
+                    If Not String.IsNullOrEmpty(myCookie.Values("userid")) Then
+                        retVal = myCookie.Values("userid").ToInteger
+                    End If
+                End If
+            End If
+            Return retVal
         End Get
     End Property
     Public ReadOnly Property SignOut As Boolean

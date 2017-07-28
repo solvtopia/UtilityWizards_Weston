@@ -68,15 +68,6 @@ Partial Public Class RecentWorkOrders
     Protected WithEvents pnlHidden As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
-    '''lblFields control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lblFields As Global.System.Web.UI.WebControls.Label
-    
-    '''<summary>
     '''lblClientID control.
     '''</summary>
     '''<remarks>
@@ -86,29 +77,11 @@ Partial Public Class RecentWorkOrders
     Protected WithEvents lblClientID As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''lblModuleID control.
+    '''lblUserID control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lblModuleID As Global.System.Web.UI.WebControls.Label
-    
-    '''<summary>
-    '''lblCustAcctNum control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lblCustAcctNum As Global.System.Web.UI.WebControls.Label
-    
-    '''<summary>
-    '''lblFilterID control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lblFilterID As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents lblUserID As Global.System.Web.UI.WebControls.Label
 End Class

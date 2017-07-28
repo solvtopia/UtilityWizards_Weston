@@ -6,6 +6,11 @@
                 <i class="fa fa-dashboard"></i><span>Dashboard</span>
         </asp:LinkButton>
     </li>
+    <li runat="server" id="liRecentWorkOrders">
+        <asp:LinkButton runat="server" ID="lnkRecentWorkOrders">
+                <i class="fa fa-asdf"></i><span>Recent Work Orders</span>
+        </asp:LinkButton>
+    </li>
     <asp:PlaceHolder runat="server" ID="pnlMainOptions">
         <li runat="server" id="liHelp">
             <asp:LinkButton runat="server" ID="lnkHelp"><i class="fa fa-book"></i><span>Help Me With This</span></asp:LinkButton></li>

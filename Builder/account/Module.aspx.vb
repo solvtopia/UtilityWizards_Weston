@@ -142,9 +142,9 @@ Public Class _Module
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Try
-            Dim sql As String = "SELECT [FullName], [ServiceAddress], [City], [State], [ZipCode] FROM [vwCustomerSearch] WHERE [Account] LIKE '" & Me.txtAcctNumber.Text & "';"
+            Dim sql As String = "SELECT [FullName], [ServiceAddress], [City], [State], [ZipCode] FROM [vwCustomerSearch_new] WHERE [Account] LIKE '" & Me.txtAcctNumber.Text & "';"
             If Me.CustAcctNum = "" Then
-                sql = "SELECT [FullName], [ServiceAddress], [City], [State], [ZipCode] FROM [vwCustomerSearch] WHERE [xLocationID] LIKE '" & Me.LocationNum & "';"
+                sql = "SELECT [FullName], [ServiceAddress], [City], [State], [ZipCode] FROM [vwCustomerSearch_new] WHERE [LocationNum] LIKE '" & Me.LocationNum & "';"
             End If
             Dim cmd As New SqlClient.SqlCommand(sql, cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
@@ -355,33 +355,7 @@ Public Class _Module
 
             ' update the location record with the trash can serials for Wadesboro
             If App.CurrentClient.ID = 4 And App.ActiveModule.ID = 78 Then
-                Dim xLocDoc As New System.Xml.XmlDocument
-                cmd = New SqlClient.SqlCommand("SELECT [xmlData] FROM [Locations] WHERE [xLocationID] Like '" & xDoc.GetNodeValue("LocationNum") & "';", cn)
-                If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-                Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
-                If rs.Read Then
-                    xLocDoc.LoadXml(rs("xmlData").ToString)
-                End If
-                rs.Close()
-                cmd.Cancel()
-
-                If xLocDoc.Item("Data").Item("Serial01") Is Nothing Then
-                    xLocDoc.Item("Data").AppendChild(xLocDoc.NewElement("Serial01", trashCanSerial1.XmlEncode))
-                Else xLocDoc.Item("Data").Item("Serial01").InnerText = trashCanSerial1.XmlEncode
-                End If
-
-                If xLocDoc.Item("Data").Item("Serial02") Is Nothing Then
-                    xLocDoc.Item("Data").AppendChild(xLocDoc.NewElement("Serial02", trashCanSerial2.XmlEncode))
-                Else xLocDoc.Item("Data").Item("Serial02").InnerText = trashCanSerial2.XmlEncode
-                End If
-
-                If xLocDoc.Item("Data").Item("Serial03") Is Nothing Then
-                    xLocDoc.Item("Data").AppendChild(xLocDoc.NewElement("Serial03", trashCanSerial3.XmlEncode))
-                Else xLocDoc.Item("Data").Item("Serial03").InnerText = trashCanSerial3.XmlEncode
-                End If
-
-                cmd = New SqlClient.SqlCommand("UPDATE [Locations] SET [xmlData] = @xmlData WHERE [xLocationID] LIKE '" & xDoc.GetNodeValue("LocationNum") & "';", cn)
-                cmd.Parameters.AddWithValue("@xmlData", xLocDoc.ToXmlString)
+                cmd = New SqlClient.SqlCommand("UPDATE [Locations_new] SET [Serial001] = '" & trashCanSerial1 & "', [Serial002] = '" & trashCanSerial2 & "', [Serial003] = '" & trashCanSerial3 & "' WHERE [LocationNum] LIKE '" & xDoc.GetNodeValue("LocationNum") & "';", cn)
                 If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
                 cmd.ExecuteNonQuery()
                 cmd.Cancel()

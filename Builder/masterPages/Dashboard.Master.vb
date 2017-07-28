@@ -133,6 +133,11 @@ Public Class Dashboard
         App.CurrentUser.MobileDeviceIds = lstDeviceIds
         App.CurrentUser.Save()
 
+        Dim myCookie As New HttpCookie("UtilityWizards")
+        myCookie.Values.Add("userid", "0")
+        myCookie.Expires = DateTime.Now.AddYears(1)
+        Response.Cookies.Add(myCookie)
+
         App.CurrentUser = New SystemUser
         App.CurrentClient = New SystemClient
         Dim usrString As String = If(Me.DeviceId <> "", "deviceid=", "uid=0")

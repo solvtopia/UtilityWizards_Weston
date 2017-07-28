@@ -50,6 +50,15 @@ Partial Public Class Login
     Protected WithEvents txtPassword As Global.Telerik.Web.UI.RadTextBox
     
     '''<summary>
+    '''chkRememberMe control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents chkRememberMe As Global.UtilityWizards.CommonCore.Controls.CheckBoxes.CheckBox
+    
+    '''<summary>
     '''btnLogin control.
     '''</summary>
     '''<remarks>

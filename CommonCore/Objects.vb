@@ -3,6 +3,7 @@ Imports System.Text
 Imports System.Xml
 Imports UtilityWizards.CommonCore.Enums
 Imports System.Reflection
+Imports UtilityWizards.CommonCore.Xml
 
 Public Class SystemUser
     Public Sub New()
@@ -1170,19 +1171,26 @@ Public Class CustomerRecord
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Try
-            Dim cmd As New SqlClient.SqlCommand("SELECT [ID], [xmlData], [Active] FROM [Customers] WHERE [ID] = " & id & ";", cn)
+            Dim cmd As New SqlClient.SqlCommand("SELECT [ID], [ClientID], [AccountNum] AS [Account], [FullName] FROM [Customers_new] WHERE [ID] = " & id & ";", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
             If rs.Read Then
+                ' build xml to populate the object
+                Dim xDoc As XmlDocument = NewXmlDocument()
+                For x As Integer = 0 To rs.FieldCount - 1
+                    Dim n As String = rs.GetName(x)
+                    Dim v As String = rs.GetString(x)
+                    xDoc.NewElement(n, v)
+                Next
                 Me.RecordData = New List(Of NameValuePair)
-                Me.Initialize(rs("xmlData").ToString)
+                Me.Initialize(xDoc.ToXmlString)
                 Me.ID = rs("id").ToString.ToInteger
             End If
             cmd.Cancel()
             rs.Close()
 
             Me.Locations = New List(Of CustomerLocation)
-            cmd = New SqlClient.SqlCommand("SELECT [ID] FROM [Locations] WHERE [xAccount] LIKE '" & Me.AccountNumber & "'", cn)
+            cmd = New SqlClient.SqlCommand("SELECT [ID] FROM [Locations_new] WHERE [AccountNum] LIKE '" & Me.AccountNumber & "'", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             rs = cmd.ExecuteReader
             Do While rs.Read
@@ -1201,19 +1209,26 @@ Public Class CustomerRecord
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Try
-            Dim cmd As New SqlClient.SqlCommand("Select [ID], [xmlData], [Active] FROM [Customers] WHERE [xLocationID] LIKE '" & locationId & "';", cn)
+            Dim cmd As New SqlClient.SqlCommand("Select [CustomerID] AS [ID], [ClientID], [Account], [FullName] FROM [vwCustomerSearch_new] WHERE [LocationNum] LIKE '" & locationId & "';", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
             If rs.Read Then
+                ' build xml to populate the object
+                Dim xDoc As XmlDocument = NewXmlDocument()
+                For x As Integer = 0 To rs.FieldCount - 1
+                    Dim n As String = rs.GetName(x)
+                    Dim v As String = rs.GetString(x)
+                    xDoc.NewElement(n, v)
+                Next
                 Me.RecordData = New List(Of NameValuePair)
-                Me.Initialize(rs("xmlData").ToString)
+                Me.Initialize(xDoc.ToXmlString)
                 Me.ID = rs("id").ToString.ToInteger
             End If
             cmd.Cancel()
             rs.Close()
 
             Me.Locations = New List(Of CustomerLocation)
-            cmd = New SqlClient.SqlCommand("SELECT [ID] FROM [Locations] WHERE [xAccount] LIKE '" & Me.AccountNumber & "'", cn)
+            cmd = New SqlClient.SqlCommand("SELECT [ID] FROM [Locations_new] WHERE [AccountNum] LIKE '" & Me.AccountNumber & "'", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             rs = cmd.ExecuteReader
             Do While rs.Read
@@ -1236,12 +1251,19 @@ Public Class CustomerRecord
             Dim rs As SqlClient.SqlDataReader
 
             If custAcctNum <> "" And serviceAddress = "" Then
-                cmd = New SqlClient.SqlCommand("Select [ID], [xmlData], [Active] FROM [Customers] WHERE [xAccount] Like '" & custAcctNum & "';", cn)
+                cmd = New SqlClient.SqlCommand("SELECT [ID], [ClientID], [AccountNum] AS [Account], [FullName] FROM [Customers_new] WHERE [AccountNum] LIKE '" & custAcctNum & "';", cn)
                 If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
                 rs = cmd.ExecuteReader
                 If rs.Read Then
+                    ' build xml to populate the object
+                    Dim xDoc As XmlDocument = NewXmlDocument()
+                    For x As Integer = 0 To rs.FieldCount - 1
+                        Dim n As String = rs.GetName(x)
+                        Dim v As String = rs.GetString(x)
+                        xDoc.NewElement(n, v)
+                    Next
                     Me.RecordData = New List(Of NameValuePair)
-                    Me.Initialize(rs("xmlData").ToString)
+                    Me.Initialize(xDoc.ToXmlString)
                     Me.ID = rs("id").ToString.ToInteger
                 End If
                 cmd.Cancel()
@@ -1249,15 +1271,22 @@ Public Class CustomerRecord
             ElseIf custAcctNum = "" And serviceAddress <> "" Then
                 Dim sWhere As String = ""
                 For Each s As String In serviceAddress.Split(" "c)
-                    If sWhere = "" Then sWhere = "[SearchAddress] Like '%" & s & "%'" Else sWhere &= " AND [SearchAddress] LIKE '%" & s & "%'"
+                    If sWhere = "" Then sWhere = "[SearchAddress] LIKE '%" & s & "%'" Else sWhere &= " AND [SearchAddress] LIKE '%" & s & "%'"
                 Next
 
-                cmd = New SqlClient.SqlCommand("SELECT [ID], [xmlData], [Active] FROM [vwCustomerSearch] WHERE " & sWhere & ";", cn)
+                cmd = New SqlClient.SqlCommand("SELECT [CustomerID] AS [ID], [ClientID], [Account], [FullName] FROM [vwCustomerSearch_new] WHERE " & sWhere & ";", cn)
                 If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
                 rs = cmd.ExecuteReader
                 If rs.Read Then
+                    ' build xml to populate the object
+                    Dim xDoc As XmlDocument = NewXmlDocument()
+                    For x As Integer = 0 To rs.FieldCount - 1
+                        Dim n As String = rs.GetName(x)
+                        Dim v As String = rs.GetString(x)
+                        xDoc.NewElement(n, v)
+                    Next
                     Me.RecordData = New List(Of NameValuePair)
-                    Me.Initialize(rs("xmlData").ToString)
+                    Me.Initialize(xDoc.ToXmlString)
                     Me.ID = rs("id").ToString.ToInteger
                 End If
                 cmd.Cancel()
@@ -1265,7 +1294,7 @@ Public Class CustomerRecord
             End If
 
             Me.Locations = New List(Of CustomerLocation)
-            cmd = New SqlClient.SqlCommand("SELECT [ID] FROM [Locations] WHERE [xAccount] LIKE '" & Me.AccountNumber & "'", cn)
+            cmd = New SqlClient.SqlCommand("SELECT [ID] FROM [Locations_new] WHERE [AccountNum] LIKE '" & Me.AccountNumber & "'", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             rs = cmd.ExecuteReader
             Do While rs.Read
@@ -1279,10 +1308,6 @@ Public Class CustomerRecord
         Finally
             cn.Close()
         End Try
-    End Sub
-    Sub New(ByVal id As Integer, ByVal xData As String)
-        Me.Initialize(xData)
-        Me.ID = id
     End Sub
 
     Public ID As Integer
@@ -1357,9 +1382,6 @@ Public Class CustomerRecord
     End Sub
 
     Public Function Save() As CustomerRecord
-        Return Me.Save("")
-    End Function
-    Public Function Save(ByVal xmlData As String) As CustomerRecord
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Dim retVal As New CustomerRecord
@@ -1373,7 +1395,7 @@ Public Class CustomerRecord
             Me.Locations = newLocs
 
             Dim addNew As Boolean = True
-            Dim cmd As New SqlClient.SqlCommand("SELECT [ID] FROM [Customers] WHERE [xAccount] LIKE '" & Me.AccountNumber & "' OR [ID] = " & Me.ID & ";", cn)
+            Dim cmd As New SqlClient.SqlCommand("SELECT [ID] FROM [Customers_new] WHERE [AccountNum] LIKE '" & Me.AccountNumber & "' OR [ID] = " & Me.ID & ";", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
             If rs.Read Then
@@ -1382,11 +1404,17 @@ Public Class CustomerRecord
 
             ' now save the client record
             If addNew Then
-                cmd = New SqlClient.SqlCommand("INSERT INTO [Customers] ([xmlData], [dtInserted], [dtUpdated], [Active]) VALUES (@xmlData, '" & Now.ToString & "', '" & Now.ToString & "', '1');SELECT @@Identity AS SCOPEIDENTITY;", cn)
-                If xmlData = "" Then
-                    cmd.Parameters.AddWithValue("@xmlData", Me.CreateXml)
-                Else cmd.Parameters.AddWithValue("@xmlData", xmlData)
-                End If
+                Dim fields As String = ""
+                Dim values As String = ""
+                For Each itm In Me.RecordData
+                    If fields = "" Then fields = "[" & itm.Name & "]" Else fields &= ", [" & itm.Name & "]"
+                    If values = "" Then values = "'" & itm.value & "'" Else values &= ", '" & itm.value & "'"
+                Next
+
+                fields &= "[dtInserted], [dtUpdated], [Active]"
+                values &= "'" & Now.ToString & "', '" & Now.ToString & "', '1'"
+
+                cmd = New SqlClient.SqlCommand("INSERT INTO [Customers_new] (" & fields & ") VALUES (" & values & ");SELECT @@Identity AS SCOPEIDENTITY;", cn)
                 If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
                 rs = cmd.ExecuteReader
                 If rs.Read Then
@@ -1395,12 +1423,15 @@ Public Class CustomerRecord
                 rs.Close()
                 cmd.Cancel()
             Else
+                Dim fields As String = ""
+                For Each itm In Me.RecordData
+                    If fields = "" Then fields = "[" & itm.Name & "] = '" & itm.value & "'" Else fields &= ", [" & itm.Name & "] = '" & itm.value & "'"
+                Next
+
+                fields &= "[dtUpdated] = '" & Now.ToString & "'"
+
                 Dim sWhere As String = ""
-                cmd = New SqlClient.SqlCommand("UPDATE [Customers] SET [xmlData] = @xmlData, [dtUpdated] = '" & Now.ToString & "' WHERE [xAccount] LIKE '" & Me.AccountNumber & "' OR [ID] = " & Me.ID, cn)
-                If xmlData = "" Then
-                    cmd.Parameters.AddWithValue("@xmlData", Me.CreateXml)
-                Else cmd.Parameters.AddWithValue("@xmlData", xmlData)
-                End If
+                cmd = New SqlClient.SqlCommand("UPDATE [Customers_new] SET " & fields & " WHERE [AccountNum] LIKE '" & Me.AccountNumber & "' OR [ID] = " & Me.ID, cn)
                 If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
                 cmd.ExecuteNonQuery()
             End If
@@ -1423,7 +1454,7 @@ Public Class CustomerRecord
         Dim retVal As Boolean = True
 
         Try
-            Dim cmd As New SqlClient.SqlCommand("UPDATE [Customers] SET [Active] = 0 WHERE [ID] = " & Me.ID, cn)
+            Dim cmd As New SqlClient.SqlCommand("UPDATE [Customers_new] SET [Active] = 0, [dtUpdated] = '" & Now.ToString & "' WHERE [ID] = " & Me.ID, cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             cmd.ExecuteNonQuery()
             cmd.Cancel()
@@ -1433,30 +1464,6 @@ Public Class CustomerRecord
             ex.WriteToErrorLog
         Finally
             cn.Close()
-        End Try
-
-        Return retVal
-    End Function
-
-    Private Function CreateXml() As String
-        Dim retVal As String = ""
-
-        Try
-            Dim xDoc As New XmlDocument
-            xDoc = NewXmlDocument("Data")
-
-            Dim e As XmlElement = xDoc.Item("Data")
-
-            If Me.RecordData Is Nothing Then Me.RecordData = New List(Of NameValuePair)
-            For Each itm In Me.RecordData
-                e.AppendChild(xDoc.NewElement(itm.Name, itm.value))
-            Next
-
-            retVal = xDoc.ToXmlString
-
-        Catch ex As Exception
-            retVal = ""
-            ex.WriteToErrorLog
         End Try
 
         Return retVal
@@ -1476,11 +1483,19 @@ Public Class CustomerLocation
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Try
-            Dim cmd As New SqlClient.SqlCommand("SELECT [ID], [xmlData], [Active] FROM [Locations] WHERE [ID] = " & id & ";", cn)
+            Dim cmd As New SqlClient.SqlCommand("SELECT * FROM [Locations_new] WHERE [ID] = " & id & ";", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
             If rs.Read Then
-                Me.Initialize(rs("xmlData").ToString)
+                ' build xml to populate the object
+                Dim xDoc As XmlDocument = NewXmlDocument()
+                For x As Integer = 0 To rs.FieldCount - 1
+                    Dim n As String = rs.GetName(x)
+                    Dim v As String = rs.GetString(x)
+                    xDoc.NewElement(n, v)
+                Next
+                Me.RecordData = New List(Of NameValuePair)
+                Me.Initialize(xDoc.ToXmlString)
                 Me.ID = rs("id").ToString.ToInteger
             End If
             cmd.Cancel()
@@ -1496,11 +1511,19 @@ Public Class CustomerLocation
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Try
-            Dim cmd As New SqlClient.SqlCommand("Select [ID], [xmlData], [Active] FROM [Locations] WHERE [xLocationID] LIKE '" & locationId & "';", cn)
+            Dim cmd As New SqlClient.SqlCommand("Select * FROM [Locations_new] WHERE [LocationNum] LIKE '" & locationId & "';", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
             If rs.Read Then
-                Me.Initialize(rs("xmlData").ToString)
+                ' build xml to populate the object
+                Dim xDoc As XmlDocument = NewXmlDocument()
+                For x As Integer = 0 To rs.FieldCount - 1
+                    Dim n As String = rs.GetName(x)
+                    Dim v As String = rs.GetString(x)
+                    xDoc.NewElement(n, v)
+                Next
+                Me.RecordData = New List(Of NameValuePair)
+                Me.Initialize(xDoc.ToXmlString)
                 Me.ID = rs("id").ToString.ToInteger
             End If
             cmd.Cancel()
@@ -1512,10 +1535,6 @@ Public Class CustomerLocation
             cn.Close()
         End Try
     End Sub
-    Sub New(ByVal id As Integer, ByVal xData As String)
-        Me.Initialize(xData)
-        Me.ID = id
-    End Sub
 
     Public ID As Integer
     Public Property LocationId As String
@@ -1523,7 +1542,7 @@ Public Class CustomerLocation
             Dim retVal As String = "000-0000000"
             If Me.RecordData Is Nothing Then Me.RecordData = New List(Of NameValuePair)
             For Each v As NameValuePair In Me.RecordData
-                If v.Name IsNot Nothing AndAlso v.Name.ToLower = "location" Then
+                If v.Name IsNot Nothing AndAlso v.Name.ToLower = "locationnum" Then
                     retVal = v.value
                     Exit For
                 End If
@@ -1531,8 +1550,8 @@ Public Class CustomerLocation
             Return retVal
         End Get
         Set(value As String)
-            Dim i As Integer = Me.RecordData.FindItemIndex("location")
-            Dim nvp As New NameValuePair("Location", value)
+            Dim i As Integer = Me.RecordData.FindItemIndex("locationnum")
+            Dim nvp As New NameValuePair("LocationNum", value)
 
             If i = -1 Then
                 Me.RecordData.Add(nvp)
@@ -1545,7 +1564,7 @@ Public Class CustomerLocation
             Dim retVal As String = ""
             If Me.RecordData Is Nothing Then Me.RecordData = New List(Of NameValuePair)
             For Each v As NameValuePair In Me.RecordData
-                If v.Name IsNot Nothing AndAlso v.Name.ToLower = "serviceaddress" Then
+                If v.Name IsNot Nothing AndAlso v.Name.ToLower = "serviceaddr" Then
                     retVal = v.value
                     Exit For
                 End If
@@ -1553,8 +1572,8 @@ Public Class CustomerLocation
             Return retVal
         End Get
         Set(value As String)
-            Dim i As Integer = Me.RecordData.FindItemIndex("serviceaddress")
-            Dim nvp As New NameValuePair("ServiceAddress", value)
+            Dim i As Integer = Me.RecordData.FindItemIndex("serviceaddr")
+            Dim nvp As New NameValuePair("ServiceAddr", value)
 
             If i = -1 Then
                 Me.RecordData.Add(nvp)
@@ -1657,33 +1676,48 @@ Public Class CustomerLocation
     End Sub
 
     Public Function Save() As CustomerLocation
-        Return Me.Save("")
-    End Function
-    Public Function Save(ByVal xmlData As String) As CustomerLocation
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Dim retVal As New CustomerLocation
 
         Try
-            If Me.ID = 0 Then
-                Dim cmd As New SqlClient.SqlCommand("INSERT INTO [Locations] ([xmlData], [dtInserted], [dtUpdated], [Active]) VALUES (@xmlData, '" & Now.ToString & "', '" & Now.ToString & "', '1');SELECT @@Identity AS SCOPEIDENTITY;", cn)
-                If xmlData = "" Then
-                    cmd.Parameters.AddWithValue("@xmlData", Me.CreateXml)
-                Else cmd.Parameters.AddWithValue("@xmlData", xmlData)
-                End If
+            Dim addNew As Boolean = True
+            Dim cmd As New SqlClient.SqlCommand("SELECT [ID] FROM [Locations_new] WHERE [LocationNum] LIKE '" & Me.LocationId & "' OR [ID] = " & Me.ID & ";", cn)
+            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+            Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+            If rs.Read Then
+                addNew = False
+            End If
+
+            If addNew Then
+                Dim fields As String = ""
+                Dim values As String = ""
+                For Each itm In Me.RecordData
+                    If fields = "" Then fields = "[" & itm.Name & "]" Else fields &= ", [" & itm.Name & "]"
+                    If values = "" Then values = "'" & itm.value & "'" Else values &= ", '" & itm.value & "'"
+                Next
+
+                fields &= "[dtInserted], [dtUpdated], [Active]"
+                values &= "'" & Now.ToString & "', '" & Now.ToString & "', '1'"
+
+                cmd = New SqlClient.SqlCommand("INSERT INTO [Locations_new] (" & fields & ") VALUES (" & values & ");SELECT @@Identity AS SCOPEIDENTITY;", cn)
                 If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-                Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+                rs = cmd.ExecuteReader
                 If rs.Read Then
                     Me.ID = rs("SCOPEIDENTITY").ToString.ToInteger
                 End If
                 rs.Close()
                 cmd.Cancel()
             Else
-                Dim cmd As New SqlClient.SqlCommand("UPDATE [Locations] SET [xmlData] = @xmlData, [dtUpdated] = '" & Now.ToString & "' WHERE [ID] = " & Me.ID, cn)
-                If xmlData = "" Then
-                    cmd.Parameters.AddWithValue("@xmlData", Me.CreateXml)
-                Else cmd.Parameters.AddWithValue("@xmlData", xmlData)
-                End If
+                Dim fields As String = ""
+                For Each itm In Me.RecordData
+                    If fields = "" Then fields = "[" & itm.Name & "] = '" & itm.value & "'" Else fields &= ", [" & itm.Name & "] = '" & itm.value & "'"
+                Next
+
+                fields &= "[dtUpdated] = '" & Now.ToString & "'"
+
+                Dim sWhere As String = ""
+                cmd = New SqlClient.SqlCommand("UPDATE [Locations_new] SET " & fields & " WHERE [LocationNum] LIKE '" & Me.LocationId & "' OR [ID] = " & Me.ID, cn)
                 If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
                 cmd.ExecuteNonQuery()
             End If
@@ -1706,7 +1740,7 @@ Public Class CustomerLocation
         Dim retVal As Boolean = True
 
         Try
-            Dim cmd As New SqlClient.SqlCommand("UPDATE [Locations] SET [Active] = 0 WHERE [ID] = " & Me.ID, cn)
+            Dim cmd As New SqlClient.SqlCommand("UPDATE [Locations_new] SET [Active] = 0, [dtUpdated] = '" & Now.ToString & "' WHERE [ID] = " & Me.ID, cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             cmd.ExecuteNonQuery()
             cmd.Cancel()
@@ -1716,30 +1750,6 @@ Public Class CustomerLocation
             ex.WriteToErrorLog
         Finally
             cn.Close()
-        End Try
-
-        Return retVal
-    End Function
-
-    Private Function CreateXml() As String
-        Dim retVal As String = ""
-
-        Try
-            Dim xDoc As New XmlDocument
-            xDoc = NewXmlDocument("Data")
-
-            Dim e As XmlElement = xDoc.Item("Data")
-
-            If Me.RecordData Is Nothing Then Me.RecordData = New List(Of NameValuePair)
-            For Each itm In Me.RecordData
-                e.AppendChild(xDoc.NewElement(itm.Name, itm.value))
-            Next
-
-            retVal = xDoc.ToXmlString
-
-        Catch ex As Exception
-            retVal = ""
-            ex.WriteToErrorLog
         End Try
 
         Return retVal

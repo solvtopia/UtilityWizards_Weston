@@ -6,12 +6,12 @@
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   IgnorableNamespaces="uap mp">
 
-  <Identity 
-    Name="36359130-4333-4587-80a5-f77a704734c1"
+  <Identity
+    Name="a70c5372-82ef-4c1f-a39a-e60127e1e723"
     Publisher="CN=James"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="f736c883-f105-4d30-a719-4bf328872f5e" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="a70c5372-82ef-4c1f-a39a-e60127e1e723" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>UWXamarin.UWP</DisplayName>
@@ -29,8 +29,8 @@
 
   <Applications>
     <Application Id="App"
-        Executable="$targetnametoken$.exe"
-        EntryPoint="UWXamarin.UWP.App">
+      Executable="$targetnametoken$.exe"
+      EntryPoint="UWXamarin.UWP.App">
       <uap:VisualElements
         DisplayName="UWXamarin.UWP"
         Square150x150Logo="Assets\Square150x150Logo.png"

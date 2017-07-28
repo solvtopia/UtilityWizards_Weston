@@ -3,6 +3,8 @@
 <%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
 <%@ MasterType VirtualPath="~/masterPages/ContentPage.Master" %>
 
+<%@ Register assembly="UtilityWizards.CommonCore" namespace="UtilityWizards.CommonCore.Controls.CheckBoxes" tagprefix="cc1" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="headContent" runat="server">
     <style type="text/css">
         .wrap-table-login {
@@ -57,8 +59,22 @@
             </tr>
             <tr>
                 <td>
-                    <telerik:RadButton ID="btnLogin" runat="server" Text="Login" ButtonType="LinkButton" Skin="Metro" Width="100%" CssClass="fixedWidth" />
+                    <cc1:CheckBox ID="chkRememberMe" runat="server" Checked="True" Text="Keep me logged in" />
                 </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>
+                    <telerik:RadButton ID="btnLogin" runat="server" ButtonType="LinkButton" CssClass="fixedWidth" Skin="Metro" Text="Login" Width="100%" />
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
             </tr>
             <tr>
                 <td>

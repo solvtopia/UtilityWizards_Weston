@@ -121,6 +121,7 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="account\LoginHelp.aspx" />
+    <Content Include="account\MobileLandingPage.aspx" />
     <Content Include="admin\Customers.aspx" />
     <Content Include="controls\Menu.ascx" />
     <Content Include="documentation\api\Default.aspx" />
@@ -1169,6 +1170,13 @@
       <DependentUpon>LoginHelp.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
+    <Compile Include="account\MobileLandingPage.aspx.designer.vb">
+      <DependentUpon>MobileLandingPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="account\MobileLandingPage.aspx.vb">
+      <DependentUpon>MobileLandingPage.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
     <Compile Include="admin\Customers.aspx.designer.vb">
       <DependentUpon>Customers.aspx</DependentUpon>
     </Compile>
@@ -1639,7 +1647,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties UseAjaxifiedTemplates="False" UseJQuerySupport="False" />
+      <UserProperties UseJQuerySupport="False" UseAjaxifiedTemplates="False" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

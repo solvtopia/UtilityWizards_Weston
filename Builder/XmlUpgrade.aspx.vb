@@ -18,7 +18,7 @@ Public Class XmlUpgrade
         Try
             Dim lst As New List(Of XmlDocument)
 
-            Dim cmd As New SqlClient.SqlCommand("SELECT * FROM [Customers];", cn)
+            Dim cmd As New SqlClient.SqlCommand("SELECT * FROM [Customers_new];", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
             Do While rs.Read
