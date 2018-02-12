@@ -1,7 +1,13 @@
 ﻿Imports System.Xml
 Imports UtilityWizards.CommonCore.Common
-Imports UtilityWizards.CommonCore.Xml
+Imports UtilityWizards.CommonCore.Shared.Common
+Imports UtilityWizards.CommonCore.Shared.Xml
 Imports Telerik.Web.UI
+Imports System.Configuration.ConfigurationManager
+Imports System.IO
+Imports iTextSharp.text
+Imports iTextSharp.text.pdf
+Imports iTextSharp.text.html.simpleparser
 
 Public Class _Module
     Inherits builderPage
@@ -30,6 +36,11 @@ Public Class _Module
     Private ReadOnly Property LocationNum As String
         Get
             Return Request.QueryString("locationnum")
+        End Get
+    End Property
+    Private ReadOnly Property Is811Module As Boolean
+        Get
+            Return App.ActiveModule.Name.Contains("811")
         End Get
     End Property
 
@@ -64,8 +75,43 @@ Public Class _Module
         Me.ddlTechnician.Enabled = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Supervisor Or
                                     App.CurrentUser.IsAdminUser Or
                                     App.CurrentUser.IsSysAdmin)
+        Me.pnlModuleOptions.Visible = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Supervisor Or
+                                    App.CurrentUser.IsAdminUser Or
+                                    App.CurrentUser.IsSysAdmin)
 
         Me.txtTechComments.Enabled = True
+
+        If App.ActiveModule.ID = 108 Then
+            Me.pnlCustomerDetails.Visible = False
+            Me.RadTabStrip1.Tabs(0).Text = "Header Details"
+            Me.RadTabStrip1.Tabs(1).Visible = False
+            Me.lnkNew.Visible = False
+        Else
+            Me.pnlCustomerDetails.Visible = True
+            Me.RadTabStrip1.Tabs(0).Text = "Header &amp; Customer Details"
+            Me.RadTabStrip1.Tabs(1).Visible = True
+            Me.lnkNew.Visible = True
+        End If
+
+        ' setup the form for the 811 locates
+        If Me.Is811Module Then
+            Me.pnlModuleOptions.Visible = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Solvtopia Or Me.OnLocal)
+            Me.RadTabStrip1.Tabs(1).Visible = False
+            Me.RadTabStrip1.Tabs(2).Visible = True
+            Me.lblAcctNum.Visible = False
+            Me.txtAcctNumber.Visible = False
+            Me.lblLocationNum.Visible = False
+            Me.txtLocationNum.Visible = False
+            Me.tbl811SignOff.Visible = True
+        Else
+            Me.RadTabStrip1.Tabs(1).Visible = (App.ActiveModule.ID <> 108)
+            Me.RadTabStrip1.Tabs(2).Visible = False
+            Me.lblAcctNum.Visible = True
+            Me.txtAcctNumber.Visible = True
+            Me.lblLocationNum.Visible = True
+            Me.txtLocationNum.Visible = True
+            Me.tbl811SignOff.Visible = False
+        End If
     End Sub
 
     Private Sub LoadLists()
@@ -107,7 +153,7 @@ Public Class _Module
             Next
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try
@@ -132,7 +178,7 @@ Public Class _Module
             Me.ddlTechnician.SelectedIndex = 0
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try
@@ -142,13 +188,18 @@ Public Class _Module
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Try
-            Dim sql As String = "SELECT [FullName], [ServiceAddress], [City], [State], [ZipCode] FROM [vwCustomerSearch_new] WHERE [Account] LIKE '" & Me.txtAcctNumber.Text & "';"
+            Dim sql As String = ""
+            Dim cmd As SqlClient.SqlCommand
+            Dim rs As SqlClient.SqlDataReader
+
+            ' now run the query to pull the new record
+            sql = "SELECT [FullName], [ServiceAddress], [City], [State], [ZipCode], [TransmitterNum], [SerialNo], [MeterNum], [CurrentRead], [PreviousRead], [CurrentDate], [PreviousDate] FROM [vwCustomerSearch_new] WHERE [Account] LIKE '" & Me.txtAcctNumber.Text & "';"
             If Me.CustAcctNum = "" Then
-                sql = "SELECT [FullName], [ServiceAddress], [City], [State], [ZipCode] FROM [vwCustomerSearch_new] WHERE [LocationNum] LIKE '" & Me.LocationNum & "';"
+                sql = "SELECT [FullName], [ServiceAddress], [City], [State], [ZipCode], [TransmitterNum], [SerialNo], [MeterNum], [CurrentRead], [PreviousRead], [CurrentDate], [PreviousDate] FROM [vwCustomerSearch_new] WHERE [LocationNum] LIKE '" & Me.LocationNum & "';"
             End If
-            Dim cmd As New SqlClient.SqlCommand(sql, cn)
+            cmd = New SqlClient.SqlCommand(sql, cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-            Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+            rs = cmd.ExecuteReader
             If rs.Read Then
                 Me.txtCustomerName.Text = rs("FullName").ToString
                 Me.txtCustomerServiceAddress.Text = rs("ServiceAddress").ToString & ", " & rs("City").ToString
@@ -156,6 +207,41 @@ Public Class _Module
                 Dim latLon As List(Of String) = AddressToLatLon(rs("ServiceAddress").ToString & " " & rs("City").ToString & " " & rs("State").ToString & " " & rs("ZipCode").ToString.Substring(0, 5))
                 Me.txtCustomerServiceAddressLat.Text = latLon(0)
                 Me.txtCustomerServiceAddressLon.Text = latLon(1)
+
+                ' questions for wadesboro customers 1720 (numeric) - 1726 (text)
+                If Me.FindInControl("txt_1720") IsNot Nothing Then
+                    CType(Me.FindInControl("txt_1720"), Controls.TextBoxes.NumericTextBox).Text = If(IsDBNull(rs("TransmitterNum")), "", rs("TransmitterNum").ToString)
+                    CType(Me.FindInControl("txt_1720"), Controls.TextBoxes.NumericTextBox).ReadOnly = True
+                    CType(Me.FindInControl("txt_1720"), Controls.TextBoxes.NumericTextBox).NumberFormat.GroupSeparator = ""
+                End If
+                If Me.FindInControl("txt_1721") IsNot Nothing Then
+                    CType(Me.FindInControl("txt_1721"), Controls.TextBoxes.NumericTextBox).Text = If(IsDBNull(rs("SerialNo")), "", rs("SerialNo").ToString)
+                    CType(Me.FindInControl("txt_1721"), Controls.TextBoxes.NumericTextBox).ReadOnly = True
+                    CType(Me.FindInControl("txt_1721"), Controls.TextBoxes.NumericTextBox).NumberFormat.GroupSeparator = ""
+                End If
+                If Me.FindInControl("txt_1722") IsNot Nothing Then
+                    CType(Me.FindInControl("txt_1722"), Controls.TextBoxes.NumericTextBox).Text = If(IsDBNull(rs("MeterNum")), "", rs("MeterNum").ToString)
+                    CType(Me.FindInControl("txt_1722"), Controls.TextBoxes.NumericTextBox).ReadOnly = True
+                    CType(Me.FindInControl("txt_1722"), Controls.TextBoxes.NumericTextBox).NumberFormat.GroupSeparator = ""
+                End If
+                If Me.FindInControl("txt_1723") IsNot Nothing Then
+                    CType(Me.FindInControl("txt_1723"), Controls.TextBoxes.NumericTextBox).Text = If(IsDBNull(rs("CurrentRead")), "", rs("CurrentRead").ToString)
+                    CType(Me.FindInControl("txt_1723"), Controls.TextBoxes.NumericTextBox).ReadOnly = True
+                    CType(Me.FindInControl("txt_1723"), Controls.TextBoxes.NumericTextBox).NumberFormat.GroupSeparator = ""
+                End If
+                If Me.FindInControl("txt_1724") IsNot Nothing Then
+                    CType(Me.FindInControl("txt_1724"), Controls.TextBoxes.NumericTextBox).Text = If(IsDBNull(rs("PreviousRead")), "", rs("PreviousRead").ToString)
+                    CType(Me.FindInControl("txt_1724"), Controls.TextBoxes.NumericTextBox).ReadOnly = True
+                    CType(Me.FindInControl("txt_1724"), Controls.TextBoxes.NumericTextBox).NumberFormat.GroupSeparator = ""
+                End If
+                If Me.FindInControl("txt_1725") IsNot Nothing Then
+                    CType(Me.FindInControl("txt_1725"), Controls.TextBoxes.TextBox).Text = If(IsDBNull(rs("CurrentDate")), "", rs("CurrentDate").ToString)
+                    CType(Me.FindInControl("txt_1725"), Controls.TextBoxes.TextBox).ReadOnly = True
+                End If
+                If Me.FindInControl("txt_1726") IsNot Nothing Then
+                    CType(Me.FindInControl("txt_1726"), Controls.TextBoxes.TextBox).Text = If(IsDBNull(rs("PreviousDate")), "", rs("PreviousDate").ToString)
+                    CType(Me.FindInControl("txt_1726"), Controls.TextBoxes.TextBox).ReadOnly = True
+                End If
 
                 Dim ds As New DataSet("ServiceLocation")
                 Dim dt As New DataTable("ServiceLocationTable")
@@ -178,7 +264,7 @@ Public Class _Module
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try
@@ -192,6 +278,59 @@ Public Class _Module
             Me.tblFolderQuestions.Visible = False
         End If
         Me.LoadQuestions(App.ActiveModuleQuestions, tblModuleQuestions, "")
+
+        ' build the list of names for the 811 tickets
+        Me.tbl811SignOff.Rows.Clear()
+        If Me.Is811Module Then
+            Dim cn As New SqlClient.SqlConnection(ConnectionString)
+
+            Try
+                Dim hr As New TableRow
+                Dim htc As New TableCell
+                htc.Text = "Ticket Sign-off"
+                hr.Cells.Add(htc)
+                Me.tbl811SignOff.Rows.Add(hr)
+
+                Dim notifyIDs As New List(Of Integer)
+                Dim cmd As New SqlClient.SqlCommand("SELECT [NotifyIDs] FROM [811Settings] WHERE [ClientID] = " & App.CurrentClient.ID & ";", cn)
+                If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+                Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+                If rs.Read Then
+                    Dim tmp As List(Of String) = rs("NotifyIDs").ToString.Split("|"c).ToList
+                    For Each s As String In tmp
+                        If IsNumeric(s) Then notifyIDs.Add(s.ToInteger)
+                    Next
+                End If
+                cmd.Cancel()
+                rs.Close()
+
+                For Each i As Integer In notifyIDs
+                    Dim usr As New SystemUser(i)
+                    Dim tr1 As New TableRow
+                    Dim tc1 As New TableCell
+                    tc1.Text = usr.Name
+                    tr1.Cells.Add(tc1)
+                    Me.tbl811SignOff.Rows.Add(tr1)
+                    Dim tr2 As New TableRow
+                    Dim tc2 As New TableCell
+                    Dim ddl As New Controls.DropDownLists.DropDownList
+                    ddl.ID = "ddl811SignOff_" & usr.ID
+                    ddl.Items.Add(New RadComboBoxItem("- select one -", "- select one -"))
+                    ddl.Items.Add(New RadComboBoxItem("Clear And No Conflict", "Clear And No Conflict"))
+                    ddl.Items.Add(New RadComboBoxItem("Marked", "Marked"))
+                    ddl.Width = New Unit(100, UnitType.Percentage)
+                    ddl.XmlPath = ""
+                    tc2.Controls.Add(ddl)
+                    tr2.Cells.Add(tc2)
+                    Me.tbl811SignOff.Rows.Add(tr2)
+                Next
+
+            Catch ex As Exception
+                ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            Finally
+                cn.Close()
+            End Try
+        End If
     End Sub
     Private Sub LoadQuestions(ByVal qList As List(Of SystemQuestion), ByVal tbl As Table, ByVal xmlPath As String)
         tbl.Rows.Clear()
@@ -305,7 +444,7 @@ Public Class _Module
             If Me.txtLocationNum.Text = "" Then Me.txtLocationNum.Text = Me.LocationNum
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try
@@ -317,6 +456,12 @@ Public Class _Module
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Try
+            ' validate the form
+            If Me.txtTechComments.Text.Trim = "" And Not Me.RecordId = 0 And Me.ddlStatus.SelectedValue = CStr(Enums.SystemModuleStatus.Completed) Then
+                Me.MsgBox("Technician Comments are required.")
+                Exit Function
+            End If
+
             'If Me.PageErrors(wot).Count = 0 Then
             Dim xDoc As New XmlDocument()
             xDoc = Me.ToXml
@@ -394,38 +539,107 @@ Public Class _Module
             If newRecord Then
                 technicianUpdated = True
 
-                Common.LogHistory("New Work Order #" & Me.RecordId & " Created")
+                CommonCore.Shared.Common.LogHistory("New Work Order #" & Me.RecordId & " Created", App.CurrentUser.ID)
 
                 Dim assigned As String = "with no technician "
+                Dim txt As String = ""
+
                 ' text the technician only if it has been assigned
                 If technicianUpdated And Me.ddlTechnician.SelectedValue.ToInteger > 0 Then
-                    Dim txt As String = App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been created and assigned to you as the technician."
-                    CommonCore.Messaging.SendTwilioNotification(New SystemUser(Me.ddlTechnician.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
+                    txt = App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been created and assigned to you as the technician."
+                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlTechnician.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
                     assigned = ""
                 End If
 
                 ' text the supervisor that a work order has been created
-                If CType(Me.ddlPriority.SelectedValue, Global.UtilityWizards.CommonCore.Enums.SystemModulePriority) = Enums.SystemModulePriority.Normal Then
-                    Dim txt As String = App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been created " & assigned & "and assigned to you as the supervisor."
-                    CommonCore.Messaging.SendTwilioNotification(New SystemUser(Me.ddlSupervisor.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
-                ElseIf CType(Me.ddlPriority.SelectedValue, Global.UtilityWizards.CommonCore.Enums.SystemModulePriority) = Enums.SystemModulePriority.Emergency Then
-                    Dim txt As String = assigned & "EMERGENCY " & App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been created " & assigned & "and assigned to you as the supervisor."
-                    CommonCore.Messaging.SendTwilioNotification(New SystemUser(Me.ddlSupervisor.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
+                If CType(Me.ddlPriority.SelectedValue, Global.UtilityWizards.CommonCore.Shared.Enums.SystemModulePriority) = Enums.SystemModulePriority.Normal Then
+                    txt = App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been created " & assigned & "and assigned to you as the supervisor."
+                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlSupervisor.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
+                ElseIf CType(Me.ddlPriority.SelectedValue, Global.UtilityWizards.CommonCore.Shared.Enums.SystemModulePriority) = Enums.SystemModulePriority.Emergency Then
+                    txt = assigned & "EMERGENCY " & App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been created " & assigned & "and assigned to you as the supervisor."
+                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlSupervisor.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
+                End If
+
+                ' email administrators if the notify box is checked
+                If Me.chkNotifyAdmins.Checked Then
+                    Dim fName As String = Me.PrintPdf("window")
+                    fName = fName.Replace("..", "~")
+
+                    ' add the supervisor name to the the text
+                    txt = txt.Replace(" you ", " " & Me.ddlSupervisor.SelectedItem.Text & " ")
+
+                    cmd = New SqlClient.SqlCommand("SELECT [xEmail] FROM [vwUserInfo] WHERE [xClientID] = " & App.CurrentClient.ID & " AND [xPermissions] LIKE '%administrator%'", cn)
+                    If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+                    Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+                    Do While rs.Read
+                        ' email all administrators that the work order has been created
+                        Dim msg As New Mailer
+                        msg.HostServer = AppSettings("MailHost")
+                        msg.UserName = AppSettings("MailUser")
+                        msg.Password = AppSettings("MailPassword")
+                        If Me.OnLocal Then
+                            msg.To.Add("james@solvtopia.com")
+                        Else
+                            msg.To.Add(rs("xEmail").ToString)
+                            msg.BCC.Add("james@solvtopia.com")
+                        End If
+                        msg.Body = "<html>" & txt & "</html>"
+                        msg.Subject = "Utility Wizards Work Order Created"
+                        msg.From = "noreply@utilitywizards.com"
+                        msg.HtmlBody = True
+                        msg.Attachments.Add(Server.MapPath(fName))
+                        msg.Send()
+                    Loop
+                    cmd.Cancel()
+                    rs.Close()
                 End If
 
             Else
-                Common.LogHistory("Work Order #" & Me.RecordId & " Updated")
-
                 ' text the supervisor if the status has been changed
                 If statusUpdated Then
+                    CommonCore.Shared.Common.LogHistory("Work Order #" & Me.RecordId & " Status Updated To " & Me.ddlStatus.SelectedItem.Text, App.CurrentUser.ID)
+
                     Dim txt As String = "The status for " & App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been updated to " & Me.ddlStatus.SelectedItem.Text & "."
-                    CommonCore.Messaging.SendTwilioNotification(New SystemUser(Me.ddlSupervisor.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
+                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlSupervisor.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
+
+                    ' email administrators if the notify box is checked
+                    If Me.chkNotifyAdmins.Checked Then
+                        Dim fName As String = Me.PrintPdf("window")
+                        fName = fName.Replace("..", "~")
+
+                        cmd = New SqlClient.SqlCommand("SELECT [xEmail] FROM [vwUserInfo] WHERE [xClientID] = " & App.CurrentClient.ID & " AND [xPermissions] LIKE '%administrator%'", cn)
+                        If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+                        Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+                        Do While rs.Read
+                            ' email all administrators that the work order has been created
+                            Dim msg As New Mailer
+                            msg.HostServer = AppSettings("MailHost")
+                            msg.UserName = AppSettings("MailUser")
+                            msg.Password = AppSettings("MailPassword")
+                            If Me.OnLocal Then
+                                msg.To.Add("james@solvtopia.com")
+                            Else
+                                msg.To.Add(rs("xEmail").ToString)
+                                msg.BCC.Add("james@solvtopia.com")
+                            End If
+                            msg.Body = "<html>" & txt & "</html>"
+                            msg.Subject = "Utility Wizards Work Order Updated"
+                            msg.From = "noreply@utilitywizards.com"
+                            msg.HtmlBody = True
+                            msg.Attachments.Add(Server.MapPath(fName))
+                            msg.Send()
+                        Loop
+                        cmd.Cancel()
+                        rs.Close()
+                    End If
                 End If
 
                 ' text the technician if it has been assigned
                 If technicianUpdated And Me.ddlTechnician.SelectedValue.ToInteger > 0 Then
+                    CommonCore.Shared.Common.LogHistory("Work Order #" & Me.RecordId & " Assigned To " & Me.ddlTechnician.SelectedItem.Text, App.CurrentUser.ID)
+
                     Dim txt As String = App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been assigned to you."
-                    CommonCore.Messaging.SendTwilioNotification(New SystemUser(Me.ddlTechnician.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
+                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlTechnician.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
                 End If
             End If
 
@@ -440,7 +654,7 @@ Public Class _Module
             'End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog()
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
             retVal = False
         Finally
             cn.Close()
@@ -486,8 +700,70 @@ Public Class _Module
     End Sub
 
     Private Sub lnkPrint_Click(sender As Object, e As EventArgs) Handles lnkPrint.Click
-        Response.Redirect("~/account/Print.aspx?modid=" & Me.ModId & "&id=", False)
+        Dim fName As String = Me.PrintPdf("window")
+        'Response.Redirect("~/account/PrintPreview.aspx?modid=" & Me.ModId & "&id=" & Me.RecordId, False)
+        Me.RunClientScript("window.open('" & fName & "','_blank')")
     End Sub
+
+    Private Function PrintPdf(ByVal dest As String) As String
+        Dim retVal As String = ""
+
+        Dim HTMLContent As String = ScrapeUrl(Left(Request.Url.OriginalString, Request.Url.OriginalString.Length - Request.Url.PathAndQuery.Length) & "/account/Print.aspx?modid=" & Me.ModId & "&id=" & Me.RecordId & "&usr=" & App.CurrentUser.ID, Enums.ScrapeType.KeepTags)
+        Dim ba() As Byte = GetPDF(HTMLContent)
+
+        Select Case dest
+            Case "download"
+                ' download the pdf
+                Response.Clear()
+                Response.ContentType = "application/pdf"
+                Response.AddHeader("content-disposition", "attachment;filename=" + "PDFfile.pdf")
+                Response.Cache.SetCacheability(HttpCacheability.NoCache)
+                Response.BinaryWrite(ba)
+                Response.[End]()
+
+            Case "window", "attachment"
+                ' save the file
+                Dim fName As String = "WO_" & Me.RecordId & "_" & Now.ToString.Replace("/", "").Replace(":", "").Replace("AM", "").Replace("PM", "").Replace(" ", "") & ".pdf"
+                If My.Computer.FileSystem.FileExists(Server.MapPath("~/temp/" & fName)) Then My.Computer.FileSystem.DeleteFile(Server.MapPath("~/temp/" & fName))
+                File.WriteAllBytes(Server.MapPath("~/temp/" & fName), ba)
+                retVal = "../temp/" & fName
+        End Select
+
+        Return retVal
+    End Function
+
+    Private Function GetPDF(pHTML As String) As Byte()
+        Dim bPDF As Byte() = Nothing
+
+        Dim ms As New MemoryStream()
+        Dim txtReader As TextReader = New StringReader(pHTML)
+
+        ' 1: create object of a itextsharp document class
+        Dim doc As New Document(PageSize.A4, 25, 25, 25, 25)
+
+        ' 2: we create a itextsharp pdfwriter that listens to the document and directs a XML-stream to a file
+        Dim oPdfWriter As PdfWriter = PdfWriter.GetInstance(doc, ms)
+
+        ' 3: we create a worker parse the document
+        Dim htmlWorker As New HTMLWorker(doc)
+
+        ' 4: we open document and start the worker on the document
+        doc.Open()
+        htmlWorker.StartDocument()
+
+        ' 5: parse the html into the document
+        htmlWorker.Parse(txtReader)
+
+        ' 6: close the document and the worker
+        htmlWorker.EndDocument()
+        htmlWorker.Close()
+        doc.Close()
+
+        bPDF = ms.ToArray()
+
+        Return bPDF
+    End Function
+
 
     Private Sub lnkReset_Click(sender As Object, e As EventArgs) Handles lnkReset.Click
         Me.ClearForm()

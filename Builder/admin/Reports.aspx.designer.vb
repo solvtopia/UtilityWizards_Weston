@@ -14,6 +14,24 @@ Option Explicit On
 Partial Public Class Reports
     
     '''<summary>
+    '''liNewReport control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents liNewReport As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
+    '''lnkNewReport control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lnkNewReport As Global.System.Web.UI.WebControls.LinkButton
+    
+    '''<summary>
     '''tblReports control.
     '''</summary>
     '''<remarks>

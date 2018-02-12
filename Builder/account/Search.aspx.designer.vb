@@ -23,6 +23,24 @@ Partial Public Class Search
     Protected WithEvents lnkNew As Global.System.Web.UI.WebControls.LinkButton
     
     '''<summary>
+    '''btnNewWorkOrder control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnNewWorkOrder As Global.Telerik.Web.UI.RadButton
+    
+    '''<summary>
+    '''chkShowCompleted control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents chkShowCompleted As Global.System.Web.UI.WebControls.CheckBox
+    
+    '''<summary>
     '''RadSearchGrid control.
     '''</summary>
     '''<remarks>

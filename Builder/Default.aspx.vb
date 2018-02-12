@@ -1,4 +1,5 @@
 ﻿Imports Telerik.Web.UI
+Imports UtilityWizards.CommonCore.Shared.Common
 
 Public Class _Default4
     Inherits builderPage
@@ -37,7 +38,7 @@ Public Class _Default4
                     End If
 
                 Catch ex As Exception
-                    ex.WriteToErrorLog
+                    ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
                 Finally
                     cn.Close()
                 End Try
@@ -88,7 +89,7 @@ Public Class _Default4
             Me.lblOpenWorkOrders.Text = "0"
             Me.lblCompletedWorkOrders.Text = "0"
 
-            Dim cmd As New SqlClient.SqlCommand("SELECT COUNT([ID]) AS [WOCount] FROM [vwModuleData] WHERE [xStatus] = " & Enums.SystemModuleStatus.Open & " AND [xClientId] = " & App.CurrentClient.ID, cn)
+            Dim cmd As New SqlClient.SqlCommand("SELECT COUNT([ID]) AS [WOCount] FROM [vwModuleData] WHERE [xStatus] <> " & Enums.SystemModuleStatus.Completed & " AND [xClientId] = " & App.CurrentClient.ID & " AND [Active] = 1;", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
             If rs.Read Then
@@ -97,7 +98,7 @@ Public Class _Default4
             cmd.Cancel()
             rs.Close()
 
-            cmd = New SqlClient.SqlCommand("SELECT COUNT([ID]) AS [WOCount] FROM [vwModuleData] WHERE [xStatus] = " & Enums.SystemModuleStatus.Completed & " AND [xClientId] = " & App.CurrentClient.ID, cn)
+            cmd = New SqlClient.SqlCommand("SELECT COUNT([ID]) AS [WOCount] FROM [vwModuleData] WHERE [xStatus] = " & Enums.SystemModuleStatus.Completed & " AND [xClientId] = " & App.CurrentClient.ID & " AND [Active] = 1;", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             rs = cmd.ExecuteReader
             If rs.Read Then
@@ -107,7 +108,7 @@ Public Class _Default4
             rs.Close()
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try
@@ -176,27 +177,29 @@ Public Class _Default4
 
                 For Each m As SystemModule In App.CurrentClient.Modules
                     If m.FolderID = App.ActiveFolderID Then
-                        Dim tc As New TableCell
-                        tc.Attributes.Add("style", "display: inline-block; padding: 10px;")
-                        tc.VerticalAlign = VerticalAlign.Top
-                        tc.HorizontalAlign = HorizontalAlign.Center
-                        Dim ibtn As New Telerik.Web.UI.RadButton
-                        ibtn.ID = "ibtnModule_" & m.ID
-                        ibtn.Image.ImageUrl = m.Icon
-                        ibtn.Image.IsBackgroundImage = True
-                        ibtn.Height = New Unit(iconSize, UnitType.Pixel)
-                        ibtn.Width = New Unit(iconSize, UnitType.Pixel)
-                        AddHandler ibtn.Click, AddressOf ibtnModule_Click
-                        Dim lit As New Literal
-                        lit.ID = "litModule_" & m.ID
-                        lit.Text = "<br/>"
-                        Dim lbl As New Label
-                        lbl.ID = "lblModule_" & m.ID
-                        lbl.Text = m.Name
-                        tc.Controls.Add(ibtn)
-                        tc.Controls.Add(lit)
-                        tc.Controls.Add(lbl)
-                        tr.Cells.Add(tc)
+                        If m.ID <> 109 Then
+                            Dim tc As New TableCell
+                            tc.Attributes.Add("style", "display: inline-block; padding: 10px;")
+                            tc.VerticalAlign = VerticalAlign.Top
+                            tc.HorizontalAlign = HorizontalAlign.Center
+                            Dim ibtn As New Telerik.Web.UI.RadButton
+                            ibtn.ID = "ibtnModule_" & m.ID
+                            ibtn.Image.ImageUrl = m.Icon
+                            ibtn.Image.IsBackgroundImage = True
+                            ibtn.Height = New Unit(iconSize, UnitType.Pixel)
+                            ibtn.Width = New Unit(iconSize, UnitType.Pixel)
+                            AddHandler ibtn.Click, AddressOf ibtnModule_Click
+                            Dim lit As New Literal
+                            lit.ID = "litModule_" & m.ID
+                            lit.Text = "<br/>"
+                            Dim lbl As New Label
+                            lbl.ID = "lblModule_" & m.ID
+                            lbl.Text = m.Name
+                            tc.Controls.Add(ibtn)
+                            tc.Controls.Add(lit)
+                            tc.Controls.Add(lbl)
+                            tr.Cells.Add(tc)
+                        End If
                     End If
                 Next
 
@@ -211,7 +214,7 @@ Public Class _Default4
         ElseIf App.CurrentUser.ApprovedModules.Count > 0 Then
             For Each m As SystemModule In App.CurrentClient.Modules
                 ' add modules only for the active folder
-                Dim addModule As Boolean = App.CurrentUser.ApprovedModules.Contains(m.ID)
+                Dim addModule As Boolean = App.CurrentUser.ApprovedModules.Contains(m.ID) And m.ID <> 109
 
                 If addModule Then
                     Dim tc As New TableCell
@@ -260,7 +263,7 @@ Public Class _Default4
                 Me.LoadModules()
             Else
                 App.ActiveModule = New SystemModule(modId)
-                ShowModule(modId)
+                ShowModule(modId, App.ActiveModule.Name)
             End If
         End If
 
@@ -281,5 +284,13 @@ Public Class _Default4
 
     Private Sub lnkDeleteFolder_Click(sender As Object, e As EventArgs) Handles lnkDeleteFolder.Click
         ShowInformationPopup(Enums.InformationPopupType.DeleteFolder, Enums.InformationPopupButtons.YesNo, App.ActiveFolderID)
+    End Sub
+
+    Private Sub lnkOpenWorkOrders_Click(sender As Object, e As EventArgs) Handles lnkOpenWorkOrders.Click
+        Response.Redirect("~/account/Search.aspx?modid=0", False)
+    End Sub
+
+    Private Sub lnkCompletedWorkOrders_Click(sender As Object, e As EventArgs) Handles lnkCompletedWorkOrders.Click
+        Response.Redirect("~/account/Search.aspx?modid=0&showcompleted=1")
     End Sub
 End Class

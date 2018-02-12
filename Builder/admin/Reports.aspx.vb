@@ -1,6 +1,6 @@
 ﻿Imports System.Xml
-Imports UtilityWizards.CommonCore.Common
-Imports UtilityWizards.CommonCore.Xml
+Imports UtilityWizards.CommonCore.Shared.Common
+Imports UtilityWizards.CommonCore.Shared.Xml
 Imports Telerik.Web.UI
 
 Public Class Reports
@@ -104,7 +104,7 @@ Public Class Reports
             Next
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try
@@ -114,7 +114,13 @@ Public Class Reports
         Dim ibtn As Telerik.Web.UI.RadButton = CType(sender, Telerik.Web.UI.RadButton)
         Dim rptId As Integer = ibtn.ID.Split("_"c)(1).ToInteger
 
-        Response.Redirect("~/admin/ReportEditor.aspx?t=" & CStr(Enums.TransactionType.Existing) & "&id=" & rptId, False)
+        Dim url As String = "~/admin/ReportEditor.aspx?t=" & CStr(Enums.TransactionType.Existing) & "&id=" & rptId
+        If rptId = 4 Then url = "~/admin/DebrisTally.aspx"
+        Response.Redirect(url, False)
+    End Sub
+
+    Private Sub lnkNewReport_Click(sender As Object, e As EventArgs) Handles lnkNewReport.Click
+        Response.Redirect("~/admin/ReportEditor.aspx?t=" & CStr(Enums.TransactionType.New) & "&id=0", False)
     End Sub
 
     'Protected Sub rbReport_CheckedChanged(sender As Object, e As EventArgs)

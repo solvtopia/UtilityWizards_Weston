@@ -1,6 +1,6 @@
 ﻿Imports System.Xml
-Imports UtilityWizards.CommonCore.Common
-Imports UtilityWizards.CommonCore.Xml
+Imports UtilityWizards.CommonCore.Shared.Common
+Imports UtilityWizards.CommonCore.Shared.Xml
 Imports Telerik.Web.UI
 
 Public Class Profile
@@ -26,30 +26,81 @@ Public Class Profile
     End Sub
 
     Private Sub LoadData()
-        Dim usr As New SystemUser(Me.EditId)
+        Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
-        If Me.EditId = 0 Then
-            Me.ddlClient.SelectedValue = App.CurrentClient.ID.ToString
-        Else Me.ddlClient.SelectedValue = usr.ClientID.ToString
-        End If
-        Me.txtName.Text = usr.Name
-        Me.txtEmail.Text = usr.Email
-        Me.txtMobileUser.Text = usr.MobileUsername
-        Me.txtPassword.Text = usr.Password
-        Me.txtMobileNumber.Text = usr.MobileNumber
-        Me.ddlPermissions.SelectedValue = CStr(usr.Permissions)
-        Me.ddlSupervisor.SelectedValue = CStr(usr.SupervisorID)
-        Me.txtDeviceID.Text = usr.MobileDeviceId
-        Me.txtOneSignal.Text = usr.OneSignalUserID
-        Me.chkApiAccess.Checked = usr.ApiEnabled
-        Me.chkWebAccess.Checked = usr.WebEnabled
-        Me.ddlDeviceType.SelectedValue = CStr(usr.MobileDeviceType)
+        Try
+            Dim usr As New SystemUser(Me.EditId)
+
+            If Me.EditId = 0 Then
+                Me.ddlClient.SelectedValue = App.CurrentClient.ID.ToString
+            Else Me.ddlClient.SelectedValue = usr.ClientID.ToString
+            End If
+            Me.txtName.Text = usr.Name
+            Me.txtEmail.Text = usr.Email
+            Me.txtMobileUser.Text = usr.MobileUsername
+            Me.txtPassword.Text = usr.Password
+            Me.txtMobileNumber.Text = usr.MobileNumber
+            Me.ddlPermissions.SelectedValue = CStr(usr.Permissions)
+            Me.ddlSupervisor.SelectedValue = CStr(usr.SupervisorID)
+            Me.txtDeviceID.Text = usr.MobileDeviceId
+            Me.txtOneSignal.Text = usr.OneSignalUserID
+            Me.chkApiAccess.Checked = usr.ApiEnabled
+            Me.chkWebAccess.Checked = usr.WebEnabled
+            Me.ddlDeviceType.SelectedValue = CStr(usr.MobileDeviceType)
+
+            ' get the 811 settings
+            Dim cmd As New SqlClient.SqlCommand("SELECT [ModuleID], [NotifyIDs], [AdminUserID], [Email], [Password], [MailServer], [FtpServer], [FtpUser], [FtpPass] FROM [811Settings] WHERE [ClientID] = " & App.CurrentClient.ID.ToString, cn)
+            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+            Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+            If rs.Read Then
+                Me.chk811Record.Checked = True
+                Me.ddl811Module.SelectedValue = rs("ModuleID").ToString
+                Me.ddl811AdminAcount.SelectedValue = rs("AdminUserID").ToString
+                Me.txt811EmailAddress.Text = rs("Email").ToString
+                Me.txt811EmailPass.Text = rs("Password").ToString
+                Me.txt811EmailServer.Text = rs("MailServer").ToString
+                Me.txt811FtpServer.Text = rs("FtpServer").ToString
+                Me.txt811FtpUser.Text = rs("FtpUser").ToString
+                Me.txt811FtpPass.Text = rs("FtpPass").ToString
+                Dim notifyIDs As List(Of String) = rs("NotifyIDs").ToString.Split("|"c).ToList
+                For Each itm As ListItem In Me.cbl811Notify.Items
+                    If notifyIDs.Contains(itm.Value) Then itm.Selected = True
+                Next
+            Else
+                Me.chk811Record.Checked = False
+                For Each itm As RadComboBoxItem In Me.ddl811Module.Items
+                    If itm.Text.Contains("811") Then itm.Selected = True
+                Next
+                Me.ddl811AdminAcount.SelectedIndex = 0
+                Me.txt811EmailAddress.Text = ""
+                Me.txt811EmailPass.Text = ""
+                Me.txt811EmailServer.Text = ""
+                Me.txt811FtpServer.Text = "resp.nc811.org"
+                Me.txt811FtpUser.Text = ""
+                Me.txt811FtpPass.Text = ""
+                For Each itm As ListItem In Me.cbl811Notify.Items
+                    itm.Selected = False
+                Next
+            End If
+            cmd.Cancel()
+            rs.Close()
+
+        Catch ex As Exception
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+        Finally
+            cn.Close()
+        End Try
     End Sub
 
     Private Sub LoadLists()
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Try
+            Dim sWhere As String = ""
+            If App.CurrentUser.Permissions <> Enums.SystemUserPermissions.Solvtopia Then
+                sWhere = " AND [xClientID] = " & App.CurrentClient.ID
+            End If
+
             Me.ddlClient.Items.Clear()
             Dim cmd As New SqlClient.SqlCommand("SELECT [ID], [xName] FROM [Clients];", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
@@ -75,10 +126,6 @@ Public Class Profile
             Next
 
             Me.ddlSupervisor.Items.Clear()
-            Dim sWhere As String = ""
-            If App.CurrentUser.Permissions <> Enums.SystemUserPermissions.Solvtopia Then
-                sWhere = " AND [xClientID] = " & App.CurrentClient.ID
-            End If
             cmd = New SqlClient.SqlCommand("SELECT [ID], [xName] FROM [Users] WHERE [xPermissions] = '" & Enums.SystemUserPermissions.Supervisor.ToString & "'" & sWhere, cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             rs = cmd.ExecuteReader
@@ -88,8 +135,34 @@ Public Class Profile
             cmd.Cancel()
             rs.Close()
 
+            ' 811 options
+            Me.ddl811Module.Items.Clear()
+            For Each m As SystemModule In App.CurrentClient.Modules
+                Me.ddl811Module.Items.Add(New RadComboBoxItem(m.Name, m.ID.ToString))
+            Next
+
+            Me.ddl811AdminAcount.Items.Clear()
+            cmd = New SqlClient.SqlCommand("SELECT [ID], [xName] FROM [Users] WHERE [xPermissions] = '" & Enums.SystemUserPermissions.SystemAdministrator.ToString & "'" & sWhere, cn)
+            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+            rs = cmd.ExecuteReader
+            Do While rs.Read
+                Me.ddl811AdminAcount.Items.Add(New RadComboBoxItem(rs("xName").ToString, rs("ID").ToString))
+            Loop
+            cmd.Cancel()
+            rs.Close()
+
+            Me.cbl811Notify.Items.Clear()
+            cmd = New SqlClient.SqlCommand("SELECT [ID], [xName] FROM [Users] WHERE [Active] = 1" & sWhere, cn)
+            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+            rs = cmd.ExecuteReader
+            Do While rs.Read
+                Me.cbl811Notify.Items.Add(New ListItem(rs("xName").ToString, rs("ID").ToString))
+            Loop
+            cmd.Cancel()
+            rs.Close()
+
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try
@@ -108,6 +181,9 @@ Public Class Profile
         Me.chkApiAccess.Enabled = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Solvtopia)
         Me.chkWebAccess.Enabled = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Solvtopia)
 
+        Me.RadTabStrip1.Tabs(1).Visible = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Solvtopia Or
+                                           App.CurrentUser.Permissions = Enums.SystemUserPermissions.SystemAdministrator)
+
         Select Case CType(Me.ddlPermissions.SelectedValue, Enums.SystemUserPermissions)
             Case Enums.SystemUserPermissions.Administrator, Enums.SystemUserPermissions.SystemAdministrator
                 Me.imgAvatar.ImageUrl = "~/images/icon_administrator_avatar.png"
@@ -120,6 +196,16 @@ Public Class Profile
             Case Else
                 Me.imgAvatar.ImageUrl = "~/images/icon_user_avatar.png"
         End Select
+
+        ' hide the 811 tab if the account doesn't have an 811 module
+        Dim _811Found As Boolean = False
+        For Each m As SystemModule In App.CurrentClient.Modules
+            If m.Name.ToLower.Contains("811") Then
+                _811Found = True
+                Exit For
+            End If
+        Next
+        Me.RadTabStrip1.Tabs(1).Visible = _811Found
     End Sub
 
     Private Function SaveChanges() As Boolean
@@ -152,10 +238,45 @@ Public Class Profile
             cmd.ExecuteNonQuery()
             cmd.Cancel()
 
-            Common.LogHistory("User Information Updated for " & Me.txtName.Text)
+            ' save the 811 information
+            Dim notifyIDs As String = ""
+            For Each itm As ListItem In Me.cbl811Notify.Items
+                If itm.Selected Then If notifyIDs = "" Then notifyIDs = itm.Value Else notifyIDs &= "|" & itm.Value
+            Next
+            If Me.chk811Record.Checked Then
+                cmd = New SqlClient.SqlCommand("UPDATE [811Settings] SET [ModuleID] = " & Me.ddl811Module.SelectedValue &
+                                               ", [NotifyIDs] = '" & notifyIDs &
+                                               "', [AdminUserID] = " & Me.ddl811AdminAcount.SelectedValue &
+                                               ", [Email] = '" & Me.txt811EmailAddress.Text &
+                                               "', [Password] = '" & Me.txt811EmailPass.Text &
+                                               "', [MailServer] = '" & Me.txt811EmailServer.Text &
+                                               "', [FtpServer] = '" & Me.txt811FtpServer.Text &
+                                               "', [FtpUser] = '" & Me.txt811FtpUser.Text &
+                                               "', [FtpPass] = '" & Me.txt811FtpPass.Text &
+                                               "' WHERE [ClientID] = " & App.CurrentClient.ID & ";", cn)
+                If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+                cmd.ExecuteNonQuery()
+                cmd.Cancel()
+            Else
+                cmd = New SqlClient.SqlCommand("INSERT INTO [811Settings] ([ModuleID], [NotifyIDs], [AdminUserID], [Email], [Password], [MailServer], [FtpServer], [FtpUser], [FtpPass])" &
+                                               " VALUES ('" & Me.ddl811Module.SelectedValue & "', '" &
+                                               notifyIDs & "', '" &
+                                               Me.ddl811AdminAcount.SelectedValue & "', '" &
+                                               Me.txt811EmailAddress.Text & "', '" &
+                                               Me.txt811EmailPass.Text & "', '" &
+                                               Me.txt811EmailServer.Text & "', '" &
+                                               Me.txt811FtpServer.Text & "', '" &
+                                               Me.txt811FtpUser.Text & "', '" &
+                                               Me.txt811FtpPass.Text & "');", cn)
+                If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+                cmd.ExecuteNonQuery()
+                cmd.Cancel()
+            End If
+
+            CommonCore.Shared.Common.LogHistory("User Information Updated for " & Me.txtName.Text, App.CurrentUser.ID)
 
         Catch ex As Exception
-            ex.WriteToErrorLog()
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
             retVal = False
         Finally
             cn.Close()

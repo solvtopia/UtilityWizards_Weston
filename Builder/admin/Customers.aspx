@@ -28,6 +28,39 @@
     </ol>
 </asp:Content>
 <asp:Content ID="Content4" ContentPlaceHolderID="pageContent_Ajax" runat="server">
+    <table cellpadding="1" cellspacing="2">
+        <tr>
+            <td>Search Type</td>
+            <td>&nbsp;</td>
+            <td>
+                <telerik:RadDropDownList ID="ddlSearch" runat="server" SelectedText="Service Address" SelectedValue="ServiceAddress">
+                    <Items>
+                        <telerik:DropDownListItem runat="server" Selected="True" Text="Service Address" Value="ServiceAddress" />
+                        <telerik:DropDownListItem runat="server" Text="Receptacle Number" Value="Receptacle" />
+                    </Items>
+                </telerik:RadDropDownList>
+            </td>
+        </tr>
+        <tr>
+            <td>Search Value</td>
+            <td>&nbsp;</td>
+            <td>
+                <telerik:RadTextBox ID="txtSearch" runat="server" Width="300px">
+                </telerik:RadTextBox>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>
+                <telerik:RadButton ID="btnSearch" runat="server" Text="Search">
+                </telerik:RadButton>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">&nbsp;</td>
+        </tr>
+    </table>
     <telerik:RadGrid ID="RadCustomerGrid" runat="server" GroupPanelPosition="Top" RenderMode="Auto" Skin="Metro" Width="100%" AllowFilteringByColumn="True" AutoGenerateColumns="false">
         <GroupingSettings CaseSensitive="false" />
         <MasterTableView>
@@ -38,7 +71,7 @@
                 </telerik:GridBoundColumn>
                 <telerik:GridBoundColumn DataField="Full Name" FilterControlAltText="Filter Full Name column" HeaderText="Full Name" SortExpression="Full Name" UniqueName="FullName" AllowFiltering="false">
                 </telerik:GridBoundColumn>
-                <telerik:GridBoundColumn DataField="Service Address" FilterControlAltText="Filter Service Address column" HeaderText="Service Address" ReadOnly="True" SortExpression="Service Address" UniqueName="ServiceAddress" AllowFiltering="true" CurrentFilterFunction="Contains" AutoPostBackOnFilter="true">
+                <telerik:GridBoundColumn DataField="Service Address" FilterControlAltText="Filter Service Address column" HeaderText="Service Address" ReadOnly="True" SortExpression="Service Address" UniqueName="ServiceAddress" AllowFiltering="false" CurrentFilterFunction="Contains" AutoPostBackOnFilter="true">
                 </telerik:GridBoundColumn>
                 <telerik:GridBoundColumn DataField="City" DataType="System.Int32" FilterControlAltText="Filter City column" HeaderText="City" ReadOnly="True" SortExpression="City" UniqueName="City" AllowFiltering="false">
                 </telerik:GridBoundColumn>

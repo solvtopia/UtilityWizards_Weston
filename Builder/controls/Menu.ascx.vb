@@ -44,6 +44,7 @@
                 Me.pnlLoginOptions.Visible = True
                 Me.lnkDashboard.Visible = False
                 Me.lnkLogin.Visible = False
+                Me.lnkRecentWorkOrders.Visible = False
             Case currentUrl.Contains("loginhelp.aspx")
                 Me.pnlLoginOptions.Visible = True
                 Me.lnkDashboard.Visible = False

@@ -1,22 +1,8 @@
-﻿Imports UtilityWizards.CommonCore.Common
+﻿Imports UtilityWizards.CommonCore.Shared.Common
 Imports Telerik.Web.UI
 
 Public Class Common
-    Public Shared Sub LogHistory(ByVal itemText As String)
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
-        Try
-            Dim cmd As New SqlClient.SqlCommand("INSERT INTO [Sys_History] ([itemText], [dtInserted], [insertedBy]) VALUES ('" & itemText & "', '" & Now.ToString & "', '" & App.CurrentUser.ID & "');SELECT @@Identity AS SCOPEIDENTITY;", cn)
-            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-            cmd.ExecuteNonQuery()
-            cmd.Cancel()
-
-        Catch ex As Exception
-            ex.WriteToErrorLog
-        Finally
-            cn.Close()
-        End Try
-    End Sub
 End Class
 
 Class ContentTemplate

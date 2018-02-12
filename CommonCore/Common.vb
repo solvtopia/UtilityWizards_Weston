@@ -3,42 +3,12 @@ Imports System.IO
 Imports System.Net
 Imports System.Reflection
 Imports System.Runtime.CompilerServices
-Imports System.Web
 Imports System.Xml
 Imports Newtonsoft.Json
+Imports UtilityWizards.CommonCore.Shared
 
 Public Module Common
     Public ReturnToParentScript As String = "returnToParent('True','../Default.aspx');"
-    Private Const AspNetNamespace As String = "ASP"
-
-    Public Function GetApplicationAssembly(ctx As HttpContext) As Assembly
-        ' Try the EntryAssembly, this doesn't work for ASP.NET classic pipeline (untested on integrated)
-        Dim ass As Assembly = Assembly.GetEntryAssembly()
-
-        ' Look for web application assembly
-        If ctx IsNot Nothing Then
-            ass = GetWebApplicationAssembly(ctx)
-        End If
-
-        ' Fallback to executing assembly
-        Return If(ass, (Assembly.GetExecutingAssembly()))
-    End Function
-
-    Private Function GetWebApplicationAssembly(context As HttpContext) As Assembly
-        'Guard.AgainstNullArgument(context)
-
-        Dim app As Object = context.ApplicationInstance
-        If app Is Nothing Then
-            Return Nothing
-        End If
-
-        Dim type As Type = app.[GetType]()
-        While type IsNot Nothing AndAlso type <> GetType(Object) AndAlso type.[Namespace] = AspNetNamespace
-            type = type.BaseType
-        End While
-
-        Return type.Assembly
-    End Function
 
     ' sets all variables to blanks (used to initialize new objects)
     Public Function InitializeObject(ByVal o As Object) As Object
@@ -143,37 +113,10 @@ Public Module Common
         Return retVal
     End Function
 
-    Public Function ConnectionString() As String
-        Return ConnectionString(Enums.DBName.UtilityWizards)
-    End Function
-    Public Function ConnectionString(ByVal DbName As String) As String
-        Return System.Configuration.ConfigurationManager.ConnectionStrings("DbConnection").ConnectionString.Replace("[DataBaseName]", DbName)
-    End Function
-    Public Function ConnectionString(ByVal DbName As Enums.DBName) As String
-        Dim retVal As String = ""
-
-        Dim db As String = ""
-
-        Select Case DbName
-            Case Enums.DBName.UtilityWizards : db = "solvtopia_UtilityWizards"
-
-            Case Else
-                If System.Configuration.ConfigurationManager.ConnectionStrings(DbName) IsNot Nothing Then
-                    retVal = System.Configuration.ConfigurationManager.ConnectionStrings(DbName).ConnectionString
-                    Return retVal
-                End If
-
-        End Select
-
-        retVal = System.Configuration.ConfigurationManager.ConnectionStrings("DbConnection").ConnectionString.Replace("[DataBaseName]", db)
-
-        Return retVal
-    End Function
-
     Public Function LoadModuleQuestions(ByVal modId As Integer) As List(Of SystemQuestion)
         Dim retVal As New List(Of SystemQuestion)
 
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
 
         Try
             Dim cmd As New SqlClient.SqlCommand("SELECT [ID], [xmlData] FROM [Questions] WHERE [xModuleID] = " & modId & " AND [Active] = 1", cn)
@@ -187,7 +130,7 @@ Public Module Common
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCore))
         Finally
             cn.Close()
         End Try
@@ -198,7 +141,7 @@ Public Module Common
     Public Function GetFolderName(ByVal folderId As Integer) As String
         Dim retVal As String = ""
 
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
 
         Try
             Dim cmd As New SqlClient.SqlCommand("SELECT [xName] FROM [Modules] WHERE [ID] = " & folderId & " AND [Active] = 1", cn)
@@ -211,9 +154,27 @@ Public Module Common
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCore))
         Finally
             cn.Close()
+        End Try
+
+        Return retVal
+    End Function
+
+    Public Function GetModuleName(ByVal modId As Integer) As String
+        Dim retVal As String = ""
+
+        Try
+            For Each m As SystemModule In App.CurrentClient.Modules
+                If m.ID = modId Then
+                    retVal = m.Name
+                    Exit For
+                End If
+            Next
+
+        Catch ex As Exception
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCore))
         End Try
 
         Return retVal
@@ -233,12 +194,18 @@ Public Module Common
 
         address = Replace(address, " ", "+").Replace("++", "+")
 
-        Dim lookupResponse As String = GetUrlResponse("http://maps.google.com/maps/api/geocode/xml?address=" & address & "&sensor=false").ReadToEnd
+        'Dim lookupResponse As String = GetUrlResponse("http://maps.google.com/maps/api/geocode/xml?key=AIzaSyCOgADHHZ0NC7ztBp3gRIAwYe9GlXoZufU&address=" & address & "&sensor=false").ReadToEnd
+        Dim lookupResponse As String = GetUrlResponse("https://maps.googleapis.com/maps/api/geocode/xml?address=" & address & "&key=AIzaSyCOgADHHZ0NC7ztBp3gRIAwYe9GlXoZufU").ReadToEnd
         Dim xDoc As New XmlDocument
         xDoc.LoadXml(lookupResponse)
 
-        retVal.Add(xDoc("GeocodeResponse")("result")("geometry")("location")("lat").InnerText)
-        retVal.Add(xDoc("GeocodeResponse")("result")("geometry")("location")("lng").InnerText)
+        If xDoc.InnerText.ToLower <> "zero_results" Then
+            retVal.Add(xDoc("GeocodeResponse")("result")("geometry")("location")("lat").InnerText)
+            retVal.Add(xDoc("GeocodeResponse")("result")("geometry")("location")("lng").InnerText)
+        Else
+            retVal.Add("0")
+            retVal.Add("0")
+        End If
 
         Return retVal
     End Function

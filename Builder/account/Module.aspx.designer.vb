@@ -203,13 +203,31 @@ Partial Public Class _Module
     Protected WithEvents RadPageView1 As Global.Telerik.Web.UI.RadPageView
     
     '''<summary>
+    '''pnlCustomerDetails control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlCustomerDetails As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
+    '''lblAcctNum control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblAcctNum As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
     '''txtAcctNumber control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtAcctNumber As Global.UtilityWizards.CommonCore.Controls.TextBoxes.TextBox
+    Protected WithEvents txtAcctNumber As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
     
     '''<summary>
     '''txtCustomerName control.
@@ -218,7 +236,16 @@ Partial Public Class _Module
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtCustomerName As Global.UtilityWizards.CommonCore.Controls.TextBoxes.TextBox
+    Protected WithEvents txtCustomerName As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
+    
+    '''<summary>
+    '''lblLocationNum control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblLocationNum As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
     '''txtLocationNum control.
@@ -227,7 +254,7 @@ Partial Public Class _Module
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtLocationNum As Global.UtilityWizards.CommonCore.Controls.TextBoxes.TextBox
+    Protected WithEvents txtLocationNum As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
     
     '''<summary>
     '''txtCustomerServiceAddress control.
@@ -236,7 +263,16 @@ Partial Public Class _Module
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtCustomerServiceAddress As Global.UtilityWizards.CommonCore.Controls.TextBoxes.TextBox
+    Protected WithEvents txtCustomerServiceAddress As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
+    
+    '''<summary>
+    '''tbl811SignOff control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents tbl811SignOff As Global.System.Web.UI.WebControls.Table
     
     '''<summary>
     '''ddlStatus control.
@@ -245,7 +281,7 @@ Partial Public Class _Module
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlStatus As Global.UtilityWizards.CommonCore.Controls.DropDownLists.DropDownList
+    Protected WithEvents ddlStatus As Global.UtilityWizards.CommonCore.[Shared].Controls.DropDownLists.DropDownList
     
     '''<summary>
     '''ddlPriority control.
@@ -254,7 +290,16 @@ Partial Public Class _Module
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlPriority As Global.UtilityWizards.CommonCore.Controls.DropDownLists.DropDownList
+    Protected WithEvents ddlPriority As Global.UtilityWizards.CommonCore.[Shared].Controls.DropDownLists.DropDownList
+    
+    '''<summary>
+    '''chkNotifyAdmins control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents chkNotifyAdmins As Global.System.Web.UI.WebControls.CheckBox
     
     '''<summary>
     '''ddlSupervisor control.
@@ -263,7 +308,7 @@ Partial Public Class _Module
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlSupervisor As Global.UtilityWizards.CommonCore.Controls.DropDownLists.DropDownList
+    Protected WithEvents ddlSupervisor As Global.UtilityWizards.CommonCore.[Shared].Controls.DropDownLists.DropDownList
     
     '''<summary>
     '''ddlTechnician control.
@@ -272,7 +317,7 @@ Partial Public Class _Module
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlTechnician As Global.UtilityWizards.CommonCore.Controls.DropDownLists.DropDownList
+    Protected WithEvents ddlTechnician As Global.UtilityWizards.CommonCore.[Shared].Controls.DropDownLists.DropDownList
     
     '''<summary>
     '''txtTechComments control.
@@ -281,7 +326,7 @@ Partial Public Class _Module
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtTechComments As Global.UtilityWizards.CommonCore.Controls.TextBoxes.TextBox
+    Protected WithEvents txtTechComments As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
     
     '''<summary>
     '''RadPageView2 control.
@@ -302,6 +347,24 @@ Partial Public Class _Module
     Protected WithEvents RadMap1 As Global.Telerik.Web.UI.RadMap
     
     '''<summary>
+    '''RadPageView3 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RadPageView3 As Global.Telerik.Web.UI.RadPageView
+    
+    '''<summary>
+    '''txtPrintView control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtPrintView As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
+    
+    '''<summary>
     '''pnlHidden control.
     '''</summary>
     '''<remarks>
@@ -317,7 +380,7 @@ Partial Public Class _Module
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtID As Global.UtilityWizards.CommonCore.Controls.TextBoxes.TextBox
+    Protected WithEvents txtID As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
     
     '''<summary>
     '''txtUserEmail control.
@@ -326,7 +389,7 @@ Partial Public Class _Module
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtUserEmail As Global.UtilityWizards.CommonCore.Controls.TextBoxes.TextBox
+    Protected WithEvents txtUserEmail As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
     
     '''<summary>
     '''txtViewed control.
@@ -335,7 +398,7 @@ Partial Public Class _Module
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtViewed As Global.UtilityWizards.CommonCore.Controls.TextBoxes.TextBox
+    Protected WithEvents txtViewed As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
     
     '''<summary>
     '''txtCustomerServiceAddressLat control.
@@ -344,7 +407,7 @@ Partial Public Class _Module
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtCustomerServiceAddressLat As Global.UtilityWizards.CommonCore.Controls.TextBoxes.TextBox
+    Protected WithEvents txtCustomerServiceAddressLat As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
     
     '''<summary>
     '''txtCustomerServiceAddressLon control.
@@ -353,7 +416,7 @@ Partial Public Class _Module
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtCustomerServiceAddressLon As Global.UtilityWizards.CommonCore.Controls.TextBoxes.TextBox
+    Protected WithEvents txtCustomerServiceAddressLon As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
     
     '''<summary>
     '''Master property.

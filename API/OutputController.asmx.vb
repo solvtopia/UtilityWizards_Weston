@@ -1,6 +1,6 @@
 ﻿Imports System.Web.Services
 Imports System.ComponentModel
-Imports UtilityWizards.CommonCore.Common
+Imports UtilityWizards.CommonCore.Shared.Common
 Imports System.Xml.Serialization
 Imports System.Xml
 
@@ -50,7 +50,7 @@ Public Class OutputController
                     rs.Close()
 
                 Catch ex As Exception
-                    ex.WriteToErrorLog
+                    ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
                 Finally
                     cn.Close()
                 End Try
@@ -63,7 +63,7 @@ Public Class OutputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = Nothing
@@ -88,7 +88,7 @@ Public Class OutputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = Nothing
@@ -113,7 +113,7 @@ Public Class OutputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = Nothing
@@ -141,7 +141,7 @@ Public Class OutputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = Nothing
@@ -166,7 +166,7 @@ Public Class OutputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = Nothing

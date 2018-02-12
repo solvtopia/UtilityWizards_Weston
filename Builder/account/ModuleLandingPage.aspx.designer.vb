@@ -12,7 +12,7 @@ Option Explicit On
 
 
 Partial Public Class ModuleLandingPage
-    
+
     '''<summary>
     '''liEditModule control.
     '''</summary>
@@ -21,7 +21,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents liEditModule As Global.System.Web.UI.HtmlControls.HtmlGenericControl
-    
+
     '''<summary>
     '''lnkEditModule control.
     '''</summary>
@@ -30,7 +30,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents lnkEditModule As Global.System.Web.UI.WebControls.LinkButton
-    
+
     '''<summary>
     '''liDeleteModule control.
     '''</summary>
@@ -39,7 +39,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents liDeleteModule As Global.System.Web.UI.HtmlControls.HtmlGenericControl
-    
+
     '''<summary>
     '''lnkDeleteModule control.
     '''</summary>
@@ -48,7 +48,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents lnkDeleteModule As Global.System.Web.UI.WebControls.LinkButton
-    
+
     '''<summary>
     '''liCopyModule control.
     '''</summary>
@@ -57,7 +57,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents liCopyModule As Global.System.Web.UI.HtmlControls.HtmlGenericControl
-    
+
     '''<summary>
     '''lnkCopyModule control.
     '''</summary>
@@ -66,7 +66,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents lnkCopyModule As Global.System.Web.UI.WebControls.LinkButton
-    
+
     '''<summary>
     '''liMoveModule control.
     '''</summary>
@@ -75,7 +75,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents liMoveModule As Global.System.Web.UI.HtmlControls.HtmlGenericControl
-    
+
     '''<summary>
     '''lnkMoveModule control.
     '''</summary>
@@ -84,7 +84,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents lnkMoveModule As Global.System.Web.UI.WebControls.LinkButton
-    
+
     '''<summary>
     '''pnlOptions control.
     '''</summary>
@@ -93,7 +93,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents pnlOptions As Global.System.Web.UI.WebControls.Panel
-    
+
     '''<summary>
     '''btnNew control.
     '''</summary>
@@ -102,7 +102,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnNew As Global.Telerik.Web.UI.RadButton
-    
+
     '''<summary>
     '''btnSearch control.
     '''</summary>
@@ -111,7 +111,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnSearch As Global.Telerik.Web.UI.RadButton
-    
+
     '''<summary>
     '''pnlNew control.
     '''</summary>
@@ -120,7 +120,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents pnlNew As Global.System.Web.UI.WebControls.Panel
-    
+
     '''<summary>
     '''imgHelp_AcctNum_New1 control.
     '''</summary>
@@ -129,7 +129,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents imgHelp_AcctNum_New1 As Global.System.Web.UI.WebControls.Image
-    
+
     '''<summary>
     '''ddlSearchField_New control.
     '''</summary>
@@ -137,8 +137,8 @@ Partial Public Class ModuleLandingPage
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlSearchField_New As Global.UtilityWizards.CommonCore.Controls.DropDownLists.DropDownList
-    
+    Protected WithEvents ddlSearchField_New As Global.UtilityWizards.CommonCore.[Shared].Controls.DropDownLists.DropDownList
+
     '''<summary>
     '''imgHelp_AcctNum_New0 control.
     '''</summary>
@@ -147,7 +147,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents imgHelp_AcctNum_New0 As Global.System.Web.UI.WebControls.Image
-    
+
     '''<summary>
     '''txtSearch_New control.
     '''</summary>
@@ -156,7 +156,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents txtSearch_New As Global.Telerik.Web.UI.RadTextBox
-    
+
     '''<summary>
     '''btnSearch_New control.
     '''</summary>
@@ -165,7 +165,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnSearch_New As Global.Telerik.Web.UI.RadButton
-    
+
     '''<summary>
     '''RadCustomerGrid_New control.
     '''</summary>
@@ -174,7 +174,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents RadCustomerGrid_New As Global.Telerik.Web.UI.RadGrid
-    
+
     '''<summary>
     '''pnlSearch control.
     '''</summary>
@@ -183,7 +183,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents pnlSearch As Global.System.Web.UI.WebControls.Panel
-    
+
     '''<summary>
     '''Image1 control.
     '''</summary>
@@ -192,7 +192,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Image1 As Global.System.Web.UI.WebControls.Image
-    
+
     '''<summary>
     '''ddlSearchField_Existing control.
     '''</summary>
@@ -200,8 +200,8 @@ Partial Public Class ModuleLandingPage
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlSearchField_Existing As Global.UtilityWizards.CommonCore.Controls.DropDownLists.DropDownList
-    
+    Protected WithEvents ddlSearchField_Existing As Global.UtilityWizards.CommonCore.[Shared].Controls.DropDownLists.DropDownList
+
     '''<summary>
     '''Image2 control.
     '''</summary>
@@ -210,7 +210,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents Image2 As Global.System.Web.UI.WebControls.Image
-    
+
     '''<summary>
     '''txtSearch_Existing control.
     '''</summary>
@@ -219,7 +219,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents txtSearch_Existing As Global.Telerik.Web.UI.RadTextBox
-    
+
     '''<summary>
     '''btnSearch_Existing control.
     '''</summary>
@@ -228,7 +228,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnSearch_Existing As Global.Telerik.Web.UI.RadButton
-    
+
     '''<summary>
     '''btnShowAll control.
     '''</summary>
@@ -237,7 +237,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnShowAll As Global.Telerik.Web.UI.RadButton
-    
+
     '''<summary>
     '''imgHelp_Customers_Existing control.
     '''</summary>
@@ -246,7 +246,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents imgHelp_Customers_Existing As Global.System.Web.UI.WebControls.Image
-    
+
     '''<summary>
     '''RadCustomerGrid_Existing control.
     '''</summary>
@@ -255,7 +255,7 @@ Partial Public Class ModuleLandingPage
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents RadCustomerGrid_Existing As Global.Telerik.Web.UI.RadGrid
-    
+
     '''<summary>
     '''Master property.
     '''</summary>
@@ -264,7 +264,7 @@ Partial Public Class ModuleLandingPage
     '''</remarks>
     Public Shadows ReadOnly Property Master() As UtilityWizards.Builder.ContentPage
         Get
-            Return CType(MyBase.Master,UtilityWizards.Builder.ContentPage)
+            Return CType(MyBase.Master, UtilityWizards.Builder.ContentPage)
         End Get
     End Property
 End Class

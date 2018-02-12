@@ -1,6 +1,7 @@
 ﻿Imports System.Xml
 Imports UtilityWizards.CommonCore.Common
-Imports UtilityWizards.CommonCore.Xml
+Imports UtilityWizards.CommonCore.Shared.Common
+Imports UtilityWizards.CommonCore.Shared.Xml
 Imports Telerik.Web.UI
 
 Public Class ReportEditor
@@ -107,7 +108,7 @@ Public Class ReportEditor
             Me.LoadModules()
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try
@@ -130,7 +131,7 @@ Public Class ReportEditor
             Me.LoadQuestions()
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try
@@ -170,7 +171,7 @@ Public Class ReportEditor
             Me.ddlQuestion.SelectedIndex = 0
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try
@@ -226,7 +227,7 @@ Public Class ReportEditor
 
             rpt.Save()
 
-            Common.LogHistory(Me.txtName.Text & " Report Updated")
+            CommonCore.Shared.Common.LogHistory(Me.txtName.Text & " Report Updated", App.CurrentUser.ID)
 
             Response.Redirect("~/admin/Reports.aspx", False)
         End If

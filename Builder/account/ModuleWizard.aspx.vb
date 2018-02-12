@@ -1,5 +1,6 @@
 ﻿Imports System.Xml
 Imports UtilityWizards.CommonCore.Common
+Imports UtilityWizards.CommonCore.Shared.Common
 Imports Telerik.Web.UI
 
 Public Class ModuleWizard
@@ -188,7 +189,7 @@ Public Class ModuleWizard
             Me.ddlIcon.SelectedIndex = 0
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try
@@ -243,12 +244,12 @@ Public Class ModuleWizard
                 cmd.ExecuteNonQuery()
 
                 If Me.Type = Enums.SystemModuleType.Folder Then
-                    Common.LogHistory(Me.txtName.Text & " Folder Updated")
-                Else Common.LogHistory(Me.txtName.Text & " Module Updated")
+                    CommonCore.Shared.Common.LogHistory(Me.txtName.Text & " Folder Updated", App.CurrentUser.ID)
+                Else CommonCore.Shared.Common.LogHistory(Me.txtName.Text & " Module Updated", App.CurrentUser.ID)
                 End If
 
             Catch ex As Exception
-                ex.WriteToErrorLog
+                ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
             Finally
                 cn.Close()
             End Try
@@ -296,7 +297,7 @@ Public Class ModuleWizard
             Me.ddlQuestion.Focus()
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         End Try
     End Sub
 
@@ -431,7 +432,7 @@ Public Class ModuleWizard
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         End Try
     End Sub
 
@@ -449,7 +450,7 @@ Public Class ModuleWizard
             Me.BuildQuestionList()
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try

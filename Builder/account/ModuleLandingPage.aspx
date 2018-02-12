@@ -3,8 +3,8 @@
 <%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
 <%@ MasterType VirtualPath="~/masterPages/ContentPage.Master" %>
 
-<%@ Register Assembly="UtilityWizards.CommonCore" Namespace="UtilityWizards.CommonCore.Controls.TextBoxes" TagPrefix="Builder" %>
-<%@ Register Assembly="UtilityWizards.CommonCore" Namespace="UtilityWizards.CommonCore.Controls.DropDownLists" TagPrefix="Builder" %>
+<%@ Register Assembly="UtilityWizards.CommonCore.Shared" Namespace="UtilityWizards.CommonCore.Shared.Controls.TextBoxes" TagPrefix="Builder" %>
+<%@ Register Assembly="UtilityWizards.CommonCore.Shared" Namespace="UtilityWizards.CommonCore.Shared.Controls.DropDownLists" TagPrefix="Builder" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="headContent" runat="server">
     <style type="text/css">

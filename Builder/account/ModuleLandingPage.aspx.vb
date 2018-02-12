@@ -1,4 +1,5 @@
 ﻿Imports UtilityWizards.CommonCore.Common
+Imports UtilityWizards.CommonCore.Shared.Common
 Imports Telerik.Web.UI
 
 Public Class ModuleLandingPage
@@ -80,14 +81,17 @@ Public Class ModuleLandingPage
                     cmd.Parameters.AddWithValue("@CustAcctNum", "")
                     cmd.Parameters.AddWithValue("@ServiceAddress", "")
                     cmd.Parameters.AddWithValue("@CustName", Me.txtSearch_New.Text)
+                    cmd.Parameters.AddWithValue("@Receptacle", "")
                 Case "acctnum"
                     cmd.Parameters.AddWithValue("@CustAcctNum", Me.txtSearch_New.Text)
                     cmd.Parameters.AddWithValue("@ServiceAddress", "")
                     cmd.Parameters.AddWithValue("@CustName", "")
+                    cmd.Parameters.AddWithValue("@Receptacle", "")
                 Case "address"
                     cmd.Parameters.AddWithValue("@CustAcctNum", "")
                     cmd.Parameters.AddWithValue("@ServiceAddress", Me.txtSearch_New.Text)
                     cmd.Parameters.AddWithValue("@CustName", "")
+                    cmd.Parameters.AddWithValue("@Receptacle", "")
             End Select
 
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
@@ -95,7 +99,7 @@ Public Class ModuleLandingPage
             Me.RadCustomerGrid_New.DataSource = rs
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             'cn.Close()
         End Try
@@ -123,7 +127,7 @@ Public Class ModuleLandingPage
                 Response.Redirect("~/account/Search.aspx?modid=" & Me.ModId & "&custacctnum=" & custNum & "&id=" & Me.txtSearch_Existing.Text, False)
 
             Catch ex As Exception
-                ex.WriteToErrorLog
+                ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
             Finally
                 cn.Close()
             End Try
@@ -153,10 +157,12 @@ Public Class ModuleLandingPage
                     cmd.Parameters.AddWithValue("@CustAcctNum", "")
                     cmd.Parameters.AddWithValue("@ServiceAddress", "")
                     cmd.Parameters.AddWithValue("@CustName", Me.txtSearch_Existing.Text)
+                    cmd.Parameters.AddWithValue("@Receptacle", "")
                 Case "acctnum"
                     cmd.Parameters.AddWithValue("@CustAcctNum", Me.txtSearch_Existing.Text)
                     cmd.Parameters.AddWithValue("@ServiceAddress", "")
                     cmd.Parameters.AddWithValue("@CustName", "")
+                    cmd.Parameters.AddWithValue("@Receptacle", "")
             End Select
 
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
@@ -164,7 +170,7 @@ Public Class ModuleLandingPage
             Me.RadCustomerGrid_Existing.DataSource = rs
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             'cn.Close()
         End Try

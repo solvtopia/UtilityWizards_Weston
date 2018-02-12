@@ -1,6 +1,6 @@
 ﻿Imports System.Xml
-Imports UtilityWizards.CommonCore.Common
-Imports UtilityWizards.CommonCore.Xml
+Imports UtilityWizards.CommonCore.Shared.Common
+Imports UtilityWizards.CommonCore.Shared.Xml
 Imports Telerik.Web.UI
 
 Public Class AdminUserEditor
@@ -188,7 +188,7 @@ Public Class AdminUserEditor
             Next
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try
@@ -265,10 +265,10 @@ Public Class AdminUserEditor
             cmd.ExecuteNonQuery()
             cmd.Cancel()
 
-            Common.LogHistory("User Information Updated for " & Me.txtName.Text)
+            CommonCore.Shared.Common.LogHistory("User Information Updated for " & Me.txtName.Text, App.CurrentUser.ID)
 
         Catch ex As Exception
-            ex.WriteToErrorLog()
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
             retVal = False
         Finally
             cn.Close()

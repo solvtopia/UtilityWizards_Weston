@@ -14,6 +14,33 @@ Option Explicit On
 Partial Public Class Customers
     
     '''<summary>
+    '''ddlSearch control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddlSearch As Global.Telerik.Web.UI.RadDropDownList
+    
+    '''<summary>
+    '''txtSearch control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtSearch As Global.Telerik.Web.UI.RadTextBox
+    
+    '''<summary>
+    '''btnSearch control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnSearch As Global.Telerik.Web.UI.RadButton
+    
+    '''<summary>
     '''RadCustomerGrid control.
     '''</summary>
     '''<remarks>

@@ -1,4 +1,4 @@
-﻿Imports UtilityWizards.CommonCore.Common
+﻿Imports UtilityWizards.CommonCore.Shared.Common
 
 Public Class Confirmation
     Inherits builderPage
@@ -107,34 +107,34 @@ Public Class Confirmation
             If Me.Type = Enums.InformationPopupType.DeleteFolder Then
                 Dim m As New SystemModule(Me.EditId)
                 m.Delete()
-                Common.LogHistory(m.Name & " Folder Deleted")
+                CommonCore.Shared.Common.LogHistory(m.Name & " Folder Deleted", App.CurrentUser.ID)
 
                 App.ActiveFolderID = 0
 
             ElseIf Me.Type = Enums.InformationPopupType.DeleteModule Then
                 Dim m As New SystemModule(Me.EditId)
                 m.Delete()
-                Common.LogHistory(m.Name & " Module Deleted")
+                CommonCore.Shared.Common.LogHistory(m.Name & " Module Deleted", App.CurrentUser.ID)
 
             ElseIf Me.Type = Enums.InformationPopupType.DeleteUser Then
                 Dim usr As New SystemUser(Me.EditId)
                 usr.Delete()
-                Common.LogHistory(usr.Name & " User Deleted")
+                CommonCore.Shared.Common.LogHistory(usr.Name & " User Deleted", App.CurrentUser.ID)
 
             ElseIf Me.Type = Enums.InformationPopupType.DeleteReport Then
                 Dim rpt As New SystemReport(Me.EditId)
                 rpt.Delete()
-                Common.LogHistory(rpt.Name & " Report Deleted")
+                CommonCore.Shared.Common.LogHistory(rpt.Name & " Report Deleted", App.CurrentUser.ID)
 
             ElseIf Me.Type = Enums.InformationPopupType.MoveModule Then
                 Dim m As New SystemModule(Me.EditId)
                 m.Move(Me.ddlFolder.SelectedValue.ToInteger)
-                Common.LogHistory(m.Name & " Module Moved")
+                CommonCore.Shared.Common.LogHistory(m.Name & " Module Moved", App.CurrentUser.ID)
 
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try

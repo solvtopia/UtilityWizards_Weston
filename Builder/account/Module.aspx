@@ -3,9 +3,9 @@
 <%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
 <%@ MasterType VirtualPath="~/masterPages/Dashboard.Master" %>
 
-<%@ Register Assembly="UtilityWizards.CommonCore" Namespace="UtilityWizards.CommonCore.Controls.TextBoxes" TagPrefix="Builder" %>
-<%@ Register Assembly="UtilityWizards.CommonCore" Namespace="UtilityWizards.CommonCore.Controls.CheckBoxes" TagPrefix="Builder" %>
-<%@ Register Assembly="UtilityWizards.CommonCore" Namespace="UtilityWizards.CommonCore.Controls.DropDownLists" TagPrefix="Builder" %>
+<%@ Register Assembly="UtilityWizards.CommonCore.Shared" Namespace="UtilityWizards.CommonCore.Shared.Controls.TextBoxes" TagPrefix="Builder" %>
+<%@ Register Assembly="UtilityWizards.CommonCore.Shared" Namespace="UtilityWizards.CommonCore.Shared.Controls.CheckBoxes" TagPrefix="Builder" %>
+<%@ Register Assembly="UtilityWizards.CommonCore.Shared" Namespace="UtilityWizards.CommonCore.Shared.Controls.DropDownLists" TagPrefix="Builder" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="headContent" runat="server">
     <style type="text/css">
@@ -73,10 +73,7 @@
                         <asp:Label ID="lblHeader" runat="server" Text="Wizard Title"></asp:Label></h3>
 
                     <div class="box-tools pull-right">
-                        <%--<button type="button" class="btn btn-box-tool" data-widget="collapse">
-                                <i class="fa fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>--%>
+                        <%--<h3 class="box-title"></h3>--%>
                     </div>
                 </div>
                 <!-- /.box-header -->
@@ -95,12 +92,17 @@
             <!-- HEADER & DETAILS -->
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <%--<h3 class="box-title"></h3>--%>
+                    <%--<button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>--%>
                     <telerik:RadTabStrip ID="RadTabStrip1" runat="server" SelectedIndex="0" MultiPageID="RadMultiPage1" Skin="Metro">
                         <Tabs>
                             <telerik:RadTab runat="server" Text="Header &amp; Customer Details">
                             </telerik:RadTab>
                             <telerik:RadTab runat="server" Text="Location Map">
+                            </telerik:RadTab>
+                            <telerik:RadTab runat="server" Text="Ticket Text">
                             </telerik:RadTab>
                         </Tabs>
                     </telerik:RadTabStrip>
@@ -116,39 +118,50 @@
                 <div class="box-body">
                     <telerik:RadMultiPage ID="RadMultiPage1" runat="server" SelectedIndex="0" Width="100%">
                         <telerik:RadPageView ID="RadPageView1" runat="server" Selected="true">
+                            <asp:Panel runat="server" ID="pnlCustomerDetails">
+                                <table class="wrap-table-module">
+                                    <tr>
+                                        <td>
+                                            <asp:Label runat="server" ID="lblAcctNum">Customer Account Number</asp:Label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <Builder:TextBox ID="txtAcctNumber" runat="server" DataFieldName="CustAcctNum" ReadOnly="True" Width="100%" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <Builder:TextBox ID="txtCustomerName" runat="server" DataFieldName="CustomerName" ReadOnly="True" Width="100%">
+                                            </Builder:TextBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <asp:Label runat="server" ID="lblLocationNum">Location Number</asp:Label></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <Builder:TextBox ID="txtLocationNum" runat="server" DataFieldName="LocationNum" ReadOnly="True" Width="100%" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="vertical-align: top;">Service Address</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <Builder:TextBox ID="txtCustomerServiceAddress" runat="server" DataFieldName="CustomerServiceAddress" ReadOnly="True" Rows="3" TextMode="MultiLine" Width="100%">
+                                            </Builder:TextBox>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </asp:Panel>
                             <table class="wrap-table-module">
                                 <tr>
-                                    <td>Customer Account Number</td>
-                                </tr>
-                                <tr>
                                     <td>
-                                        <Builder:TextBox ID="txtAcctNumber" runat="server" DataFieldName="CustAcctNum" Enabled="False" Width="100%" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Name</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <Builder:TextBox ID="txtCustomerName" runat="server" DataFieldName="CustomerName" Enabled="False" Width="100%">
-                                        </Builder:TextBox>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Location Number</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <Builder:TextBox ID="txtLocationNum" runat="server" DataFieldName="LocationNum" Enabled="False" Width="100%" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="vertical-align: top;">Service Address</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <Builder:TextBox ID="txtCustomerServiceAddress" runat="server" DataFieldName="CustomerServiceAddress" Enabled="False" Rows="3" TextMode="MultiLine" Width="100%">
-                                        </Builder:TextBox>
+                                        <asp:Table runat="server" ID="tbl811SignOff" Width="100%" CellPadding="1" CellSpacing="2" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -166,6 +179,14 @@
                                     <td>
                                         <Builder:DropDownList ID="ddlPriority" runat="server" DataFieldName="Priority" Width="100%" AutoPostBack="true" />
                                     </td>
+                                </tr>
+                                <tr>
+                                    <td>Notify Administrators</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <asp:CheckBox ID="chkNotifyAdmins" runat="server" />
+                                        &nbsp;<span style="font-size: small;"><em>(Email all administrators with updates)</em></span></td>
                                 </tr>
                                 <tr>
                                     <td>Supervisor</td>
@@ -208,6 +229,16 @@
                                     </telerik:MapLayer>
                                 </LayersCollection>
                             </telerik:RadMap>
+                        </telerik:RadPageView>
+                        <telerik:RadPageView ID="RadPageView3" runat="server">
+                            <table class="wrap-table-module">
+                                <tr>
+                                    <td>
+                                        <Builder:TextBox ID="txtPrintView" runat="server" DataFieldName="printable_text" ReadOnly="True" Rows="30" TextMode="MultiLine" Width="100%">
+                                        </Builder:TextBox>
+                                    </td>
+                                </tr>
+                            </table>
                         </telerik:RadPageView>
                     </telerik:RadMultiPage>
                 </div>

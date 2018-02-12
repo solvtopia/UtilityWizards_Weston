@@ -3,7 +3,7 @@
 <%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
 <%@ MasterType VirtualPath="~/masterPages/ContentPage.Master" %>
 
-<%@ Register assembly="UtilityWizards.CommonCore" namespace="UtilityWizards.CommonCore.Controls.CheckBoxes" tagprefix="cc1" %>
+<%@ Register Assembly="UtilityWizards.CommonCore.Shared" namespace="UtilityWizards.CommonCore.Shared.Controls.CheckBoxes" tagprefix="cc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="headContent" runat="server">
     <style type="text/css">

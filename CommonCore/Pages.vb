@@ -10,8 +10,8 @@ Public Class builderPage
         ShowModuleWizard(0, folderId, Enums.SystemModuleType.Module)
     End Sub
 
-    Public Sub Layout_ShowModule(ByVal modId As Integer)
-        ShowModule(modId)
+    Public Sub Layout_ShowModule(ByVal modId As Integer, ByVal modName As String)
+        ShowModule(modId, modName)
     End Sub
 
     Public Sub Layout_FolderClicked(ByVal editId As Integer)
@@ -32,9 +32,12 @@ Public Class builderPage
         End Try
     End Sub
 
-    Public Sub ShowModule(ByVal id As Integer)
+    Public Sub ShowModule(ByVal id As Integer, ByVal name As String)
         Try
             Dim url As String = "~/account/ModuleLandingPage.aspx?modid=" & id
+            ' 811 and the generic work order type for wadesboro don't need the customer info
+            If name.ToLower.Contains("811") Or id = 108 Then url = "~/account/Search.aspx?modid=" & id
+            'If name.ToLower.Contains("811") Then url = "~/account/Search.aspx?modid=" & id
             Response.Redirect(url, False)
 
         Catch ex As Exception
@@ -271,7 +274,7 @@ tryAgain:
 
         If Me.FindInControl("lblSSL") IsNot Nothing Then
             Dim lbl As WebControls.Label = CType(Me.FindInControl("lblSSL"), WebControls.Label)
-            lbl.Text = Common.GetApplicationAssembly(Me.Context).GetName.Version.ToString & If(Me.OnPhone, "M", If(Me.OnTablet, "T", "D")) & If(Request.Url.Scheme.ToLower = "https", "s", "u")
+            lbl.Text = CommonCore.Shared.Common.GetApplicationAssembly(Me.Context).GetName.Version.ToString & If(Me.OnPhone, "M", If(Me.OnTablet, "T", "D")) & If(Request.Url.Scheme.ToLower = "https", "s", "u")
         End If
 
         If Me.OnMobile Then

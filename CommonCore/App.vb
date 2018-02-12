@@ -1,5 +1,4 @@
 ﻿Imports System.Web
-Imports UtilityWizards.CommonCore.Common
 
 Public Class App
     Public Shared Property CurrentUser As SystemUser

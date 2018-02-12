@@ -1,4 +1,5 @@
 ﻿Imports System.Xml
+Imports UtilityWizards.CommonCore.Shared.Common
 
 Public Class XmlUpgrade
     Inherits System.Web.UI.Page

@@ -131,6 +131,15 @@ Partial Public Class _Default4
     Protected WithEvents pnlBadges As Global.System.Web.UI.WebControls.PlaceHolder
     
     '''<summary>
+    '''lnkOpenWorkOrders control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lnkOpenWorkOrders As Global.System.Web.UI.WebControls.LinkButton
+    
+    '''<summary>
     '''lblOpenWorkOrders control.
     '''</summary>
     '''<remarks>
@@ -138,6 +147,15 @@ Partial Public Class _Default4
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents lblOpenWorkOrders As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
+    '''lnkCompletedWorkOrders control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lnkCompletedWorkOrders As Global.System.Web.UI.WebControls.LinkButton
     
     '''<summary>
     '''lblCompletedWorkOrders control.

@@ -51,7 +51,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -112,7 +112,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -144,7 +144,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -171,7 +171,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -198,7 +198,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -232,7 +232,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -264,7 +264,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -291,7 +291,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -325,7 +325,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -357,7 +357,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False

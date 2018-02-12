@@ -14,6 +14,33 @@ Option Explicit On
 Partial Public Class Profile
     
     '''<summary>
+    '''RadTabStrip1 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RadTabStrip1 As Global.Telerik.Web.UI.RadTabStrip
+    
+    '''<summary>
+    '''RadMultiPage1 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RadMultiPage1 As Global.Telerik.Web.UI.RadMultiPage
+    
+    '''<summary>
+    '''RadPageView1 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RadPageView1 As Global.Telerik.Web.UI.RadPageView
+    
+    '''<summary>
     '''imgAvatar control.
     '''</summary>
     '''<remarks>
@@ -113,6 +140,96 @@ Partial Public Class Profile
     Protected WithEvents txtMobileNumber As Global.Telerik.Web.UI.RadTextBox
     
     '''<summary>
+    '''RadPageView2 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents RadPageView2 As Global.Telerik.Web.UI.RadPageView
+    
+    '''<summary>
+    '''ddl811Module control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddl811Module As Global.Telerik.Web.UI.RadComboBox
+    
+    '''<summary>
+    '''ddl811AdminAcount control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddl811AdminAcount As Global.Telerik.Web.UI.RadComboBox
+    
+    '''<summary>
+    '''txt811EmailAddress control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txt811EmailAddress As Global.Telerik.Web.UI.RadTextBox
+    
+    '''<summary>
+    '''txt811EmailServer control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txt811EmailServer As Global.Telerik.Web.UI.RadTextBox
+    
+    '''<summary>
+    '''txt811EmailPass control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txt811EmailPass As Global.Telerik.Web.UI.RadTextBox
+    
+    '''<summary>
+    '''txt811FtpServer control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txt811FtpServer As Global.Telerik.Web.UI.RadTextBox
+    
+    '''<summary>
+    '''txt811FtpUser control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txt811FtpUser As Global.Telerik.Web.UI.RadTextBox
+    
+    '''<summary>
+    '''txt811FtpPass control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txt811FtpPass As Global.Telerik.Web.UI.RadTextBox
+    
+    '''<summary>
+    '''cbl811Notify control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents cbl811Notify As Global.System.Web.UI.WebControls.CheckBoxList
+    
+    '''<summary>
     '''pnlHidden control.
     '''</summary>
     '''<remarks>
@@ -201,6 +318,15 @@ Partial Public Class Profile
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents ddlDeviceType As Global.Telerik.Web.UI.RadComboBox
+    
+    '''<summary>
+    '''chk811Record control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents chk811Record As Global.System.Web.UI.WebControls.CheckBox
     
     '''<summary>
     '''btnSave control.

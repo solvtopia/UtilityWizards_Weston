@@ -1,4 +1,4 @@
-﻿Imports UtilityWizards.CommonCore.Common
+﻿Imports UtilityWizards.CommonCore.Shared.Common
 Imports System.Configuration.ConfigurationManager
 
 Public Class Register
@@ -101,7 +101,7 @@ Public Class Register
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try

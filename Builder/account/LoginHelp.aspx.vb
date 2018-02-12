@@ -1,4 +1,5 @@
 ﻿Imports System.Configuration.ConfigurationManager
+Imports UtilityWizards.CommonCore.Shared.Common
 
 Public Class LoginHelp
     Inherits builderPage
@@ -43,7 +44,7 @@ Public Class LoginHelp
             rs.Close()
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try

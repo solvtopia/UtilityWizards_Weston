@@ -35,6 +35,38 @@
     <table style="width: 100%;">
         <tr>
             <td>
+                <table class="nav-justified">
+                    <tr>
+                        <td>
+                            <telerik:RadButton ID="btnNewWorkOrder" runat="server" ButtonType="LinkButton" CssClass="fixedWidth" Skin="Metro" Text="New Work Order" Width="100%" />
+                        </td>
+                        <td style="text-align: right;">
+                            &nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            &nbsp;</td>
+                        <td style="text-align: right;">
+                            &nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:CheckBox runat="server" ID="chkShowCompleted" Text="Show Completed" AutoPostBack="true" />
+                        </td>
+                        <td style="text-align: right;">
+                            &nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            &nbsp;</td>
+                        <td style="text-align: right;">
+                            &nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
                 <telerik:RadGrid ID="RadSearchGrid" runat="server" AllowSorting="True" GroupPanelPosition="Top" AutoGenerateEditColumn="True" Skin="Metro">
                 </telerik:RadGrid>
                 <telerik:RadGrid ID="RadSearchGridMobile" runat="server" AutoGenerateColumns="False" DataSourceID="SqlDataSource1" GroupPanelPosition="Top" Skin="MetroTouch">

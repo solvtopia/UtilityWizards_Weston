@@ -1,4 +1,4 @@
-﻿Imports UtilityWizards.CommonCore.Common
+﻿Imports UtilityWizards.CommonCore.Shared.Common
 
 Public Class History
     Inherits System.Web.UI.Page
@@ -65,7 +65,7 @@ Public Class History
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try

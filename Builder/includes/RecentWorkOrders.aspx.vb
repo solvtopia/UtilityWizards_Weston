@@ -31,12 +31,12 @@ Public Class RecentWorkOrders
         'Dim dataItem As GridItem = e.Item
         'Dim woId As Integer = dataItem.Cells(3).Text.ToInteger
 
-        App.ActiveModule = New SystemModule(e.Item.Cells(7).Text.ToInteger)
+        App.ActiveModule = New SystemModule(e.Item.Cells(8).Text.ToInteger)
         App.ActiveFolderID = App.ActiveModule.FolderID
         'App.Mobile_SupervisorID = dataItem.Cells(7).Text.ToInteger
         'App.Mobile_TechnicianID = dataItem.Cells(8).Text.ToInteger
 
-        Me.RunClientScript("window.parent.location = '../account/Module.aspx?modid=" & e.Item.Cells(7).Text & "&id=" & e.Item.Cells(2).Text & "&custacctnum=" & e.Item.Cells(3).Text & "';")
+        Me.RunClientScript("window.parent.location = '../account/Module.aspx?modid=" & e.Item.Cells(8).Text & "&id=" & e.Item.Cells(2).Text & "&custacctnum=" & e.Item.Cells(3).Text & "';")
         'Response.Redirect("~/account/Module.aspx?modid=" & e.Item.Cells(7).Text & "&id=" & e.Item.Cells(3).Text & "&custacctnum=" & e.Item.Cells(4).Text, False)
     End Sub
 
@@ -51,23 +51,23 @@ Public Class RecentWorkOrders
         Dim itm As GridItem = CType(sender, GridDataItem)
 
         ' change priority to red if emergency
-        If itm.Cells(5).Text.ToLower = Enums.SystemModulePriority.Emergency.ToString.ToLower Then
-            itm.Cells(5).Text = "<span style='color:#FFFFFF;'>" & itm.Cells(5).Text & "</span>"
-        ElseIf itm.Cells(5).Text.ToLower = Enums.SystemModulePriority.Emergency.ToString.ToLower Then
+        If itm.Cells(6).Text.ToLower = Enums.SystemModulePriority.Emergency.ToString.ToLower Then
+            itm.Cells(6).Text = "<span style='color:#FFFFFF;'>" & itm.Cells(6).Text & "</span>"
+        ElseIf itm.Cells(6).Text.ToLower = Enums.SystemModulePriority.Emergency.ToString.ToLower Then
             'itm.Cells(5).Text = "<span style='color:#FF6600;'>" & itm.Cells(5).Text & "</span>"
         End If
 
         ' change out the enum value from status to the text
-        itm.Cells(6).Text = CType(itm.Cells(6).Text.ToInteger, Enums.SystemModuleStatus).ToString
+        itm.Cells(7).Text = CType(itm.Cells(7).Text.ToInteger, Enums.SystemModuleStatus).ToString
     End Sub
 
     Private Sub RadSearchGrid_ItemDataBound(sender As Object, e As GridItemEventArgs) Handles RadSearchGrid.ItemDataBound
         Try
             If TypeOf e.Item Is GridItem Then
                 Dim dataItem As GridItem = e.Item
-                If dataItem.Cells(5).Text.ToLower = Enums.SystemModulePriority.Emergency.ToString.ToLower Then
+                If dataItem.Cells(6).Text.ToLower = Enums.SystemModulePriority.Emergency.ToString.ToLower Then
                     dataItem.BackColor = GetColor("#CC0000")
-                ElseIf dataItem.Cells(5).Text.ToLower = Enums.SystemModulePriority.High.ToString.ToLower Then
+                ElseIf dataItem.Cells(6).Text.ToLower = Enums.SystemModulePriority.High.ToString.ToLower Then
                     dataItem.BackColor = GetColor("#FF6600")
                 End If
             End If
@@ -98,6 +98,13 @@ Public Class RecentWorkOrders
                     dataItem.BackColor = GetColor("#27AAD0")
                 End If
             End If
+
+
+            Dim ctl As Control = e.Item.FindInControl("lblStatus")
+            If ctl IsNot Nothing Then
+                CType(ctl, Label).Text = CType(CType(ctl, Label).Text.ToInteger, Enums.SystemModuleStatus).ToString
+            End If
+
         Catch ex As Exception
         End Try
     End Sub

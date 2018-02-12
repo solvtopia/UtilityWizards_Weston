@@ -49,7 +49,8 @@
                     <span class="info-box-icon bg-red"></span>
 
                     <div class="info-box-content">
-                        <span class="info-box-text">Open Work Orders</span>
+                        <span class="info-box-text">
+                            <asp:LinkButton runat="server" ID="lnkOpenWorkOrders">Open Work Orders</asp:LinkButton></span>
                         <span class="info-box-number">
                             <asp:Label runat="server" ID="lblOpenWorkOrders" /></span>
                     </div>
@@ -67,7 +68,8 @@
                     <span class="info-box-icon bg-green"></span>
 
                     <div class="info-box-content">
-                        <span class="info-box-text">Completed Work Orders</span>
+                        <span class="info-box-text">
+                            <asp:LinkButton runat="server" ID="lnkCompletedWorkOrders">Completed Work Orders</asp:LinkButton></span>
                         <span class="info-box-number">
                             <asp:Label runat="server" ID="lblCompletedWorkOrders" /></span>
                     </div>

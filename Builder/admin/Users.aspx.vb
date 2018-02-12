@@ -1,6 +1,6 @@
 ﻿Imports System.Xml
-Imports UtilityWizards.CommonCore.Common
-Imports UtilityWizards.CommonCore.Xml
+Imports UtilityWizards.CommonCore.Shared.Common
+Imports UtilityWizards.CommonCore.Shared.Xml
 Imports Telerik.Web.UI
 
 Public Class AdminUsers
@@ -120,7 +120,7 @@ Public Class AdminUsers
             Me.tblSolvtopia.Rows.Add(trSolvtopia)
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             cn.Close()
         End Try

@@ -29,7 +29,7 @@
         <table style="width: 100%;">
             <tr>
                 <td>
-                    <telerik:RadGrid ID="RadSearchGrid" runat="server" AllowSorting="True" GroupPanelPosition="Top" Skin="Metro" CellSpacing="-1" GridLines="Both" DataSourceID="SqlDataSource1" AutoGenerateEditColumn="true">
+                    <telerik:RadGrid ID="RadSearchGrid" runat="server" AllowSorting="True" GroupPanelPosition="Top" Skin="Metro" CellSpacing="-1" GridLines="Both" DataSourceID="SqlDataSource1" AutoGenerateEditColumn="true" BorderColor="#e5e5e5" BorderStyle="Solid" BorderWidth="1px">
                         <MasterTableView AutoGenerateColumns="False" DataKeyNames="ID" DataSourceID="SqlDataSource1">
                             <Columns>
                                 <telerik:GridBoundColumn DataField="ID" DataType="System.Int32" FilterControlAltText="Filter ID column" HeaderText="ID" ReadOnly="True" SortExpression="ID" UniqueName="ID">
@@ -37,6 +37,8 @@
                                 <telerik:GridBoundColumn DataField="CustomerAccount" FilterControlAltText="Filter CustomerAccount column" HeaderText="Customer Account" ReadOnly="True" SortExpression="CustomerAccount" UniqueName="CustomerAccount">
                                 </telerik:GridBoundColumn>
                                 <telerik:GridBoundColumn DataField="CustomerName" FilterControlAltText="Filter CustomerName column" HeaderText="Customer Name" SortExpression="CustomerName" UniqueName="CustomerName">
+                                </telerik:GridBoundColumn>
+                                <telerik:GridBoundColumn DataField="ServiceAddress" FilterControlAltText="Filter ServiceAddress column" HeaderText="Service Address" SortExpression="ServiceAddress" UniqueName="ServiceAddress">
                                 </telerik:GridBoundColumn>
                                 <telerik:GridBoundColumn DataField="Priority" FilterControlAltText="Filter Priority column" HeaderText="Priority" ReadOnly="True" SortExpression="Priority" UniqueName="Priority">
                                 </telerik:GridBoundColumn>
@@ -54,7 +56,7 @@
                                 </telerik:GridBoundColumn>
                                 <telerik:GridBoundColumn DataField="Updated" DataType="System.DateTime" FilterControlAltText="Filter Updated column" HeaderText="Updated" SortExpression="Updated" UniqueName="Updated">
                                 </telerik:GridBoundColumn>
-                                <telerik:GridBoundColumn DataField="UpdatedBy" FilterControlAltText="Filter UpdatedBy column" HeaderText="Updated By" ReadOnly="True" SortExpression="UpdatedBy" UniqueName="UpdatedBy">
+                                <telerik:GridBoundColumn DataField="UpdatedBy" FilterControlAltText="Filter UpdatedBy column" HeaderText="Updated By" ReadOnly="True" SortExpression="UpdatedBy" UniqueName="UpdatedBy" Display="false">
                                 </telerik:GridBoundColumn>
                             </Columns>
                         </MasterTableView>
@@ -85,7 +87,17 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
+                                                                <asp:Label ID='lblStatus' runat='server' ForeColor='White' Text='<%# Eval("Status") %>'></asp:Label>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
                                                                 <asp:Label ID='lblDescription' runat='server' ForeColor='White' Text='<%# Eval("CustomerName") %>'></asp:Label>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <asp:Label ID='lblAddress' runat='server' ForeColor='White' Text='<%# Eval("ServiceAddress") %>'></asp:Label>
                                                             </td>
                                                         </tr>
                                                     </table>

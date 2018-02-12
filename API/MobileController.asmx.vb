@@ -2,7 +2,7 @@
 Imports System.Web.Services.Protocols
 Imports System.ComponentModel
 Imports System.Xml.Serialization
-Imports UtilityWizards.CommonCore.Common
+Imports UtilityWizards.CommonCore.Shared.Common
 Imports System.Xml
 
 ' To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line.
@@ -47,7 +47,7 @@ Public Class MobileController
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -82,7 +82,7 @@ Public Class MobileController
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
             retVal = New MaintenanceInfo
         Finally
             cn.Close()

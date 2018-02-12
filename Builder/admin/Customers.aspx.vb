@@ -1,4 +1,5 @@
 ﻿Imports Telerik.Web.UI
+Imports UtilityWizards.CommonCore.Shared.Common
 
 Public Class Customers
     Inherits builderPage
@@ -15,19 +16,28 @@ Public Class Customers
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             cmd.CommandType = CommandType.StoredProcedure
             cmd.Parameters.AddWithValue("@CustAcctNum", "")
-            cmd.Parameters.AddWithValue("@ServiceAddress", "")
+            If Me.ddlSearch.SelectedValue.ToLower = "serviceaddress" Then
+                cmd.Parameters.AddWithValue("@ServiceAddress", Me.txtSearch.Text)
+            Else cmd.Parameters.AddWithValue("@ServiceAddress", "")
+            End If
             cmd.Parameters.AddWithValue("@CustName", "")
+            If Me.ddlSearch.SelectedValue.ToLower = "receptacle" Then
+                cmd.Parameters.AddWithValue("@Receptacle", Me.txtSearch.Text)
+            Else cmd.Parameters.AddWithValue("@Receptacle", "")
+            End If
 
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
 
             Me.RadCustomerGrid.DataSource = rs
 
         Catch ex As Exception
-            ex.WriteToErrorLog
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
             'cn.Close()
         End Try
     End Sub
 
-
+    Protected Sub btnSearch_Click(sender As Object, e As EventArgs) Handles btnSearch.Click
+        Me.RadCustomerGrid.Rebind()
+    End Sub
 End Class
