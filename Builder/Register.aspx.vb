@@ -81,7 +81,7 @@ Public Class Register
                 msg.Password = AppSettings("MailPassword")
                 msg.To.Add(Me.txtClientContactEmail.Text)
                 msg.BCC.Add("james@nk5.co")
-                msg.Body = "<html>Welcome to Utility Wizards!<br/><br/>Your accounts have been created and your information has been sent to our sales department.<br/><br/>We will be in touch in less than 24 hours to approve your access.<br/><br/>Click Login on the menu or visit <a href='https://access.utilitywizards.com'>Utility Wizards</a> to start using your new account immediately!<br/><br/>Username: " & Me.txtAdminEmail.Text & "<br/>Password: " & Me.txtAdminPasswordConfirm.Text & "</html>"
+                msg.Body = "<html>Welcome to Utility Wizards!<br/><br/>Your accounts have been created and your information has been sent to our sales department.<br/><br/>We will be in touch in less than 24 hours to approve your access.<br/><br/>Click Login on the menu or visit <a href='https://weston.utilitywizards.com'>Utility Wizards</a> to start using your new account immediately!<br/><br/>Username: " & Me.txtAdminEmail.Text & "<br/>Password: " & Me.txtAdminPasswordConfirm.Text & "</html>"
                 msg.Subject = "Welcome to Utility Wizards!"
                 msg.From = "sales@utilitywizards.com"
                 msg.HtmlBody = True

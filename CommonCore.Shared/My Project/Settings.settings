@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="DbConnection" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Data Source=mssql.solvtopia.com;Initial Catalog=[DataBaseName];Persist Security Info=True;User ID=solvt_master;Password=9dR00g326d;Pooling=false;MultipleActiveResultSets=True</Value>
+      <Value Profile="(Default)">Data Source=weston.utilitywizards.com;Initial Catalog=[DataBaseName];Persist Security Info=True;User ID=sa;Password=OrangeBeach82!;Pooling=false;MultipleActiveResultSets=True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

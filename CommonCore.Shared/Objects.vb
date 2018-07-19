@@ -239,7 +239,7 @@ Public Class SystemUser
         Get
             Dim retVal As String = Me.ImageUrl
 
-            retVal = retVal.Replace("~/", "https://access.utilitywizards.com/")
+            retVal = retVal.Replace("~/", "https://weston.utilitywizards.com/")
             'retVal = retVal.Replace("avatar.png", "mobile_avatar.png")
 
             Return retVal

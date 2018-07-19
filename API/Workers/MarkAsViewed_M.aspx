@@ -19,7 +19,7 @@
         </tr>
         <tr>
             <td style="width: 20%;">Service Url</td>
-            <td style="border: 1px solid #C0C0C0; vertical-align: top; background-color: #E6E6E6; padding-left: 10px;">https://Api.UtilityWizards.com/InputController.asmx</td>
+            <td style="border: 1px solid #C0C0C0; vertical-align: top; background-color: #E6E6E6; padding-left: 10px;">https://westonapi.utilitywizards.com/InputController.asmx</td>
         </tr>
         <tr>
             <td colspan="2">&nbsp;</td>

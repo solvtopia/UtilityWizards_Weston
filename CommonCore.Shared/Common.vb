@@ -45,7 +45,7 @@ Public Class Common
         Dim db As String = ""
 
         Select Case DbName
-            Case Enums.DBName.UtilityWizards : db = "solvtopia_UtilityWizards"
+            Case Enums.DBName.UtilityWizards : db = "UtilityWizards"
 
             Case Else
                 'If System.Configuration.ConfigurationManager.ConnectionStrings(DbName) IsNot Nothing Then

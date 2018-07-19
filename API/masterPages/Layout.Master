@@ -7,7 +7,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Utility Wizards</title>
-    <link href="http://access.utilitywizards.com/styles/utilityWizards.css" rel="stylesheet" />
+    <link href="http://weston.utilitywizards.com/styles/utilityWizards.css" rel="stylesheet" />
     <style type="text/css">
         .layout-header_style1 {
             width: 100%;
@@ -26,7 +26,7 @@
     </script>
     <asp:ContentPlaceHolder ID="headContent" runat="server" />
 </head>
-<body style="background-image: url('http://access.utilitywizards.com/images/bg_site.jpg'); background-repeat: no-repeat; background-attachment: fixed;">
+<body style="background-image: url('http://weston.utilitywizards.com/images/bg_site.jpg'); background-repeat: no-repeat; background-attachment: fixed;">
     <form id="form1" runat="server">
         <div>
             <telerik:RadScriptManager ID="RadScriptManager" runat="server">
@@ -47,13 +47,13 @@
                                         <span style="font-size: x-large">&nbsp;&nbsp;&nbsp;Utility Wizards API Documentation</span>
                                     </td>
                                     <td rowspan="3" style="vertical-align: top; text-align: right; width: 80px;">
-                                        <asp:Image runat="server" ID="imgLogo" AlternateText="UtilityWizards" ImageUrl="http://access.utilitywizards.com/images/icon.png" />
+                                        <asp:Image runat="server" ID="imgLogo" AlternateText="UtilityWizards" ImageUrl="http://weston.utilitywizards.com/images/icon.png" />
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="height: 20px;">
                                         <telerik:RadAjaxLoadingPanel ID="MainAjaxLoadingPanel" runat="server" Skin="MetroTouch" Width="100%" BackgroundPosition="None" IsSticky="True">
-                                            <center><asp:Image runat="server" ID="imgLoading" AlternateText="Loading" ImageUrl="http://access.utilitywizards.com/images/loading.gif"  /></center>
+                                            <center><asp:Image runat="server" ID="imgLoading" AlternateText="Loading" ImageUrl="http://weston.utilitywizards.com/images/loading.gif"  /></center>
                                         </telerik:RadAjaxLoadingPanel>
                                     </td>
                                 </tr>
@@ -142,7 +142,7 @@
                         <td style="vertical-align: top; width: 80%;">
                             <table class="layout-style1">
                                 <tr>
-                                    <td style="border: 1px solid #828282; height: 23px; background-image: url('http://access.utilitywizards.com/images/bg_header.png'); background-repeat: repeat-x; padding-left: 10px;">
+                                    <td style="border: 1px solid #828282; height: 23px; background-image: url('http://weston.utilitywizards.com/images/bg_header.png'); background-repeat: repeat-x; padding-left: 10px;">
                                         <asp:ContentPlaceHolder ID="pageHeaderContent" runat="server" />
                                     </td>
                                 </tr>

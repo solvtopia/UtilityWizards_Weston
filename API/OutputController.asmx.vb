@@ -6,7 +6,7 @@ Imports System.Xml
 
 ' To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line.
 <System.Web.Script.Services.ScriptService()>
-<System.Web.Services.WebService(Namespace:="https://api.utilitywizards.com/")>
+<System.Web.Services.WebService(Namespace:="https://westonapi.utilitywizards.com/")>
 <System.Web.Services.WebServiceBinding(ConformsTo:=WsiProfiles.BasicProfile1_1)>
 <ToolboxItem(False)>
 Public Class OutputController

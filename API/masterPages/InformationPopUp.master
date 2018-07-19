@@ -19,7 +19,7 @@
                 <table class="auto-style1" cellpadding="0" cellspacing="0">
                     <tr>
                         <td style="width: 22px;">
-                            <asp:Image runat="server" ID="imgIcon" AlternateText="Help" ImageUrl="http://access.utilitywizards.com/images/toolbar/icon_help.png"  /></td>
+                            <asp:Image runat="server" ID="imgIcon" AlternateText="Help" ImageUrl="http://weston.utilitywizards.com/images/toolbar/icon_help.png"  /></td>
                         <td style="font-weight: bold;">Purpose & Comments</td>
                     </tr>
                     <tr>

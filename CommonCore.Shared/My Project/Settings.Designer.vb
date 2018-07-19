@@ -56,8 +56,8 @@ Namespace My
         
         <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("Data Source=mssql.solvtopia.com;Initial Catalog=[DataBaseName];Persist Security I"& _ 
-            "nfo=True;User ID=solvt_master;Password=9dR00g326d;Pooling=false;MultipleActiveRe"& _ 
+         Global.System.Configuration.DefaultSettingValueAttribute("Data Source=weston.utilitywizards.com;Initial Catalog=[DataBaseName];Persist Security I"& _ 
+            "nfo=True;User ID=sa;Password=OrangeBeach82!;Pooling=false;MultipleActiveRe"& _ 
             "sultSets=True")>  _
         Public ReadOnly Property DbConnection() As String
             Get

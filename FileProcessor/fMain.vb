@@ -20,11 +20,11 @@ Public Class fMain
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Try
-            Dim files_tmp As String = "C:\inetpub\access.utilitywizards.com\wwwroot\import\"
+            Dim files_tmp As String = "C:\inetpub\weston.utilitywizards.com\wwwroot\import\"
             Dim fPath As String = My.Computer.FileSystem.CombinePath(files_tmp, "accountdata.txt")
 
             'If My.Computer.FileSystem.FileExists(fPath) Then My.Computer.FileSystem.DeleteFile(fPath)
-            'My.Computer.Network.DownloadFile("https://access.utilitywizards.com/import/accountdata.txt", fPath)
+            'My.Computer.Network.DownloadFile("https://weston.utilitywizards.com/import/accountdata.txt", fPath)
 
             Dim cmd As New SqlClient.SqlCommand
 

@@ -6,7 +6,7 @@
 #End Region
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        Response.Redirect("https://access.utilitywizards.com/documentation/api/default.aspx", False)
+        Response.Redirect("https://weston.utilitywizards.com/documentation/api/default.aspx", False)
     End Sub
 
     Protected Sub lnkInputController_Click(sender As Object, e As EventArgs) Handles lnkInputController.Click
