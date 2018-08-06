@@ -96,20 +96,21 @@ Public Class ModuleWizard
                         Me.ddlSupervisor.SelectedValue = fldr.SupervisorID.ToString
                     End If
                 End If
-                Me.ddlFolder.SelectedValue = Me.currentModule.FolderID.ToString
+                Me.ddlImportTable.SelectedValue = Me.currentModule.FolderID.ToString
                 Me.ddlIcon.SelectedValue = Me.currentModule.Icon
                 Me.imgIcon.ImageUrl = Me.currentModule.Icon
 
                 Me.ModuleQuestions = LoadModuleQuestions(Me.EditId)
             Else
                 Me.currentModule = New SystemModule()
-                Me.ddlFolder.SelectedValue = Me.FolderId.ToString
-                If Me.FolderId > 0 Then Me.ddlFolder.Enabled = False
+                Me.ddlImportTable.SelectedValue = Me.FolderId.ToString
             End If
         End If
 
+        Me.ddlImportTable.Enabled = (Me.chkImportModule.Checked)
+
         Me.lblModuleName.Text = Me.txtName.Text
-        Me.lblModuleName1.Text = Me.lblModuleName.Text
+        Me.lblModuleName1.Text = Me.lblModuleName.Text & If(Me.chkImportModule.Checked, " Import", "")
 
         If Me.Type = Enums.SystemModuleType.Module Then
             Me.Master.TitleText = "Module Wizard"
@@ -163,14 +164,14 @@ Public Class ModuleWizard
             rs.Close()
             cmd.Cancel()
 
-            Me.ddlFolder.Items.Clear()
-            Me.ddlFolder.Items.Add(New Telerik.Web.UI.RadComboBoxItem("Show on Dashboard", "0"))
-            For Each m As SystemModule In App.CurrentClient.Modules
-                If m.Type = Enums.SystemModuleType.Folder Then
-                    Me.ddlFolder.Items.Add(New Telerik.Web.UI.RadComboBoxItem(m.Name, m.ID.ToString))
-                End If
-            Next
-            Me.ddlFolder.SelectedIndex = 0
+            Me.ddlImportTable.Items.Clear()
+            cmd = New SqlClient.SqlCommand("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME LIKE '_import_%' ORDER BY TABLE_NAME;", cn)
+            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+            rs = cmd.ExecuteReader
+            Do While rs.Read
+                Me.ddlImportTable.Items.Add(New RadComboBoxItem(rs("TABLE_NAME").ToString.Replace("_import_", ""), rs("TABLE_NAME").ToString))
+            Loop
+            Me.ddlImportTable.SelectedIndex = 0
 
             Me.ddlIcon.Items.Clear()
             Dim files As List(Of String) = My.Computer.FileSystem.GetFiles(Server.MapPath("~/images/gallery/" & iconFolder & "/")).ToList
@@ -201,10 +202,16 @@ Public Class ModuleWizard
 
     Protected Sub btnNext_Click(sender As Object, e As EventArgs) Handles btnNext.Click
         If Me.WizardStep < Me.wizardMaxSteps Then
-            Me.WizardStep += 1
-            Select Case Me.WizardStep
-                Case 2 : Me.ddlQuestion.Focus()
-            End Select
+            If Me.chkImportModule.Checked = False Then
+                Me.WizardStep += 1
+                Select Case Me.WizardStep
+                    Case 2 : Me.ddlQuestion.Focus()
+                End Select
+            Else
+                ' import tables setup their questions from the table structure so cannot be edited
+                ' so jump straight to the last step
+                Me.WizardStep = Me.wizardMaxSteps
+            End If
         Else
             Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
@@ -218,7 +225,9 @@ Public Class ModuleWizard
                 Me.currentModule.Description = Me.txtDescription.Text
                 Me.currentModule.Icon = Me.ddlIcon.SelectedValue
                 Me.currentModule.Type = Me.Type
-                Me.currentModule.FolderID = Me.ddlFolder.SelectedValue.ToInteger
+                Me.currentModule.FolderID = 0
+                Me.currentModule.ImportModule = Me.chkImportModule.Checked
+                Me.currentModule.ImportTable = Me.ddlImportTable.SelectedValue
                 Me.currentModule.SupervisorID = Me.ddlSupervisor.SelectedValue.ToInteger
                 Me.currentModule = Me.currentModule.Save
 
@@ -226,6 +235,33 @@ Public Class ModuleWizard
                 Dim cmd As New SqlClient.SqlCommand("DELETE FROM [Questions] WHERE [xModuleID] = " & Me.currentModule.ID, cn)
                 If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
                 cmd.ExecuteNonQuery()
+
+                If Me.chkImportModule.Checked Then
+                    ' import module questions are generated from the fields in the table
+                    Me.ModuleQuestions = New List(Of SystemQuestion)
+
+                    cmd = New SqlClient.SqlCommand("select column_name from information_schema.columns where table_name like '" & Me.ddlImportTable.SelectedValue & "'", cn)
+                    If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+                    Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+                    Do While rs.Read
+                        Dim q As New SystemQuestion
+
+                        q.ID = 0
+                        q.ModuleID = 0
+                        q.Question = rs("column_name").ToString.Replace("_", " ")
+                        If q.Question.ToLower.Contains("desc") Or q.Question.ToLower.Contains("comment") Then
+                            q.Type = Enums.SystemQuestionType.MemoField
+                        Else q.Type = Enums.SystemQuestionType.TextBox
+                        End If
+                        q.Required = False
+                        q.SearchField = False
+                        q.ReportField = True
+                        q.ExportField = True
+                        q.MobileField = True
+
+                        Me.ModuleQuestions.Add(q)
+                    Loop
+                End If
 
                 For Each q As SystemQuestion In Me.ModuleQuestions
                     q.ModuleID = Me.currentModule.ID

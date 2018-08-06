@@ -33,10 +33,11 @@
             <td>Search Type</td>
             <td>&nbsp;</td>
             <td>
-                <telerik:RadDropDownList ID="ddlSearch" runat="server" SelectedText="Service Address" SelectedValue="ServiceAddress">
+                <telerik:RadDropDownList ID="ddlSearch" runat="server" SelectedText="Account Number" SelectedValue="ACCOUNT_NUMBER">
                     <Items>
-                        <telerik:DropDownListItem runat="server" Selected="True" Text="Service Address" Value="ServiceAddress" />
-                        <telerik:DropDownListItem runat="server" Text="Receptacle Number" Value="Receptacle" />
+                        <telerik:DropDownListItem runat="server" Selected="True" Text="Account Number" Value="ACCOUNT_NUMBER" />
+                        <telerik:DropDownListItem runat="server" Text="Borrower Name" Value="BORROWER_PRIMARY_NAME" />
+                        <telerik:DropDownListItem runat="server" Text="Property Address" Value="PROPERTY_ADDRESS_1" />
                     </Items>
                 </telerik:RadDropDownList>
             </td>
@@ -65,25 +66,17 @@
         <GroupingSettings CaseSensitive="false" />
         <MasterTableView>
             <Columns>
-                <telerik:GridBoundColumn DataField="Account ID" DataType="System.Int32" FilterControlAltText="Filter Account ID column" HeaderText="Account ID" ReadOnly="True" SortExpression="Account ID" UniqueName="AccountID" AllowFiltering="false">
+                <telerik:GridBoundColumn DataField="ACCOUNT_NUMBER" DataType="System.Int32" FilterControlAltText="Filter ACCOUNT_NUMBER column" HeaderText="Account Number" ReadOnly="True" SortExpression="ACCOUNT_NUMBER" UniqueName="ACCOUNT_NUMBER" AllowFiltering="false">
                 </telerik:GridBoundColumn>
-                <telerik:GridBoundColumn DataField="Location ID" FilterControlAltText="Filter Location ID column" HeaderText="Location ID" ReadOnly="True" SortExpression="Location ID" UniqueName="LocationID" AllowFiltering="false">
+                <telerik:GridBoundColumn DataField="BORROWER_PRIMARY_NAME" FilterControlAltText="Filter BORROWER_PRIMARY_NAME column" HeaderText="Borrower Name" SortExpression="BORROWER_PRIMARY_NAME" UniqueName="BORROWER_PRIMARY_NAME" AllowFiltering="false">
                 </telerik:GridBoundColumn>
-                <telerik:GridBoundColumn DataField="Full Name" FilterControlAltText="Filter Full Name column" HeaderText="Full Name" SortExpression="Full Name" UniqueName="FullName" AllowFiltering="false">
+                <telerik:GridBoundColumn DataField="PROPERTY_ADDRESS_1" FilterControlAltText="Filter PROPERTY_ADDRESS_1 column" HeaderText="Property Address" SortExpression="PROPERTY_ADDRESS_1" UniqueName="PROPERTY_ADDRESS_1" AllowFiltering="false">
                 </telerik:GridBoundColumn>
-                <telerik:GridBoundColumn DataField="Service Address" FilterControlAltText="Filter Service Address column" HeaderText="Service Address" ReadOnly="True" SortExpression="Service Address" UniqueName="ServiceAddress" AllowFiltering="false" CurrentFilterFunction="Contains" AutoPostBackOnFilter="true">
+                <telerik:GridBoundColumn DataField="PROPERTY_CITY" FilterControlAltText="Filter PROPERTY_CITY column" HeaderText="City" SortExpression="PROPERTY_CITY" UniqueName="PROPERTY_CITY" AllowFiltering="false"> <%--CurrentFilterFunction="Contains" AutoPostBackOnFilter="true"--%>
                 </telerik:GridBoundColumn>
-                <telerik:GridBoundColumn DataField="City" DataType="System.Int32" FilterControlAltText="Filter City column" HeaderText="City" ReadOnly="True" SortExpression="City" UniqueName="City" AllowFiltering="false">
+                <telerik:GridBoundColumn DataField="PROPERTY_STATE" FilterControlAltText="Filter PROPERTY_STATE column" HeaderText="State" SortExpression="PROPERTY_STATE" UniqueName="PROPERTY_STATE" AllowFiltering="false">
                 </telerik:GridBoundColumn>
-                <telerik:GridBoundColumn DataField="State" DataType="System.Int32" FilterControlAltText="Filter State column" HeaderText="State" ReadOnly="True" SortExpression="State" UniqueName="State" AllowFiltering="false">
-                </telerik:GridBoundColumn>
-                <telerik:GridBoundColumn DataField="Zip Code" FilterControlAltText="Filter Zip Code column" HeaderText="Zip Code" ReadOnly="True" SortExpression="Zip Code" UniqueName="ZipCode" AllowFiltering="false">
-                </telerik:GridBoundColumn>
-                <telerik:GridBoundColumn DataField="Receptacle 01" FilterControlAltText="Filter Receptacle 01 column" HeaderText="Receptacle 01" ReadOnly="True" SortExpression="Receptacle 01" UniqueName="Receptacle01" AllowFiltering="false">
-                </telerik:GridBoundColumn>
-                <telerik:GridBoundColumn DataField="Receptacle 02" DataType="System.Int32" FilterControlAltText="Filter Receptacle 02 column" HeaderText="Receptacle 02" ReadOnly="True" SortExpression="Receptacle 02" UniqueName="Receptacle02" AllowFiltering="false">
-                </telerik:GridBoundColumn>
-                <telerik:GridBoundColumn DataField="Receptacle 03" DataType="System.Int32" FilterControlAltText="Filter Receptacle 03 column" HeaderText="Receptacle 03" ReadOnly="True" SortExpression="Receptacle 03" UniqueName="Receptacle03" AllowFiltering="false">
+                <telerik:GridBoundColumn DataField="PROPERTY_ZIP" DataType="System.Int32" FilterControlAltText="Filter PROPERTY_ZIP column" HeaderText="Zip Code" SortExpression="PROPERTY_ZIP" UniqueName="PROPERTY_ZIP" AllowFiltering="false">
                 </telerik:GridBoundColumn>
             </Columns>
         </MasterTableView>

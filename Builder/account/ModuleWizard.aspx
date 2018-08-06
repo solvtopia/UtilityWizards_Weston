@@ -73,14 +73,25 @@
             <table class="wrap-table-wizard">
                 <tr>
                     <td style="width: 25px;">
-                        <asp:Image ID="imgHelp_Folder" runat="server" ImageUrl="~/images/toolbar/icon_help.png" ToolTip="Place this Module in a folder or on the dashboard" />
-                    </td>
-                    <td>Folder</td>
+                        &nbsp;</td>
+                    <td>This module is based on an import table?</td>
                 </tr>
                 <tr>
                     <td style="width: 25px;">&nbsp;</td>
                     <td>
-                        <telerik:RadComboBox ID="ddlFolder" runat="server" Skin="Metro" Width="100%">
+                        <asp:CheckBox ID="chkImportModule" runat="server" AutoPostBack="true" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 25px;">
+                        <asp:Image ID="imgHelp_Folder" runat="server" ImageUrl="~/images/toolbar/icon_help.png" ToolTip="Place this Module in a folder or on the dashboard" />
+                    </td>
+                    <td>Table Name</td>
+                </tr>
+                <tr>
+                    <td style="width: 25px;">&nbsp;</td>
+                    <td>
+                        <telerik:RadComboBox ID="ddlImportTable" runat="server" Skin="Metro" Width="100%">
                         </telerik:RadComboBox>
                     </td>
                 </tr>

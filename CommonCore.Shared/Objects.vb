@@ -643,6 +643,8 @@ Public Class SystemModule
     Public Icon As String
     Public Type As SystemModuleType
     Public SupervisorID As Integer
+    Public ImportModule As Boolean
+    Public ImportTable As String
 
     Public APIResponseCode As ApiResultCode
     Public APIResponseMessage As String

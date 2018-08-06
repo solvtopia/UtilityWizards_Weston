@@ -896,6 +896,22 @@ Public Module Xml
             Return Nothing
         End Try
     End Function
+    <Extension()> Public Sub FromDataTable(ByVal ctrl As Control, ByVal data As DataTable, ByVal recordNum As Integer)
+        Dim ht As New Hashtable
+        If data.Rows.Count > 0 Then
+            Dim row As DataRow = data.Rows(recordNum - 1)
+
+            For Each dc As DataColumn In data.Columns
+                Dim name As String = StrConv(dc.ColumnName.Replace("_", " "), VbStrConv.ProperCase).Replace(" ", "")
+                If ht.ContainsKey(name) Then
+                    ht(name) = row(dc.ColumnName).ToString
+                Else ht.Add(name, row(dc.ColumnName).ToString)
+                End If
+            Next
+        End If
+
+        FromHashtable(ctrl, ht)
+    End Sub
     <Extension()> Public Sub FromHashtable(ByVal ctrl As Control, ByVal data As Hashtable)
         Try
             ' loop through all controls in the start control

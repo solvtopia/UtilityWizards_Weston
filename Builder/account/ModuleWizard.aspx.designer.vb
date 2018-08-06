@@ -77,6 +77,15 @@ Partial Public Class ModuleWizard
     Protected WithEvents pnlModuleStep1Questions As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
+    '''chkImportModule control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents chkImportModule As Global.System.Web.UI.WebControls.CheckBox
+    
+    '''<summary>
     '''imgHelp_Folder control.
     '''</summary>
     '''<remarks>
@@ -86,13 +95,13 @@ Partial Public Class ModuleWizard
     Protected WithEvents imgHelp_Folder As Global.System.Web.UI.WebControls.Image
     
     '''<summary>
-    '''ddlFolder control.
+    '''ddlImportTable control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlFolder As Global.Telerik.Web.UI.RadComboBox
+    Protected WithEvents ddlImportTable As Global.Telerik.Web.UI.RadComboBox
     
     '''<summary>
     '''imgHelp_Icon control.

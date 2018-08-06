@@ -5,26 +5,23 @@ Public Class Customers
     Inherits builderPage
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        If Not IsPostBack Then
 
+        End If
     End Sub
 
     Private Sub RadCustomerGrid_New_NeedDataSource(sender As Object, e As GridNeedDataSourceEventArgs) Handles RadCustomerGrid.NeedDataSource
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Try
-            Dim cmd As New SqlClient.SqlCommand("procCustomerSearch_new", cn)
+            Dim sql As String = ""
+            If Me.ddlSearch.SelectedValue.ToLower = "account_number" Then
+                sql = "SELECT TRIM(STR([ACCOUNT_NUMBER], 25, 0)) AS [ACCOUNT NUMBER], [BORROWER_PRIMARY_NAME] AS [PRIMARY NAME], [PROPERTY_ADDRESS_1] AS [PROPERTY ADDRESS], [PROPERTY_CITY] AS [PROPERTY CITY], [PROPERTY_STATE] AS [PROPERTY STATE], [PROPERTY_ZIP] AS [PROPERTY ZIP] FROM [_import_Standard] WHERE TRIM(STR([ACCOUNT_NUMBER], 25, 0)) LIKE @search;"
+            Else sql = "SELECT TRIM(STR([ACCOUNT_NUMBER], 25, 0)) AS [ACCOUNT NUMBER], [BORROWER_PRIMARY_NAME] AS [PRIMARY NAME], [PROPERTY_ADDRESS_1] AS [PROPERTY ADDRESS], [PROPERTY_CITY] AS [PROPERTY CITY], [PROPERTY_STATE] AS [PROPERTY STATE], [PROPERTY_ZIP] AS [PROPERTY ZIP] FROM [_import_Standard] WHERE [" & Me.ddlSearch.SelectedValue & "] LIKE '%' + @search + '%';"
+            End If
+            Dim cmd As New SqlClient.SqlCommand(sql, cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-            cmd.CommandType = CommandType.StoredProcedure
-            cmd.Parameters.AddWithValue("@CustAcctNum", "")
-            If Me.ddlSearch.SelectedValue.ToLower = "serviceaddress" Then
-                cmd.Parameters.AddWithValue("@ServiceAddress", Me.txtSearch.Text)
-            Else cmd.Parameters.AddWithValue("@ServiceAddress", "")
-            End If
-            cmd.Parameters.AddWithValue("@CustName", "")
-            If Me.ddlSearch.SelectedValue.ToLower = "receptacle" Then
-                cmd.Parameters.AddWithValue("@Receptacle", Me.txtSearch.Text)
-            Else cmd.Parameters.AddWithValue("@Receptacle", "")
-            End If
+            cmd.Parameters.AddWithValue("@search", Me.txtSearch.Text)
 
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
 

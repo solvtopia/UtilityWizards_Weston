@@ -32,24 +32,6 @@ Partial Public Class Menu
     Protected WithEvents lnkDashboard As Global.System.Web.UI.WebControls.LinkButton
     
     '''<summary>
-    '''liRecentWorkOrders control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents liRecentWorkOrders As Global.System.Web.UI.HtmlControls.HtmlGenericControl
-    
-    '''<summary>
-    '''lnkRecentWorkOrders control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lnkRecentWorkOrders As Global.System.Web.UI.WebControls.LinkButton
-    
-    '''<summary>
     '''pnlMainOptions control.
     '''</summary>
     '''<remarks>

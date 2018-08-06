@@ -44,7 +44,7 @@
                 Me.pnlLoginOptions.Visible = True
                 Me.lnkDashboard.Visible = False
                 Me.lnkLogin.Visible = False
-                Me.lnkRecentWorkOrders.Visible = False
+                'Me.lnkRecentWorkOrders.Visible = False
             Case currentUrl.Contains("loginhelp.aspx")
                 Me.pnlLoginOptions.Visible = True
                 Me.lnkDashboard.Visible = False
@@ -88,7 +88,7 @@
             Case currentUrl.Contains("customers.aspx")
                 Me.liCustomers.Attributes.Add("class", "active")
             Case currentUrl.Contains("mobilelandingpage.aspx")
-                Me.liRecentWorkOrders.Attributes.Add("class", "active")
+                'Me.liRecentWorkOrders.Attributes.Add("class", "active")
             Case Else
                 Me.liDashboard.Attributes.Add("class", "active")
         End Select
@@ -142,7 +142,7 @@
         Response.Redirect("~/admin/Customers.aspx", False)
     End Sub
 
-    Private Sub lnkRecentWorkOrders_Click(sender As Object, e As EventArgs) Handles lnkRecentWorkOrders.Click
-        Response.Redirect("~/account/MobileLandingPage.aspx", False)
-    End Sub
+    'Private Sub lnkRecentWorkOrders_Click(sender As Object, e As EventArgs) Handles lnkRecentWorkOrders.Click
+    '    Response.Redirect("~/account/MobileLandingPage.aspx", False)
+    'End Sub
 End Class

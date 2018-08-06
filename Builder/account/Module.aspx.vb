@@ -43,6 +43,16 @@ Public Class _Module
             Return App.ActiveModule.Name.Contains("811")
         End Get
     End Property
+    Private ReadOnly Property IsImportModule As Boolean
+        Get
+            Return App.ActiveModule.ImportModule
+        End Get
+    End Property
+    Private ReadOnly Property ImportTable As String
+        Get
+            Return App.ActiveModule.ImportTable
+        End Get
+    End Property
 
 #End Region
 
@@ -54,7 +64,7 @@ Public Class _Module
 
             Me.LoadLists()
 
-            If Me.RecordId > 0 Then
+            If Me.RecordId > 0 Or App.ActiveModule.ImportModule Then
                 Me.LoadData()
             Else
                 Me.txtUserEmail.Text = App.CurrentUser.Email
@@ -432,6 +442,7 @@ Public Class _Module
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Try
+            Dim sql As String = ""
             Dim cmd As New SqlClient.SqlCommand("Select [ID], [xmlData], [xUserEmail] FROM [vwModuleData] WHERE [ID] = " & Me.RecordId, cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader

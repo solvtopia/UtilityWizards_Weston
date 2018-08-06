@@ -13,21 +13,22 @@
             <li runat="server" id="liNewModule">
                 <asp:LinkButton runat="server" ID="lnkNewModule"><i class="fa fa-puzzle-piece"></i><span>Add Module</span></asp:LinkButton>
             </li>
-            <li runat="server" id="liNewFolder">
-                <asp:LinkButton runat="server" ID="lnkNewFolder"><i class="fa fa-folder-open-o"></i><span>Add Folder</span></asp:LinkButton>
-            </li>
         </asp:PlaceHolder>
-        <asp:PlaceHolder runat="server" ID="pnlFolderOptions">
-            <li class="header">FOLDER OPTIONS</li>
-            <li runat="server" id="liNewFolderModule">
-                <asp:LinkButton runat="server" ID="lnkNewFolderModule"><i class="fa fa-puzzle-piece"></i><span>Add Module</span></asp:LinkButton>
-            </li>
-            <li runat="server" id="liDeleteFolder">
-                <asp:LinkButton runat="server" ID="lnkDeleteFolder"><i class="fa fa-trash-o"></i><span>Delete Folder</span></asp:LinkButton>
-            </li>
-            <li runat="server" id="liEditFolder">
-                <asp:LinkButton runat="server" ID="lnkEditFolder"><i class="fa fa-gears"></i><span>Manage Folder</span></asp:LinkButton>
-            </li>
+        <asp:PlaceHolder runat="server" ID="pnlRecordOptions">
+            <li class="header">RECORD OPTIONS</li>
+            <li>
+                <asp:LinkButton runat="server" ID="lnkSearch"><i class="fa fa-search"></i><span>Search</span></asp:LinkButton></li>
+            <li>
+                <asp:LinkButton runat="server" ID="lnkPrint"><i class="fa fa-print"></i><span>Print</span></asp:LinkButton></li>
+            <asp:PlaceHolder runat="server" ID="pnlModuleOptions">
+                <li class="header">MODULE OPTIONS</li>
+                <li runat="server" id="liEditModule">
+                    <asp:LinkButton runat="server" ID="lnkEditModule"><i class="fa fa-pencil"></i><span>Edit Module</span></asp:LinkButton></li>
+                <li runat="server" id="liDeleteModule">
+                    <asp:LinkButton runat="server" ID="lnkDeleteModule"><i class="fa fa-trash-o"></i><span>Delete Module</span></asp:LinkButton></li>
+                <li runat="server" id="liCopyModule">
+                    <asp:LinkButton runat="server" ID="lnkCopyModule"><i class="fa fa-files-o"></i><span>Copy Module</span></asp:LinkButton></li>
+            </asp:PlaceHolder>
         </asp:PlaceHolder>
     </ul>
 </asp:Content>
@@ -43,7 +44,7 @@
 <asp:Content ID="Content4" ContentPlaceHolderID="pageContent_Ajax" runat="server">
     <!-- Info boxes -->
     <asp:PlaceHolder runat="server" ID="pnlBadges">
-        <div class="row">
+        <%--<div class="row">
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
                     <span class="info-box-icon bg-red"></span>
@@ -78,7 +79,7 @@
                 <!-- /.info-box -->
             </div>
             <!-- /.col -->
-        </div>
+        </div>--%>
     </asp:PlaceHolder>
     <!-- /.row -->
     <div class="row">
@@ -99,7 +100,84 @@
                 <div class="box-body">
                     <telerik:RadAjaxPanel ID="MainAjaxPanel" runat="server" Width="100%" HorizontalAlign="NotSet" LoadingPanelID="MainAjaxLoadingPanel">
                         <asp:Literal runat="server" ID="lblAppUrl" />
-                        <asp:Table runat="server" ID="tblModules" CellPadding="1" CellSpacing="2" Width="100%" Style="display: block;" />
+                        <asp:HiddenField runat="server" ID="hfSearchDone" />
+                        <telerik:RadTabStrip ID="tabSearch" runat="server" SelectedIndex="0" Skin="Metro" MultiPageID="RadMultiPage2">
+                            <Tabs>
+                                <telerik:RadTab Text="Customer Search" Value="search" />
+                            </Tabs>
+                        </telerik:RadTabStrip>
+                        <telerik:RadTabStrip ID="tabModules" runat="server" SelectedIndex="0" Skin="Metro" MultiPageID="RadMultiPage2" />
+                        <telerik:RadMultiPage runat="server" ID="RadMultiPage2" Width="100%" Height="550px" SelectedIndex="0">
+                            <telerik:RadPageView runat="server" ID="RadPageView1">
+                                <asp:Panel runat="server" ID="pnlCustomerSearch" DefaultButton="btnSearch">
+                                    <div class="row">
+                                        <!-- Left col -->
+                                        <div class="col-md-8">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                </div>
+                                                <!-- /.col -->
+
+                                                <div class="col-md-6">
+                                                </div>
+                                                <!-- /.col -->
+                                            </div>
+                                            <!-- /.row -->
+
+                                            <!-- MAIN CONTENT -->
+                                            <div class="box box-info">
+                                                <div class="box-body">
+                                                    <table class="nav-justified">
+                                                        <tr>
+                                                            <td>Criteria</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <telerik:RadTextBox ID="txtSearch" runat="server" Skin="Metro" Width="100%">
+                                                                </telerik:RadTextBox>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <telerik:RadButton ID="btnSearch" runat="server" ButtonType="LinkButton" CssClass="fixedWidth" Skin="Metro" Text="Search" Width="100%" />
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>&nbsp;</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <telerik:RadGrid ID="RadSearchGrid" runat="server" AllowSorting="True" GroupPanelPosition="Top" AutoGenerateEditColumn="True" Skin="Metro" DataSourceID="SqlDataSource1">
+                                                                    <MasterTableView AutoGenerateColumns="True" DataSourceID="SqlDataSource1">
+                                                                        <%--<Columns>
+                                                                        <telerik:GridBoundColumn DataField="ACCOUNT_NUMBER" FilterControlAltText="Filter ACCOUNT_NUMBER column" HeaderText="ACCOUNT_NUMBER" ReadOnly="True" SortExpression="ACCOUNT_NUMBER" UniqueName="ACCOUNT_NUMBER">
+                                                                        </telerik:GridBoundColumn>
+                                                                        <telerik:GridBoundColumn DataField="BORROWER_PRIMARY_NAME" FilterControlAltText="Filter BORROWER_PRIMARY_NAME column" HeaderText="BORROWER_PRIMARY_NAME" SortExpression="BORROWER_PRIMARY_NAME" UniqueName="BORROWER_PRIMARY_NAME">
+                                                                        </telerik:GridBoundColumn>
+                                                                    </Columns>--%>
+                                                                    </MasterTableView>
+                                                                </telerik:RadGrid>
+                                                                <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:UtilityWizardsConnectionString %>" SelectCommand="procSearchAccounts" SelectCommandType="StoredProcedure">
+                                                                    <SelectParameters>
+                                                                        <asp:ControlParameter ControlID="txtSearch" DefaultValue="" Name="search" PropertyName="Text" Type="String" />
+                                                                    </SelectParameters>
+                                                                </asp:SqlDataSource>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <!-- /.box-body -->
+                                            </div>
+                                            <!-- /.box -->
+                                        </div>
+                                        <!-- /.col -->
+
+                                    </div>
+                                </asp:Panel>
+                            </telerik:RadPageView>
+                            <telerik:RadPageView runat="server" ID="RadPageView2" ContentUrl="~/account/SearchTab.aspx" Height="550px" />
+                        </telerik:RadMultiPage>
+                        <asp:Table runat="server" ID="tblModules" CellPadding="1" CellSpacing="2" Width="100%" Style="display: block;" Visible="false" />
                     </telerik:RadAjaxPanel>
                 </div>
                 <!-- ./box-body -->
@@ -126,7 +204,7 @@
             <!-- /.row -->
 
             <!-- TABLE: RECENT WORK ORDERS -->
-            <div class="box box-info">
+            <%--<div class="box box-info">
                 <div class="box-header with-border">
                     <h3 class="box-title">Recent Work Orders</h3>
 
@@ -144,7 +222,7 @@
                     </telerik:RadMultiPage>
                 </div>
                 <!-- /.box-body -->
-            </div>
+            </div>--%>
             <!-- /.box -->
         </div>
         <!-- /.col -->
@@ -152,7 +230,7 @@
         <div class="col-md-4">
 
             <!-- ACTIVITY LIST -->
-            <asp:PlaceHolder runat="server" ID="pnlActivity">
+            <%--<asp:PlaceHolder runat="server" ID="pnlActivity">
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <h3 class="box-title">Today's Activity</h3>
@@ -172,7 +250,7 @@
                     </div>
                     <!-- /.box-body -->
                 </div>
-            </asp:PlaceHolder>
+            </asp:PlaceHolder>--%>
             <!-- /.box -->
         </div>
         <!-- /.col -->

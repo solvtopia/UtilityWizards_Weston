@@ -11,196 +11,115 @@ Option Strict On
 Option Explicit On
 
 
-Partial Public Class _Default4
+Partial Public Class ModuleTab
     
     '''<summary>
-    '''pnlRootOptions control.
+    '''litNoData control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlRootOptions As Global.System.Web.UI.WebControls.PlaceHolder
+    Protected WithEvents litNoData As Global.System.Web.UI.WebControls.Literal
     
     '''<summary>
-    '''liNewModule control.
+    '''pnlDataNav control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents liNewModule As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    Protected WithEvents pnlDataNav As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
-    '''lnkNewModule control.
+    '''lnkFirstRecord control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lnkNewModule As Global.System.Web.UI.WebControls.LinkButton
+    Protected WithEvents lnkFirstRecord As Global.System.Web.UI.WebControls.LinkButton
     
     '''<summary>
-    '''pnlRecordOptions control.
+    '''lnkPreviousRecord control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlRecordOptions As Global.System.Web.UI.WebControls.PlaceHolder
+    Protected WithEvents lnkPreviousRecord As Global.System.Web.UI.WebControls.LinkButton
     
     '''<summary>
-    '''lnkSearch control.
+    '''txtRecordNum control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lnkSearch As Global.System.Web.UI.WebControls.LinkButton
+    Protected WithEvents txtRecordNum As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''lnkPrint control.
+    '''lnkNextRecord control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lnkPrint As Global.System.Web.UI.WebControls.LinkButton
+    Protected WithEvents lnkNextRecord As Global.System.Web.UI.WebControls.LinkButton
     
     '''<summary>
-    '''pnlModuleOptions control.
+    '''lnkLastRecord control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlModuleOptions As Global.System.Web.UI.WebControls.PlaceHolder
+    Protected WithEvents lnkLastRecord As Global.System.Web.UI.WebControls.LinkButton
     
     '''<summary>
-    '''liEditModule control.
+    '''lblTotalRecords control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents liEditModule As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    Protected WithEvents lblTotalRecords As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''lnkEditModule control.
+    '''tblFolderQuestions control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lnkEditModule As Global.System.Web.UI.WebControls.LinkButton
+    Protected WithEvents tblFolderQuestions As Global.System.Web.UI.WebControls.Table
     
     '''<summary>
-    '''liDeleteModule control.
+    '''tblModuleQuestions control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents liDeleteModule As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    Protected WithEvents tblModuleQuestions As Global.System.Web.UI.WebControls.Table
     
     '''<summary>
-    '''lnkDeleteModule control.
+    '''RadTabStrip1 control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lnkDeleteModule As Global.System.Web.UI.WebControls.LinkButton
+    Protected WithEvents RadTabStrip1 As Global.Telerik.Web.UI.RadTabStrip
     
     '''<summary>
-    '''liCopyModule control.
+    '''RadMultiPage1 control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents liCopyModule As Global.System.Web.UI.HtmlControls.HtmlGenericControl
-    
-    '''<summary>
-    '''lnkCopyModule control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lnkCopyModule As Global.System.Web.UI.WebControls.LinkButton
-    
-    '''<summary>
-    '''pnlBadges control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents pnlBadges As Global.System.Web.UI.WebControls.PlaceHolder
-    
-    '''<summary>
-    '''lblHeader control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lblHeader As Global.System.Web.UI.WebControls.Label
-    
-    '''<summary>
-    '''MainAjaxPanel control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents MainAjaxPanel As Global.Telerik.Web.UI.RadAjaxPanel
-    
-    '''<summary>
-    '''lblAppUrl control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lblAppUrl As Global.System.Web.UI.WebControls.Literal
-    
-    '''<summary>
-    '''hfSearchDone control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents hfSearchDone As Global.System.Web.UI.WebControls.HiddenField
-    
-    '''<summary>
-    '''tabSearch control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents tabSearch As Global.Telerik.Web.UI.RadTabStrip
-    
-    '''<summary>
-    '''tabModules control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents tabModules As Global.Telerik.Web.UI.RadTabStrip
-    
-    '''<summary>
-    '''RadMultiPage2 control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents RadMultiPage2 As Global.Telerik.Web.UI.RadMultiPage
+    Protected WithEvents RadMultiPage1 As Global.Telerik.Web.UI.RadMultiPage
     
     '''<summary>
     '''RadPageView1 control.
@@ -212,49 +131,49 @@ Partial Public Class _Default4
     Protected WithEvents RadPageView1 As Global.Telerik.Web.UI.RadPageView
     
     '''<summary>
-    '''pnlCustomerSearch control.
+    '''pnlCustomerDetails control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlCustomerSearch As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents pnlCustomerDetails As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
-    '''txtSearch control.
+    '''lblAcctNum control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtSearch As Global.Telerik.Web.UI.RadTextBox
+    Protected WithEvents lblAcctNum As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''btnSearch control.
+    '''txtAcctNumber control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents btnSearch As Global.Telerik.Web.UI.RadButton
+    Protected WithEvents txtAcctNumber As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
     
     '''<summary>
-    '''RadSearchGrid control.
+    '''txtCustomerName control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents RadSearchGrid As Global.Telerik.Web.UI.RadGrid
+    Protected WithEvents txtCustomerName As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
     
     '''<summary>
-    '''SqlDataSource1 control.
+    '''txtCustomerServiceAddress control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents SqlDataSource1 As Global.System.Web.UI.WebControls.SqlDataSource
+    Protected WithEvents txtCustomerServiceAddress As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
     
     '''<summary>
     '''RadPageView2 control.
@@ -266,13 +185,67 @@ Partial Public Class _Default4
     Protected WithEvents RadPageView2 As Global.Telerik.Web.UI.RadPageView
     
     '''<summary>
-    '''tblModules control.
+    '''RadMap1 control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents tblModules As Global.System.Web.UI.WebControls.Table
+    Protected WithEvents RadMap1 As Global.Telerik.Web.UI.RadMap
+    
+    '''<summary>
+    '''pnlHidden control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlHidden As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
+    '''txtID control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtID As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
+    
+    '''<summary>
+    '''txtUserEmail control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtUserEmail As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
+    
+    '''<summary>
+    '''txtViewed control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtViewed As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
+    
+    '''<summary>
+    '''txtCustomerServiceAddressLat control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtCustomerServiceAddressLat As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
+    
+    '''<summary>
+    '''txtCustomerServiceAddressLon control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtCustomerServiceAddressLon As Global.UtilityWizards.CommonCore.[Shared].Controls.TextBoxes.TextBox
     
     '''<summary>
     '''Master property.
@@ -280,9 +253,9 @@ Partial Public Class _Default4
     '''<remarks>
     '''Auto-generated property.
     '''</remarks>
-    Public Shadows ReadOnly Property Master() As UtilityWizards.Builder.Dashboard
+    Public Shadows ReadOnly Property Master() As UtilityWizards.Builder.TabPage
         Get
-            Return CType(MyBase.Master,UtilityWizards.Builder.Dashboard)
+            Return CType(MyBase.Master,UtilityWizards.Builder.TabPage)
         End Get
     End Property
 End Class

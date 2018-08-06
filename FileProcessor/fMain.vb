@@ -1,7 +1,9 @@
 ﻿Imports UtilityWizards.CommonCore.Shared.Common
 Imports System.IO
+Imports System.Collections.ObjectModel
 
 Public Class fMain
+
     Private Sub fMain_Load(sender As Object, e As EventArgs) Handles Me.Load
         Me.lblProgress.Text = ""
         Me.lblStatus.Text = ""
@@ -11,9 +13,19 @@ Public Class fMain
     Private Sub btnProcess_Click(sender As Object, e As EventArgs) Handles btnProcess.Click
         Me.tmrTimer.Enabled = False
 
-        Me.ProcessSouthernImport()
+        Me.ProcessS3Files()
 
         Me.tmrTimer.Enabled = True
+    End Sub
+
+    Private Sub ProcessS3Files()
+        Dim aws As New AWSHelper
+
+        Dim lst As ObservableCollection(Of String) = aws.ListingFiles("wpg-file-upload")
+
+        If lst.Count > 0 Then
+
+        End If
     End Sub
 
     Private Sub ProcessSouthernImport()

@@ -9,6 +9,7 @@ Public Class _Default4
         AddHandler Master.FolderClicked, AddressOf Layout_FolderClicked
 
         If App.CurrentClient.ID > 0 Then Me.LoadModules()
+        'And Me.hfSearchDone.Value.ToBoolean = True
 
         If Not IsPostBack Then
             ' handles the work order id passed from text messages
@@ -43,8 +44,14 @@ Public Class _Default4
                     cn.Close()
                 End Try
             Else
-                Me.lblAppUrl.Text = "No Work Order Id Provided<br/>"
+                'Me.lblAppUrl.Text = "No Work Order Id Provided<br/>"
+                Me.lblAppUrl.Text = ""
             End If
+
+            Me.RadSearchGrid.Visible = False
+            Me.hfSearchDone.Value = False.ToString
+
+            Me.txtSearch.Focus()
         End If
 
         Me.ShowOptions()
@@ -53,32 +60,34 @@ Public Class _Default4
     Private Sub ShowOptions()
         If Me.OnPhone Then
             Me.pnlRootOptions.Visible = False
-            Me.pnlFolderOptions.Visible = False
             Me.pnlBadges.Visible = False
-            Me.pnlActivity.Visible = False
+            'Me.pnlActivity.Visible = False
+            Me.pnlRecordOptions.Visible = (App.CurrentAccountNumber <> "")
+            Me.pnlModuleOptions.Visible = False
 
         ElseIf Me.OnTablet Then
             Me.pnlRootOptions.Visible = False
-            Me.pnlFolderOptions.Visible = False
 
             Me.pnlBadges.Visible = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Administrator Or
                                       App.CurrentUser.Permissions = Enums.SystemUserPermissions.Solvtopia Or
                                       App.CurrentUser.Permissions = Enums.SystemUserPermissions.SystemAdministrator)
-            Me.pnlActivity.Visible = Me.pnlBadges.Visible
+            'Me.pnlActivity.Visible = Me.pnlBadges.Visible
+            Me.pnlRecordOptions.Visible = (App.CurrentAccountNumber <> "")
+            Me.pnlModuleOptions.Visible = (App.ActiveModule.ID > 0)
 
         Else ' desktop
             Me.pnlRootOptions.Visible = (App.ActiveFolderID = 0 And App.CurrentUser.IsSysAdmin)
-            Me.pnlFolderOptions.Visible = (App.ActiveFolderID > 0 And App.CurrentUser.IsSysAdmin)
 
             If App.CurrentUser.Permissions = Enums.SystemUserPermissions.User Then
                 Me.pnlRootOptions.Visible = False
-                Me.pnlFolderOptions.Visible = False
             End If
 
             Me.pnlBadges.Visible = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Administrator Or
                                       App.CurrentUser.Permissions = Enums.SystemUserPermissions.Solvtopia Or
                                       App.CurrentUser.Permissions = Enums.SystemUserPermissions.SystemAdministrator)
-            Me.pnlActivity.Visible = Me.pnlBadges.Visible
+            'Me.pnlActivity.Visible = Me.pnlBadges.Visible
+            Me.pnlRecordOptions.Visible = (App.CurrentAccountNumber <> "")
+            Me.pnlModuleOptions.Visible = (App.ActiveModule.ID > 0)
         End If
 
         Me.Master.MenuAjaxPanel.RaisePostBackEvent("")
@@ -86,26 +95,26 @@ Public Class _Default4
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
 
         Try
-            Me.lblOpenWorkOrders.Text = "0"
-            Me.lblCompletedWorkOrders.Text = "0"
+            'Me.lblOpenWorkOrders.Text = "0"
+            'Me.lblCompletedWorkOrders.Text = "0"
 
-            Dim cmd As New SqlClient.SqlCommand("SELECT COUNT([ID]) AS [WOCount] FROM [vwModuleData] WHERE [xStatus] <> " & Enums.SystemModuleStatus.Completed & " AND [xClientId] = " & App.CurrentClient.ID & " AND [Active] = 1;", cn)
-            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-            Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
-            If rs.Read Then
-                Me.lblOpenWorkOrders.Text = FormatNumber(rs("WOCount").ToString, 0)
-            End If
-            cmd.Cancel()
-            rs.Close()
+            'Dim cmd As New SqlClient.SqlCommand("SELECT COUNT([ID]) AS [WOCount] FROM [vwModuleData] WHERE [xStatus] <> " & Enums.SystemModuleStatus.Completed & " AND [xClientId] = " & App.CurrentClient.ID & " AND [Active] = 1;", cn)
+            'If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+            'Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+            'If rs.Read Then
+            '    Me.lblOpenWorkOrders.Text = FormatNumber(rs("WOCount").ToString, 0)
+            'End If
+            'cmd.Cancel()
+            'rs.Close()
 
-            cmd = New SqlClient.SqlCommand("SELECT COUNT([ID]) AS [WOCount] FROM [vwModuleData] WHERE [xStatus] = " & Enums.SystemModuleStatus.Completed & " AND [xClientId] = " & App.CurrentClient.ID & " AND [Active] = 1;", cn)
-            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-            rs = cmd.ExecuteReader
-            If rs.Read Then
-                Me.lblCompletedWorkOrders.Text = FormatNumber(rs("WOCount").ToString, 0)
-            End If
-            cmd.Cancel()
-            rs.Close()
+            'cmd = New SqlClient.SqlCommand("SELECT COUNT([ID]) AS [WOCount] FROM [vwModuleData] WHERE [xStatus] = " & Enums.SystemModuleStatus.Completed & " AND [xClientId] = " & App.CurrentClient.ID & " AND [Active] = 1;", cn)
+            'If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+            'rs = cmd.ExecuteReader
+            'If rs.Read Then
+            '    Me.lblCompletedWorkOrders.Text = FormatNumber(rs("WOCount").ToString, 0)
+            'End If
+            'cmd.Cancel()
+            'rs.Close()
 
         Catch ex As Exception
             ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
@@ -116,6 +125,8 @@ Public Class _Default4
 
     Private Sub LoadModules()
         Me.tblModules.Rows.Clear()
+
+        Me.tabModules.Tabs.Clear()
 
         Dim tr As New TableRow
 
@@ -160,7 +171,7 @@ Public Class _Default4
                     ibtn.Image.IsBackgroundImage = True
                     ibtn.Height = New Unit(iconSize, UnitType.Pixel)
                     ibtn.Width = New Unit(iconSize, UnitType.Pixel)
-                    AddHandler ibtn.Click, AddressOf ibtnModule_Click
+                    'AddHandler ibtn.Click, AddressOf ibtnModule_Click
                     Dim lit As New Literal
                     lit.ID = "litModule_0"
                     lit.Text = "<br/>"
@@ -188,7 +199,7 @@ Public Class _Default4
                             ibtn.Image.IsBackgroundImage = True
                             ibtn.Height = New Unit(iconSize, UnitType.Pixel)
                             ibtn.Width = New Unit(iconSize, UnitType.Pixel)
-                            AddHandler ibtn.Click, AddressOf ibtnModule_Click
+                            'AddHandler ibtn.Click, AddressOf ibtnModule_Click
                             Dim lit As New Literal
                             lit.ID = "litModule_" & m.ID
                             lit.Text = "<br/>"
@@ -199,6 +210,11 @@ Public Class _Default4
                             tc.Controls.Add(lit)
                             tc.Controls.Add(lbl)
                             tr.Cells.Add(tc)
+
+                            Dim roFlag As String = If(m.ImportModule, " (Read-Only)", "")
+                            Dim tab As New RadTab(m.Name & roFlag, m.ID.ToString)
+                            tab.Enabled = (Me.hfSearchDone.Value.ToBoolean = True)
+                            Me.tabModules.Tabs.Add(tab)
                         End If
                     End If
                 Next
@@ -227,7 +243,7 @@ Public Class _Default4
                     ibtn.Image.IsBackgroundImage = True
                     ibtn.Height = New Unit(iconSize, UnitType.Pixel)
                     ibtn.Width = New Unit(iconSize, UnitType.Pixel)
-                    AddHandler ibtn.Click, AddressOf ibtnModule_Click
+                    'AddHandler ibtn.Click, AddressOf ibtnModule_Click
                     Dim lit As New Literal
                     lit.ID = "litModule_" & m.ID
                     lit.Text = "<br/>"
@@ -238,6 +254,11 @@ Public Class _Default4
                     tc.Controls.Add(lit)
                     tc.Controls.Add(lbl)
                     tr.Cells.Add(tc)
+
+                    Dim roFlag As String = If(m.ImportModule, " (Read-Only)", "")
+                    Dim tab As New RadTab(m.Name & roFlag, m.ID.ToString)
+                    tab.Enabled = (Me.hfSearchDone.Value.ToBoolean = True)
+                    Me.tabModules.Tabs.Add(tab)
                 End If
             Next
 
@@ -250,9 +271,35 @@ Public Class _Default4
         End If
     End Sub
 
-    Protected Sub ibtnModule_Click(sender As Object, e As EventArgs)
-        Dim ibtn As Telerik.Web.UI.RadButton = CType(sender, Telerik.Web.UI.RadButton)
-        Dim modId As Integer = ibtn.ID.Split("_"c)(1).ToInteger
+    Private Sub tabs_TabClick(sender As Object, e As RadTabStripEventArgs) Handles tabModules.TabClick, tabSearch.TabClick
+        If e.Tab.Value.ToLower = "search" Then
+            Me.txtSearch.Text = ""
+            Me.RadSearchGrid.Visible = False
+            Me.txtSearch.Focus()
+            App.ActiveModule = New SystemModule
+            App.CurrentAccountNumber = ""
+            Me.tabModules.SelectedIndex = -1
+            Me.RadMultiPage2.SelectedIndex = 0
+        ElseIf IsNumeric(e.Tab.Value) Then
+            Session("ImportDataTable" & e.Tab.Value) = Nothing
+            Me.LoadModule(e.Tab.Value.ToInteger)
+        End If
+
+        Me.ShowOptions()
+    End Sub
+
+    Private Sub LoadModule(ByVal modId As Integer)
+        ' find the tab and select it
+        For x As Integer = 0 To Me.tabModules.Tabs.Count - 1
+            If Me.tabModules.Tabs(x).Value.ToInteger = modId Then
+                Me.tabModules.SelectedIndex = x
+                Me.RadMultiPage2.SelectedIndex = 1
+                Exit For
+            End If
+        Next
+
+        ' deselect the search tab
+        Me.tabSearch.SelectedIndex = -1
 
         If modId = 0 Then
             App.ActiveFolderID = 0
@@ -263,34 +310,81 @@ Public Class _Default4
                 Me.LoadModules()
             Else
                 App.ActiveModule = New SystemModule(modId)
-                ShowModule(modId, App.ActiveModule.Name)
+                Me.RadPageView2.ContentUrl = "~/account/ModuleTab.aspx?modid=" & modId & "&custacctnum=" & App.CurrentAccountNumber
             End If
         End If
 
         Me.ShowOptions()
     End Sub
 
-    Private Sub lnkNewModule_Click(sender As Object, e As EventArgs) Handles lnkNewModule.Click, lnkNewFolderModule.Click
+    Protected Sub btnSearch_Click(sender As Object, e As EventArgs) Handles btnSearch.Click
+        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+
+        Try
+            Me.RadSearchGrid.Visible = True
+            Me.RadSearchGrid.DataBind()
+            Me.hfSearchDone.Value = True.ToString
+
+        Catch ex As Exception
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+        Finally
+            'cn.Close()
+        End Try
+    End Sub
+
+    Private Sub RadSearchGrid_ColumnCreated(sender As Object, e As GridColumnCreatedEventArgs) Handles RadSearchGrid.ColumnCreated
+        If e.Column.ColumnType.ToString = "GridEditCommandColumn" Then
+            Dim Col As Telerik.Web.UI.GridEditCommandColumn = CType(Me.RadSearchGrid.Columns(e.Column.EditFormColumnIndex), GridEditCommandColumn)
+            Col.EditText = "Select"
+            Col = Nothing
+        End If
+    End Sub
+
+    Private Sub RadSearchGrid_EditCommand(sender As Object, e As GridCommandEventArgs) Handles RadSearchGrid.EditCommand
+        e.Canceled = True
+        e.Item.Edit = False
+
+        App.CurrentAccountNumber = e.Item.Cells(3).Text
+        Me.LoadModules()
+
+        ' load the first module
+        Me.LoadModule(Me.tabModules.Tabs(0).Value.ToInteger)
+
+        'Dim modId As Integer = Me.ModId
+        'If modId = 0 Then modId = e.Item.Cells(8).Text.ToInteger
+        'App.ActiveModule = New SystemModule(modId)
+        'App.ActiveFolderID = App.ActiveModule.FolderID
+
+        'Response.Redirect("~/account/Module.aspx?modid=" & Me.ModId & "&id=" & e.Item.Cells(3).Text & "&custacctnum=" & e.Item.Cells(4).Text, False)
+    End Sub
+
+    Private Sub lnkNewModule_Click(sender As Object, e As EventArgs) Handles lnkNewModule.Click
         Layout_NewModuleClicked(App.ActiveFolderID)
     End Sub
 
-    Private Sub lnkNewFolder_Click(sender As Object, e As EventArgs) Handles lnkNewFolder.Click
-        Layout_FolderClicked(0)
+    Private Sub lnkSearch_Click(sender As Object, e As EventArgs) Handles lnkSearch.Click
+        Me.tabModules.SelectedIndex = 0
+        Me.RadMultiPage2.SelectedIndex = 0
+
+        Me.txtSearch.Text = ""
+        Me.RadSearchGrid.Visible = False
+        Me.txtSearch.Focus()
+        App.ActiveModule = New SystemModule
+        App.CurrentAccountNumber = ""
+
+        Me.ShowOptions()
     End Sub
 
-    Private Sub lnkEditFolder_Click(sender As Object, e As EventArgs) Handles lnkEditFolder.Click
-        Layout_FolderClicked(App.ActiveFolderID)
+    Private Sub lnkCopyModule_Click(sender As Object, e As EventArgs) Handles lnkCopyModule.Click
+
     End Sub
 
-    Private Sub lnkDeleteFolder_Click(sender As Object, e As EventArgs) Handles lnkDeleteFolder.Click
-        ShowInformationPopup(Enums.InformationPopupType.DeleteFolder, Enums.InformationPopupButtons.YesNo, App.ActiveFolderID)
+    Private Sub lnkDeleteModule_Click(sender As Object, e As EventArgs) Handles lnkDeleteModule.Click
+        ShowInformationPopup(Enums.InformationPopupType.DeleteModule, Enums.InformationPopupButtons.YesNo, App.ActiveModule.ID)
     End Sub
 
-    Private Sub lnkOpenWorkOrders_Click(sender As Object, e As EventArgs) Handles lnkOpenWorkOrders.Click
-        Response.Redirect("~/account/Search.aspx?modid=0", False)
+    Private Sub lnkEditModule_Click(sender As Object, e As EventArgs) Handles lnkEditModule.Click
+        Response.Redirect("~/account/ModuleWizard.aspx?id=" & App.ActiveModule.ID & "&fid=" & App.ActiveFolderID & "&t=" & CStr(Enums.SystemModuleType.Module), False)
     End Sub
 
-    Private Sub lnkCompletedWorkOrders_Click(sender As Object, e As EventArgs) Handles lnkCompletedWorkOrders.Click
-        Response.Redirect("~/account/Search.aspx?modid=0&showcompleted=1")
-    End Sub
 End Class

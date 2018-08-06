@@ -108,4 +108,15 @@ Public Class App
             HttpContext.Current.Session("Mobile_TechnicianID") = value
         End Set
     End Property
+
+    Public Shared Property CurrentAccountNumber As String
+        Get
+            Dim retVal As String = ""
+            If HttpContext.Current.Session IsNot Nothing AndAlso HttpContext.Current.Session("CurrentAccountNumber") IsNot Nothing Then retVal = HttpContext.Current.Session("CurrentAccountNumber").ToString
+            Return retVal
+        End Get
+        Set(value As String)
+            HttpContext.Current.Session("CurrentAccountNumber") = value
+        End Set
+    End Property
 End Class
