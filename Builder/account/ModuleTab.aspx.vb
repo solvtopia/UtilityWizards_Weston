@@ -232,63 +232,28 @@ Public Class ModuleTab
         Else
             Me.tblFolderQuestions.Visible = False
         End If
-        Me.LoadQuestions(App.ActiveModuleQuestions, tblModuleQuestions, "")
-
-        ' build the list of names for the 811 tickets
-        'Me.tbl811SignOff.Rows.Clear()
-        'If Me.Is811Module Then
-        '    Dim cn As New SqlClient.SqlConnection(ConnectionString)
-
-        '    Try
-        '        Dim hr As New TableRow
-        '        Dim htc As New TableCell
-        '        htc.Text = "Ticket Sign-off"
-        '        hr.Cells.Add(htc)
-        '        Me.tbl811SignOff.Rows.Add(hr)
-
-        '        Dim notifyIDs As New List(Of Integer)
-        '        Dim cmd As New SqlClient.SqlCommand("SELECT [NotifyIDs] FROM [811Settings] WHERE [ClientID] = " & App.CurrentClient.ID & ";", cn)
-        '        If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-        '        Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
-        '        If rs.Read Then
-        '            Dim tmp As List(Of String) = rs("NotifyIDs").ToString.Split("|"c).ToList
-        '            For Each s As String In tmp
-        '                If IsNumeric(s) Then notifyIDs.Add(s.ToInteger)
-        '            Next
-        '        End If
-        '        cmd.Cancel()
-        '        rs.Close()
-
-        '        For Each i As Integer In notifyIDs
-        '            Dim usr As New SystemUser(i)
-        '            Dim tr1 As New TableRow
-        '            Dim tc1 As New TableCell
-        '            tc1.Text = usr.Name
-        '            tr1.Cells.Add(tc1)
-        '            Me.tbl811SignOff.Rows.Add(tr1)
-        '            Dim tr2 As New TableRow
-        '            Dim tc2 As New TableCell
-        '            Dim ddl As New Controls.DropDownLists.DropDownList
-        '            ddl.ID = "ddl811SignOff_" & usr.ID
-        '            ddl.Items.Add(New RadComboBoxItem("- select one -", "- select one -"))
-        '            ddl.Items.Add(New RadComboBoxItem("Clear And No Conflict", "Clear And No Conflict"))
-        '            ddl.Items.Add(New RadComboBoxItem("Marked", "Marked"))
-        '            ddl.Width = New Unit(100, UnitType.Percentage)
-        '            ddl.XmlPath = ""
-        '            tc2.Controls.Add(ddl)
-        '            tr2.Cells.Add(tc2)
-        '            Me.tbl811SignOff.Rows.Add(tr2)
-        '        Next
-
-        '    Catch ex As Exception
-        '        ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
-        '    Finally
-        '        cn.Close()
-        '    End Try
-        'End If
+        Me.LoadQuestions(App.ActiveModuleQuestions, "")
+    End Sub
+    Private Sub LoadQuestions(ByVal qList As List(Of SystemQuestion), ByVal xmlPath As String)
+        LoadQuestions(qList, Nothing, xmlPath)
     End Sub
     Private Sub LoadQuestions(ByVal qList As List(Of SystemQuestion), ByVal tbl As Table, ByVal xmlPath As String)
-        tbl.Rows.Clear()
+        ' sort the list by the sort order and id
+        qList = qList.OrderBy(Function(q) q.Sort).ThenBy(Function(q) q.ID).ToList
+
+        If tbl IsNot Nothing Then
+            ' table specified so just use that
+            tbl.Rows.Clear()
+        End If
+
+        ' module question go to their selected locations
+        Me.tblModuleQuestions_TopLeft.Rows.Clear()
+        Me.tblModuleQuestions_TopMiddle.Rows.Clear()
+        Me.tblModuleQuestions_TopRight.Rows.Clear()
+        Me.tblModuleQuestions_FullPage.Rows.Clear()
+        Me.tblModuleQuestions_BottomLeft.Rows.Clear()
+        Me.tblModuleQuestions_BottomMiddle.Rows.Clear()
+        Me.tblModuleQuestions_BottomRight.Rows.Clear()
 
         If qList.Count = 0 Then
             Dim tr As New TableRow
@@ -296,15 +261,34 @@ Public Class ModuleTab
             tc1.Text = "There are no questions To show In this view."
             tc1.VerticalAlign = VerticalAlign.Top
             tr.Cells.Add(tc1)
+            If tbl Is Nothing Then tbl = Me.tblModuleQuestions_FullPage
             tbl.Rows.Add(tr)
         Else
             For Each q In qList
+                ' load any extra info we have in the lookup table
+                Common.GetExtraInfo(App.ActiveModule.ImportTable, q)
+
                 Dim tr1 As New TableRow
                 Dim tc1 As New TableCell
-                tc1.Text = q.Question.XmlDecode
+                If q.Visible Then
+                    If q.Description <> "" Then
+                        Dim lnk As New HyperLink
+                        lnk.ID = "lnk" & q.ID
+                        lnk.ToolTip = q.Description
+                        lnk.Text = q.Question.XmlDecode
+                        tc1.Controls.Add(lnk)
+                    Else
+                        tc1.Text = q.Question.XmlDecode
+                    End If
+
+                    Select Case q.Location
+                        Case Enums.SystemQuestionLocation.TopLeft, Enums.SystemQuestionLocation.FullPage, Enums.SystemQuestionLocation.BottomLeft
+                        Case Else
+                            tc1.Style.Add("padding-left", "10px")
+                    End Select
+                End If
                 tc1.VerticalAlign = VerticalAlign.Top
                 tr1.Cells.Add(tc1)
-                tbl.Rows.Add(tr1)
 
                 Dim tr2 As New TableRow
                 Dim tc2 As New TableCell
@@ -317,6 +301,12 @@ Public Class ModuleTab
                         chk.DataFieldName = q.DataFieldName
                         chk.AutoPostBack = (q.Rule <> "")
                         chk.ReadOnly = Me.IsImportModule
+                        chk.Visible = q.Visible
+                        Select Case q.Location
+                            Case Enums.SystemQuestionLocation.TopLeft, Enums.SystemQuestionLocation.FullPage, Enums.SystemQuestionLocation.BottomLeft
+                            Case Else
+                                If q.Visible Then tc2.Style.Add("padding-left", "10px")
+                        End Select
                         If q.Rule <> "" Then AddHandler chk.CheckedChanged, AddressOf CheckBox_CheckedChanged
                         tc2.Controls.Add(chk)
 
@@ -337,6 +327,12 @@ Public Class ModuleTab
                         ddl.EnableLoadOnDemand = ddl.AllowCustomText
                         ddl.ShowDropDownOnTextboxClick = ddl.AllowCustomText
                         ddl.EnableAutomaticLoadOnDemand = ddl.AllowCustomText
+                        ddl.Visible = q.Visible
+                        Select Case q.Location
+                            Case Enums.SystemQuestionLocation.TopLeft, Enums.SystemQuestionLocation.FullPage, Enums.SystemQuestionLocation.BottomLeft
+                            Case Else
+                                If q.Visible Then tc2.Style.Add("padding-left", "10px")
+                        End Select
                         If q.Rule <> "" Then AddHandler ddl.SelectedIndexChanged, AddressOf DropDownList_SelectedIndexChanged
                         tc2.Controls.Add(ddl)
 
@@ -351,6 +347,12 @@ Public Class ModuleTab
                         txt.DataFieldName = q.DataFieldName
                         txt.AutoPostBack = (q.Rule <> "")
                         txt.ReadOnly = Me.IsImportModule
+                        txt.Visible = q.Visible
+                        Select Case q.Location
+                            Case Enums.SystemQuestionLocation.TopLeft, Enums.SystemQuestionLocation.FullPage, Enums.SystemQuestionLocation.BottomLeft
+                            Case Else
+                                If q.Visible Then tc2.Style.Add("padding-left", "10px")
+                        End Select
                         If q.Rule <> "" Then AddHandler txt.TextChanged, AddressOf TextBox_TextChanged
                         tc2.Controls.Add(txt)
 
@@ -364,6 +366,12 @@ Public Class ModuleTab
                         txt.DataFieldName = q.DataFieldName
                         txt.AutoPostBack = (q.Rule <> "")
                         txt.ReadOnly = Me.IsImportModule
+                        txt.Visible = q.Visible
+                        Select Case q.Location
+                            Case Enums.SystemQuestionLocation.TopLeft, Enums.SystemQuestionLocation.FullPage, Enums.SystemQuestionLocation.BottomLeft
+                            Case Else
+                                If q.Visible Then tc2.Style.Add("padding-left", "10px")
+                        End Select
                         If q.Rule <> "" Then AddHandler txt.TextChanged, AddressOf TextBox_TextChanged
                         tc2.Controls.Add(txt)
 
@@ -377,15 +385,58 @@ Public Class ModuleTab
                         txt.NumberFormat.DecimalDigits = 0
                         txt.AutoPostBack = (q.Rule <> "")
                         txt.ReadOnly = Me.IsImportModule
+                        txt.Visible = q.Visible
+                        Select Case q.Location
+                            Case Enums.SystemQuestionLocation.TopLeft, Enums.SystemQuestionLocation.FullPage, Enums.SystemQuestionLocation.BottomLeft
+                            Case Else
+                                If q.Visible Then tc2.Style.Add("padding-left", "10px")
+                        End Select
                         If q.Rule <> "" Then AddHandler txt.TextChanged, AddressOf TextBox_TextChanged
                         tc2.Controls.Add(txt)
                 End Select
                 tc2.VerticalAlign = VerticalAlign.Top
                 tr2.Cells.Add(tc2)
 
-                tbl.Rows.Add(tr2)
+                If tbl Is Nothing Then
+                    ' select the correct location for this question
+                    Select Case q.Location
+                        Case Enums.SystemQuestionLocation.TopLeft
+                            Me.tblModuleQuestions_TopLeft.Rows.Add(tr1)
+                            Me.tblModuleQuestions_TopLeft.Rows.Add(tr2)
+                        Case Enums.SystemQuestionLocation.TopMiddle
+                            Me.tblModuleQuestions_TopMiddle.Rows.Add(tr1)
+                            Me.tblModuleQuestions_TopMiddle.Rows.Add(tr2)
+                        Case Enums.SystemQuestionLocation.TopRight
+                            Me.tblModuleQuestions_TopRight.Rows.Add(tr1)
+                            Me.tblModuleQuestions_TopRight.Rows.Add(tr2)
+                        Case Enums.SystemQuestionLocation.FullPage
+                            Me.tblModuleQuestions_FullPage.Rows.Add(tr1)
+                            Me.tblModuleQuestions_FullPage.Rows.Add(tr2)
+                        Case Enums.SystemQuestionLocation.BottomLeft
+                            Me.tblModuleQuestions_BottomLeft.Rows.Add(tr1)
+                            Me.tblModuleQuestions_BottomLeft.Rows.Add(tr2)
+                        Case Enums.SystemQuestionLocation.BottomMiddle
+                            Me.tblModuleQuestions_BottomMiddle.Rows.Add(tr1)
+                            Me.tblModuleQuestions_BottomMiddle.Rows.Add(tr2)
+                        Case Enums.SystemQuestionLocation.BottomRight
+                            Me.tblModuleQuestions_BottomRight.Rows.Add(tr1)
+                            Me.tblModuleQuestions_BottomRight.Rows.Add(tr2)
+                    End Select
+                Else
+                    tbl.Rows.Add(tr1)
+                    tbl.Rows.Add(tr2)
+                End If
             Next
         End If
+
+        ' hide the location tables if they're empty
+        Me.tblModuleQuestions_TopLeft.Visible = (Me.tblModuleQuestions_TopLeft.Rows.Count > 0)
+        Me.tblModuleQuestions_TopMiddle.Visible = (Me.tblModuleQuestions_TopMiddle.Rows.Count > 0)
+        Me.tblModuleQuestions_TopRight.Visible = (Me.tblModuleQuestions_TopRight.Rows.Count > 0)
+        Me.tblModuleQuestions_FullPage.Visible = (Me.tblModuleQuestions_FullPage.Rows.Count > 0)
+        Me.tblModuleQuestions_BottomLeft.Visible = (Me.tblModuleQuestions_BottomLeft.Rows.Count > 0)
+        Me.tblModuleQuestions_BottomMiddle.Visible = (Me.tblModuleQuestions_BottomMiddle.Rows.Count > 0)
+        Me.tblModuleQuestions_BottomRight.Visible = (Me.tblModuleQuestions_BottomRight.Rows.Count > 0)
 
         If Me.OnMobile Then
             Me.SetSkin(tbl, System.Configuration.ConfigurationManager.AppSettings("Telerik_Skin_Mobile"))

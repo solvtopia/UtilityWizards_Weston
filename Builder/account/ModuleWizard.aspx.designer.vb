@@ -266,6 +266,33 @@ Partial Public Class ModuleWizard
     Protected WithEvents chkMobile As Global.System.Web.UI.WebControls.CheckBox
     
     '''<summary>
+    '''chkDisplay control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents chkDisplay As Global.System.Web.UI.WebControls.CheckBox
+    
+    '''<summary>
+    '''ddlDisplay control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddlDisplay As Global.Telerik.Web.UI.RadComboBox
+    
+    '''<summary>
+    '''txtSort control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtSort As Global.Telerik.Web.UI.RadTextBox
+    
+    '''<summary>
     '''pnlDropDownValues control.
     '''</summary>
     '''<remarks>
@@ -338,13 +365,67 @@ Partial Public Class ModuleWizard
     Protected WithEvents imgHelp_Preview As Global.System.Web.UI.WebControls.Image
     
     '''<summary>
-    '''tblQuestions control.
+    '''tblModuleQuestions_TopLeft control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents tblQuestions As Global.System.Web.UI.WebControls.Table
+    Protected WithEvents tblModuleQuestions_TopLeft As Global.System.Web.UI.WebControls.Table
+    
+    '''<summary>
+    '''tblModuleQuestions_TopMiddle control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents tblModuleQuestions_TopMiddle As Global.System.Web.UI.WebControls.Table
+    
+    '''<summary>
+    '''tblModuleQuestions_TopRight control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents tblModuleQuestions_TopRight As Global.System.Web.UI.WebControls.Table
+    
+    '''<summary>
+    '''tblModuleQuestions_FullPage control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents tblModuleQuestions_FullPage As Global.System.Web.UI.WebControls.Table
+    
+    '''<summary>
+    '''tblModuleQuestions_BottomLeft control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents tblModuleQuestions_BottomLeft As Global.System.Web.UI.WebControls.Table
+    
+    '''<summary>
+    '''tblModuleQuestions_BottomMiddle control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents tblModuleQuestions_BottomMiddle As Global.System.Web.UI.WebControls.Table
+    
+    '''<summary>
+    '''tblModuleQuestions_BottomRight control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents tblModuleQuestions_BottomRight As Global.System.Web.UI.WebControls.Table
     
     '''<summary>
     '''pnlStep3 control.

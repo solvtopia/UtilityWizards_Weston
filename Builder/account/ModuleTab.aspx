@@ -15,13 +15,15 @@
     </style>
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="pageContent_Ajax" runat="server">
-    <asp:literal runat="server" ID="litNoData" />
+    <asp:Literal runat="server" ID="litNoData" />
     <asp:Panel runat="server" ID="pnlDataNav">
         <table cellpadding="1" cellspacing="2">
             <tr>
                 <td>Record:&nbsp;&nbsp;</td>
-                <td><asp:LinkButton ID="lnkFirstRecord" runat="server">First</asp:LinkButton>&nbsp;</td>
-                <td><asp:LinkButton ID="lnkPreviousRecord" runat="server">Previous</asp:LinkButton>&nbsp;&nbsp;</td>
+                <td>
+                    <asp:LinkButton ID="lnkFirstRecord" runat="server">First</asp:LinkButton>&nbsp;</td>
+                <td>
+                    <asp:LinkButton ID="lnkPreviousRecord" runat="server">Previous</asp:LinkButton>&nbsp;&nbsp;</td>
                 <td>
                     <asp:TextBox ID="txtRecordNum" runat="server" Width="30px" ReadOnly="true">1</asp:TextBox>
                 </td>
@@ -66,7 +68,35 @@
                 <!-- /.box-header -->
                 <div class="box-body">
                     <asp:Table ID="tblFolderQuestions" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
-                    <asp:Table ID="tblModuleQuestions" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                    <table class="nav-justified">
+                        <tr>
+                            <td style="background-color: #E4E4E4; vertical-align: top;">
+                                <asp:Table ID="tblModuleQuestions_TopLeft" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                            </td>
+                            <td style="background-color: #C0C0C0; vertical-align: top;">
+                                <asp:Table ID="tblModuleQuestions_TopMiddle" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                            </td>
+                            <td style="background-color: #808080; vertical-align: top;">
+                                <asp:Table ID="tblModuleQuestions_TopRight" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="background-color: #FFFFFF; vertical-align: top;">
+                                <asp:Table ID="tblModuleQuestions_FullPage" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: #E4E4E4; vertical-align: top;">
+                                <asp:Table ID="tblModuleQuestions_BottomLeft" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                            </td>
+                            <td style="background-color: #C0C0C0; vertical-align: top;">
+                                <asp:Table ID="tblModuleQuestions_BottomMiddle" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                            </td>
+                            <td style="background-color: #808080; vertical-align: top;">
+                                <asp:Table ID="tblModuleQuestions_BottomRight" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                            </td>
+                        </tr>
+                    </table>
                 </div>
                 <!-- /.box-body -->
             </div>

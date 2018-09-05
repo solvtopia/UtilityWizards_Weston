@@ -72,8 +72,7 @@
         <asp:Panel runat="server" ID="pnlModuleStep1Questions">
             <table class="wrap-table-wizard">
                 <tr>
-                    <td style="width: 25px;">
-                        &nbsp;</td>
+                    <td style="width: 25px;">&nbsp;</td>
                     <td>This module is based on an import table?</td>
                 </tr>
                 <tr>
@@ -215,6 +214,46 @@
                     <asp:CheckBox ID="chkMobile" runat="server" />
                 </td>
             </tr>
+            <tr>
+                <td style="width: 25px;">&nbsp;</td>
+                <td>Visible</td>
+            </tr>
+            <tr>
+                <td style="width: 25px;"></td>
+                <td>
+                    <asp:CheckBox ID="chkDisplay" runat="server" />
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 25px;">&nbsp;</td>
+                <td>Display Location</td>
+            </tr>
+            <tr>
+                <td style="width: 25px;"></td>
+                <td>
+                    <telerik:RadComboBox ID="ddlDisplay" runat="server" Width="100%" Skin="Metro">
+                        <Items>
+                            <telerik:RadComboBoxItem Text="Top-Left" Value="0" />
+                            <telerik:RadComboBoxItem Text="Top-Middle" Value="1" />
+                            <telerik:RadComboBoxItem Text="Top-Right" Value="2" />
+                            <telerik:RadComboBoxItem Text="Full Page" Value="3" />
+                            <telerik:RadComboBoxItem Text="Bottom-Left" Value="4" />
+                            <telerik:RadComboBoxItem Text="Bottom-Middle" Value="5" />
+                            <telerik:RadComboBoxItem Text="Bottom-Right" Value="6" />
+                        </Items>
+                    </telerik:RadComboBox>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 25px;">&nbsp;</td>
+                <td>Display Order</td>
+            </tr>
+            <tr>
+                <td style="width: 25px;"></td>
+                <td>
+                    <telerik:RadTextBox runat="server" ID="txtSort" />
+                </td>
+            </tr>
         </table>
         <asp:Panel runat="server" ID="pnlDropDownValues">
             <table class="wrap-table-wizard">
@@ -281,13 +320,50 @@
                 <td style="width: 25px;">
                     <asp:Image ID="imgHelp_Preview" runat="server" ImageUrl="~/images/toolbar/icon_help.png" ToolTip="This table displays the questions you have added as they will appear on the Module screen." />
                 </td>
-                <td style="vertical-align: top;">Module Questions Preview</td>
+                <td style="vertical-align: top;"><table class="nav-justified">
+                    <tr>
+                        <td>Module Questions Preview</td>
+                        <td style="width: 100px; text-align: center; background-color: #E4E4E4;">Left</td>
+                        <td style="width: 100px; text-align: center; background-color: #C0C0C0;">Middle</td>
+                        <td style="width: 100px; text-align: center; background-color: #808080;">Right</td>
+                    </tr>
+                    </table>
+                </td>
             </tr>
+        </table>
+        <table class="wrap-table-wizard">
             <tr>
                 <td style="width: 25px;"></td>
                 <td style="border: 1px solid #C0C0C0; vertical-align: top; background-color: #E6E6E6;">
-                    <asp:Table ID="tblQuestions" runat="server" CellPadding="1" CellSpacing="2" Width="100%">
-                    </asp:Table>
+                    <table class="nav-justified">
+                        <tr>
+                            <td style="background-color: #E4E4E4; vertical-align: top;">
+                                <asp:Table ID="tblModuleQuestions_TopLeft" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                            </td>
+                            <td style="background-color: #C0C0C0; vertical-align: top;">
+                                <asp:Table ID="tblModuleQuestions_TopMiddle" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                            </td>
+                            <td style="background-color: #808080; vertical-align: top;">
+                                <asp:Table ID="tblModuleQuestions_TopRight" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="background-color: #FFFFFF; vertical-align: top;">
+                                <asp:Table ID="tblModuleQuestions_FullPage" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: #E4E4E4; vertical-align: top;">
+                                <asp:Table ID="tblModuleQuestions_BottomLeft" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                            </td>
+                            <td style="background-color: #C0C0C0; vertical-align: top;">
+                                <asp:Table ID="tblModuleQuestions_BottomMiddle" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                            </td>
+                            <td style="background-color: #808080; vertical-align: top;">
+                                <asp:Table ID="tblModuleQuestions_BottomRight" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
         </table>

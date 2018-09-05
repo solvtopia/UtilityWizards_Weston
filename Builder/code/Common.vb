@@ -3,6 +3,16 @@ Imports Telerik.Web.UI
 
 Public Class Common
 
+    Public Shared Sub GetExtraInfo(ByVal tableName As String, ByRef q As SystemQuestion)
+        Dim key As String = tableName & "|" & q.Question.Replace(" ", "_")
+
+        Dim ht As Hashtable = App.FieldInfoLookup
+        If ht.ContainsKey(key) Then
+            q.FriendlyName = ht(key).ToString.Split("|"c)(0)
+            q.Description = ht(key).ToString.Split("|"c)(1)
+        End If
+    End Sub
+
 End Class
 
 Class ContentTemplate
@@ -43,4 +53,5 @@ Class ContentTemplate
         tbl.Rows.Add(tr)
         container.Controls.Add(tbl)
     End Sub
+
 End Class

@@ -56,6 +56,16 @@
         NumericTextBox
     End Enum
 
+    Public Enum SystemQuestionLocation
+        TopLeft
+        TopMiddle
+        TopRight
+        FullPage
+        BottomLeft
+        BottomMiddle
+        BottomRight
+    End Enum
+
     Public Enum SystemUserPermissions
         User
         Administrator

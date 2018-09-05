@@ -96,6 +96,7 @@ Public Class ModuleWizard
                         Me.ddlSupervisor.SelectedValue = fldr.SupervisorID.ToString
                     End If
                 End If
+                Me.chkImportModule.Checked = Me.currentModule.ImportModule
                 Me.ddlImportTable.SelectedValue = Me.currentModule.FolderID.ToString
                 Me.ddlIcon.SelectedValue = Me.currentModule.Icon
                 Me.imgIcon.ImageUrl = Me.currentModule.Icon
@@ -201,21 +202,57 @@ Public Class ModuleWizard
     End Sub
 
     Protected Sub btnNext_Click(sender As Object, e As EventArgs) Handles btnNext.Click
-        If Me.WizardStep < Me.wizardMaxSteps Then
-            If Me.chkImportModule.Checked = False Then
+        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+
+        Try
+            If Me.WizardStep < Me.wizardMaxSteps Then
+                'If Me.chkImportModule.Checked = False Then
                 Me.WizardStep += 1
                 Select Case Me.WizardStep
-                    Case 2 : Me.ddlQuestion.Focus()
-                End Select
-            Else
-                ' import tables setup their questions from the table structure so cannot be edited
-                ' so jump straight to the last step
-                Me.WizardStep = Me.wizardMaxSteps
-            End If
-        Else
-            Dim cn As New SqlClient.SqlConnection(ConnectionString)
+                    Case 2
+                        If Me.currentModule Is Nothing OrElse (Me.currentModule.ID = 0 And Me.chkImportModule.Checked) Then
+                            ' import module questions are generated from the fields in the table
+                            Me.ModuleQuestions = New List(Of SystemQuestion)
 
-            Try
+                            Dim cmd As New SqlClient.SqlCommand("select column_name from information_schema.columns where table_name like '" & Me.ddlImportTable.SelectedValue & "'", cn)
+                            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+                            Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+                            Do While rs.Read
+                                Dim q As New SystemQuestion
+
+                                q.ID = 0
+                                q.ModuleID = 0
+                                q.Question = rs("column_name").ToString.Replace("_", " ")
+                                If q.Question.ToLower.Contains("desc") Or q.Question.ToLower.Contains("comment") Then
+                                    q.Type = Enums.SystemQuestionType.MemoField
+                                Else q.Type = Enums.SystemQuestionType.TextBox
+                                End If
+                                q.Required = False
+                                q.SearchField = False
+                                q.ReportField = True
+                                q.ExportField = True
+                                q.MobileField = True
+                                q.Sort = 0
+                                Select Case rs("column_name").ToString.ToLower
+                                    Case "id", "filepart1", "filedate", "filename"
+                                        q.Visible = False
+                                    Case Else
+                                        q.Visible = True
+                                End Select
+
+                                Me.ModuleQuestions.Add(q)
+                            Loop
+
+                            Me.BuildQuestionList()
+                        End If
+                        Me.ddlQuestion.Focus()
+                End Select
+                'Else
+                '    ' import tables setup their questions from the table structure so cannot be edited
+                '    ' so jump straight to the last step
+                '    Me.WizardStep = Me.wizardMaxSteps
+                'End If
+            Else
                 If Me.EditId > 0 Then Me.currentModule = New SystemModule(Me.EditId) Else Me.currentModule = New SystemModule()
 
                 ' save the module
@@ -235,33 +272,6 @@ Public Class ModuleWizard
                 Dim cmd As New SqlClient.SqlCommand("DELETE FROM [Questions] WHERE [xModuleID] = " & Me.currentModule.ID, cn)
                 If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
                 cmd.ExecuteNonQuery()
-
-                If Me.chkImportModule.Checked Then
-                    ' import module questions are generated from the fields in the table
-                    Me.ModuleQuestions = New List(Of SystemQuestion)
-
-                    cmd = New SqlClient.SqlCommand("select column_name from information_schema.columns where table_name like '" & Me.ddlImportTable.SelectedValue & "'", cn)
-                    If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-                    Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
-                    Do While rs.Read
-                        Dim q As New SystemQuestion
-
-                        q.ID = 0
-                        q.ModuleID = 0
-                        q.Question = rs("column_name").ToString.Replace("_", " ")
-                        If q.Question.ToLower.Contains("desc") Or q.Question.ToLower.Contains("comment") Then
-                            q.Type = Enums.SystemQuestionType.MemoField
-                        Else q.Type = Enums.SystemQuestionType.TextBox
-                        End If
-                        q.Required = False
-                        q.SearchField = False
-                        q.ReportField = True
-                        q.ExportField = True
-                        q.MobileField = True
-
-                        Me.ModuleQuestions.Add(q)
-                    Loop
-                End If
 
                 For Each q As SystemQuestion In Me.ModuleQuestions
                     q.ModuleID = Me.currentModule.ID
@@ -284,15 +294,15 @@ Public Class ModuleWizard
                 Else CommonCore.Shared.Common.LogHistory(Me.txtName.Text & " Module Updated", App.CurrentUser.ID)
                 End If
 
-            Catch ex As Exception
-                ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
-            Finally
-                cn.Close()
-            End Try
+                Response.Redirect("~/Default.aspx", False)
+                Exit Sub
+            End If
 
-            Response.Redirect("~/Default.aspx", False)
-            Exit Sub
-        End If
+        Catch ex As Exception
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+        Finally
+            cn.Close()
+        End Try
     End Sub
 
     Protected Sub btnCancel_Click(sender As Object, e As EventArgs) Handles btnCancel.Click
@@ -302,8 +312,8 @@ Public Class ModuleWizard
 
     Protected Sub btnAdd_Click(sender As Object, e As EventArgs) Handles btnAdd.Click
         Try
+            Dim btn As RadButton = CType(sender, RadButton)
             Dim q As New SystemQuestion
-
             q.ID = 0
             q.ModuleID = 0
             q.Question = Me.ddlQuestion.Text
@@ -313,13 +323,21 @@ Public Class ModuleWizard
             q.ReportField = Me.chkReporting.Checked
             q.ExportField = Me.chkExport.Checked
             q.MobileField = Me.chkMobile.Checked
+            q.Visible = Me.chkDisplay.Checked
+            q.Location = CType(Me.ddlDisplay.SelectedValue, Enums.SystemQuestionLocation)
+            q.Sort = Me.txtSort.Text.ToInteger
             If q.Type = Enums.SystemQuestionType.DropDownList Then
                 For Each itm As ListItem In Me.lstValues.Items
                     If itm.Text.Trim <> "" Then q.Values.Add(itm.Text.Trim)
                 Next
             End If
 
-            Me.ModuleQuestions.Add(q)
+            If Me.btnAdd.Text.ToLower.Contains("add") Then
+                Me.ModuleQuestions.Add(q)
+            ElseIf Me.btnAdd.Text.ToLower.Contains("save") Then
+                Me.ModuleQuestions.Item(btn.CommandArgument.ToInteger) = q
+            End If
+
             Me.BuildQuestionList()
 
             Me.ddlQuestion.Text = ""
@@ -331,6 +349,9 @@ Public Class ModuleWizard
             Me.chkMobile.Checked = False
             Me.lstValues.Items.Clear()
             Me.ddlQuestion.Focus()
+            Me.chkDisplay.Checked = False
+            Me.ddlDisplay.SelectedIndex = -1
+            Me.txtSort.Text = "0"
 
         Catch ex As Exception
             ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
@@ -339,7 +360,16 @@ Public Class ModuleWizard
 
     Private Sub BuildQuestionList()
         Try
-            Me.tblQuestions.Rows.Clear()
+            ' sort the list by the sort order and id
+            Me.ModuleQuestions = Me.ModuleQuestions.OrderBy(Function(q) q.Sort).ThenBy(Function(q) q.ID).ToList
+
+            Me.tblModuleQuestions_TopLeft.Rows.Clear()
+            Me.tblModuleQuestions_TopMiddle.Rows.Clear()
+            Me.tblModuleQuestions_TopRight.Rows.Clear()
+            Me.tblModuleQuestions_FullPage.Rows.Clear()
+            Me.tblModuleQuestions_BottomLeft.Rows.Clear()
+            Me.tblModuleQuestions_BottomMiddle.Rows.Clear()
+            Me.tblModuleQuestions_BottomRight.Rows.Clear()
 
             Dim x As Integer = 0
             For Each q As SystemQuestion In Me.ModuleQuestions
@@ -368,6 +398,7 @@ Public Class ModuleWizard
 
                 Dim tc3 As New TableCell
                 tc3.Text = q.Question
+                If Not q.Visible Then tc3.Font.Strikeout = True
                 If q.Type = Enums.SystemQuestionType.MemoField Then tc3.VerticalAlign = VerticalAlign.Top
                 tr1.Cells.Add(tc3)
 
@@ -455,7 +486,22 @@ Public Class ModuleWizard
                 tc8.VerticalAlign = VerticalAlign.Top
                 tr1.Cells.Add(tc8)
 
-                Me.tblQuestions.Rows.Add(tr1)
+                Select Case q.Location
+                    Case Enums.SystemQuestionLocation.TopLeft
+                        Me.tblModuleQuestions_TopLeft.Rows.Add(tr1)
+                    Case Enums.SystemQuestionLocation.TopMiddle
+                        Me.tblModuleQuestions_TopMiddle.Rows.Add(tr1)
+                    Case Enums.SystemQuestionLocation.TopRight
+                        Me.tblModuleQuestions_TopRight.Rows.Add(tr1)
+                    Case Enums.SystemQuestionLocation.FullPage
+                        Me.tblModuleQuestions_FullPage.Rows.Add(tr1)
+                    Case Enums.SystemQuestionLocation.BottomLeft
+                        Me.tblModuleQuestions_BottomLeft.Rows.Add(tr1)
+                    Case Enums.SystemQuestionLocation.BottomMiddle
+                        Me.tblModuleQuestions_BottomMiddle.Rows.Add(tr1)
+                    Case Enums.SystemQuestionLocation.BottomRight
+                        Me.tblModuleQuestions_BottomRight.Rows.Add(tr1)
+                End Select
                 'Me.tblQuestions.Rows.Add(tr2)
                 'Me.tblQuestions.Rows.Add(tr3)
 
@@ -463,8 +509,8 @@ Public Class ModuleWizard
             Next
 
             If Me.OnMobile Then
-                Me.SetSkin(Me.tblQuestions, System.Configuration.ConfigurationManager.AppSettings("Telerik_Skin_Mobile"))
-            Else Me.SetSkin(Me.tblQuestions, System.Configuration.ConfigurationManager.AppSettings("Telerik_Skin_Desktop"))
+                Me.SetSkin(Me.pnlStep2, System.Configuration.ConfigurationManager.AppSettings("Telerik_Skin_Mobile"))
+            Else Me.SetSkin(Me.pnlStep2, System.Configuration.ConfigurationManager.AppSettings("Telerik_Skin_Desktop"))
             End If
 
         Catch ex As Exception
@@ -473,23 +519,37 @@ Public Class ModuleWizard
     End Sub
 
     Protected Sub ibtnEdit_Click(sender As Object, e As EventArgs)
+        Dim ibtn As Telerik.Web.UI.RadButton = CType(sender, Telerik.Web.UI.RadButton)
+        Dim qId As Integer = ibtn.ID.Split("_"c)(1).ToInteger
+
+        Me.btnAdd.Text = "Save Changes"
+        Me.btnAdd.CommandArgument = qId.ToString
+
+        Dim q As SystemQuestion = Me.ModuleQuestions.Item(qId)
+        Me.ddlQuestion.Text = q.Question
+        Me.ddlQuestionType.SelectedValue = CStr(q.Type)
+        Me.chkRequired.Checked = q.Required
+        Me.chkSearch.Checked = q.SearchField
+        Me.chkReporting.Checked = q.ReportField
+        Me.chkExport.Checked = q.ExportField
+        Me.chkMobile.Checked = q.MobileField
+        Me.chkDisplay.Checked = q.Visible
+        Me.ddlDisplay.SelectedValue = CStr(q.Location)
+        Me.txtSort.Text = q.Sort.ToString
+        Me.lstValues.Items.Clear()
+        If q.Type = Enums.SystemQuestionType.DropDownList Then
+            For Each itm As String In q.Values
+                If itm.Trim <> "" Then Me.lstValues.Items.Add(New ListItem(itm, itm))
+            Next
+        End If
     End Sub
 
     Protected Sub ibtnDelete_Click(sender As Object, e As EventArgs)
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim ibtn As Telerik.Web.UI.RadButton = CType(sender, Telerik.Web.UI.RadButton)
+        Dim qId As Integer = ibtn.ID.Split("_"c)(1).ToInteger
 
-        Try
-            Dim ibtn As Telerik.Web.UI.RadButton = CType(sender, Telerik.Web.UI.RadButton)
-            Dim qId As Integer = ibtn.ID.Split("_"c)(1).ToInteger
-
-            Me.ModuleQuestions.RemoveAt(qId)
-            Me.BuildQuestionList()
-
-        Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
-        Finally
-            cn.Close()
-        End Try
+        Me.ModuleQuestions.RemoveAt(qId)
+        Me.BuildQuestionList()
     End Sub
 
     Protected Sub btnAddValue_Click(sender As Object, e As EventArgs) Handles btnAddValue.Click

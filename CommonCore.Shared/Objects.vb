@@ -825,7 +825,9 @@ End Class
 Public Class SystemQuestion
     Sub New()
         Me.Type = SystemQuestionType.TextBox
+        Me.Location = SystemQuestionLocation.FullPage
         Me.Values = New List(Of String)
+        Me.Visible = True
     End Sub
     Public Sub New(ByVal id As Integer)
         Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
@@ -887,6 +889,10 @@ Public Class SystemQuestion
     Public NewMobileData As String
     Public Locked As Boolean
     Public Visible As Boolean
+    Public Location As SystemQuestionLocation
+    Public Sort As Integer
+    Public FriendlyName As String
+    Public Description As String
 
 #Region "Workers"
 

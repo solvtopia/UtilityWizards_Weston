@@ -250,6 +250,10 @@ Public Class XmlUpgrade
                 If xDoc.Item("Data").Item("NewMobileData") IsNot Nothing Then obj.NewMobileData = xDoc.Item("Data").Item("NewMobileData").InnerText
                 If xDoc.Item("Data").Item("Locked") IsNot Nothing Then obj.Locked = xDoc.Item("Data").Item("Locked").InnerText.ToBoolean
                 If xDoc.Item("Data").Item("Visible") IsNot Nothing Then obj.Visible = xDoc.Item("Data").Item("Visible").InnerText.ToBoolean
+                If xDoc.Item("Data").Item("Location") IsNot Nothing Then
+                    obj.Location = CType(xDoc.Item("Data").Item("Location").InnerText, Enums.SystemQuestionLocation)
+                Else obj.Location = Enums.SystemQuestionLocation.FullPage
+                End If
 
                 ht.Add("_" & rs("ID").ToString, obj)
             Loop

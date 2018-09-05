@@ -86,8 +86,8 @@
         <div class="col-md-12">
             <div class="box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">
-                        <asp:Label ID="lblHeader" runat="server" Text="System Modules"></asp:Label></h3>
+                    <%--<h3 class="box-title">
+                        <asp:Label ID="lblHeader" runat="server" Text="System Modules"></asp:Label></h3>--%>
 
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -107,7 +107,7 @@
                             </Tabs>
                         </telerik:RadTabStrip>
                         <telerik:RadTabStrip ID="tabModules" runat="server" SelectedIndex="0" Skin="Metro" MultiPageID="RadMultiPage2" />
-                        <telerik:RadMultiPage runat="server" ID="RadMultiPage2" Width="100%" Height="550px" SelectedIndex="0">
+                        <telerik:RadMultiPage runat="server" ID="RadMultiPage2" Width="100%" SelectedIndex="0" ><!--Height="550px"-->
                             <telerik:RadPageView runat="server" ID="RadPageView1">
                                 <asp:Panel runat="server" ID="pnlCustomerSearch" DefaultButton="btnSearch">
                                     <div class="row">
@@ -175,7 +175,7 @@
                                     </div>
                                 </asp:Panel>
                             </telerik:RadPageView>
-                            <telerik:RadPageView runat="server" ID="RadPageView2" ContentUrl="~/account/SearchTab.aspx" Height="550px" />
+                            <telerik:RadPageView runat="server" ID="RadPageView2" ContentUrl="~/account/SearchTab.aspx" /><%--Height="550px" />--%>
                         </telerik:RadMultiPage>
                         <asp:Table runat="server" ID="tblModules" CellPadding="1" CellSpacing="2" Width="100%" Style="display: block;" Visible="false" />
                     </telerik:RadAjaxPanel>

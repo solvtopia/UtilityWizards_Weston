@@ -95,13 +95,67 @@ Partial Public Class ModuleTab
     Protected WithEvents tblFolderQuestions As Global.System.Web.UI.WebControls.Table
     
     '''<summary>
-    '''tblModuleQuestions control.
+    '''tblModuleQuestions_TopLeft control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents tblModuleQuestions As Global.System.Web.UI.WebControls.Table
+    Protected WithEvents tblModuleQuestions_TopLeft As Global.System.Web.UI.WebControls.Table
+    
+    '''<summary>
+    '''tblModuleQuestions_TopMiddle control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents tblModuleQuestions_TopMiddle As Global.System.Web.UI.WebControls.Table
+    
+    '''<summary>
+    '''tblModuleQuestions_TopRight control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents tblModuleQuestions_TopRight As Global.System.Web.UI.WebControls.Table
+    
+    '''<summary>
+    '''tblModuleQuestions_FullPage control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents tblModuleQuestions_FullPage As Global.System.Web.UI.WebControls.Table
+    
+    '''<summary>
+    '''tblModuleQuestions_BottomLeft control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents tblModuleQuestions_BottomLeft As Global.System.Web.UI.WebControls.Table
+    
+    '''<summary>
+    '''tblModuleQuestions_BottomMiddle control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents tblModuleQuestions_BottomMiddle As Global.System.Web.UI.WebControls.Table
+    
+    '''<summary>
+    '''tblModuleQuestions_BottomRight control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents tblModuleQuestions_BottomRight As Global.System.Web.UI.WebControls.Table
     
     '''<summary>
     '''RadTabStrip1 control.

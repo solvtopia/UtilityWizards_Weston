@@ -9,6 +9,7 @@ Imports System.IO
 Public Class AWSHelper
     Const AWS_ACCESS_KEY As String = "AKIAILO4RJHZWPMRIARA"
     Const AWS_SECRET_KEY As String = "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"
+    Const AWS_BUCKET_NAME As String = "wpg-file-upload"
 
     Private Property s3Client As IAmazonS3
 
@@ -48,11 +49,11 @@ Public Class AWSHelper
     '''         - Cannot contain two, adjacent periods
     '''         - Cannot contain dashes next to periods (e.g., "my-.bucket.com" and "my.-bucket" are invalid)
     ''' </summary>
-    Public Function CreateABucket(bucketName As String) As String  'parameter : client As IAmazonS3
+    Public Function CreateABucket() As String  'parameter : client As IAmazonS3
         Dim retVal As String = ""
         Try
             Try
-                Dim putRequest1 As PutBucketRequest = New PutBucketRequest() With {.BucketName = bucketName, .UseClientRegion = True}
+                Dim putRequest1 As PutBucketRequest = New PutBucketRequest() With {.BucketName = AWS_BUCKET_NAME, .UseClientRegion = True}
                 Dim response1 As PutBucketResponse = s3Client.PutBucket(putRequest1)
 
             Catch amazonS3Exception As AmazonS3Exception
@@ -74,12 +75,12 @@ Public Class AWSHelper
         Return retVal
     End Function
 
-    Public Function CreateFolder(bucketName As String, folderName() As String) As String
+    Public Function CreateFolder(folderName() As String) As String
         Dim retVal As String = ""
         Try
             Try
                 Dim folderKey As String = ""
-                If Not AmazonS3Util.DoesS3BucketExist(s3Client, bucketName) Then
+                If Not AmazonS3Util.DoesS3BucketExist(s3Client, AWS_BUCKET_NAME) Then
                     retVal = "Bucket does not exist"
                 Else
                     For i = 0 To folderName.Length - 1
@@ -88,7 +89,7 @@ Public Class AWSHelper
                     Next
                     ' folderKey = folderKey & "/"    'end the folder name with "/"
                     Dim request As PutObjectRequest = New PutObjectRequest()
-                    request.BucketName = bucketName
+                    request.BucketName = AWS_BUCKET_NAME
                     request.StorageClass = S3StorageClass.Standard
                     request.ServerSideEncryptionMethod = ServerSideEncryptionMethod.None
                     ' request.CannedACL = S3CannedACL.BucketOwnerFullControl
@@ -108,20 +109,20 @@ Public Class AWSHelper
         Return retVal
     End Function
 
-    Public Function AddFileToFolder(FileName As String, bucketName As String, folderName As String) As String
+    Public Function AddFileToFolder(FileName As String, folderName As String) As String
         Dim retVal As String = ""
         Try
             Try
-                If Not AmazonS3Util.DoesS3BucketExist(s3Client, bucketName) Then
+                If Not AmazonS3Util.DoesS3BucketExist(s3Client, AWS_BUCKET_NAME) Then
                     Dim fname() As String = folderName.Split("/")
-                    CreateFolder(bucketName, fname)
+                    CreateFolder(fname)
                 Else
                     Dim path As String = FileName
                     Dim file As FileInfo = New FileInfo(path)
 
                     Dim key As String = String.Format("{0}/{1}", folderName, file.Name)
                     Dim por As PutObjectRequest = New PutObjectRequest()
-                    por.BucketName = bucketName
+                    por.BucketName = AWS_BUCKET_NAME
                     por.StorageClass = S3StorageClass.Standard
                     por.ServerSideEncryptionMethod = ServerSideEncryptionMethod.None
                     por.CannedACL = S3CannedACL.PublicRead
@@ -141,7 +142,7 @@ Public Class AWSHelper
         Return retVal
     End Function
 
-    Public Function ListingFiles(bucketName As String, Optional foldername As String = "/") As ObservableCollection(Of String)
+    Public Function ListingFiles(Optional foldername As String = "/") As ObservableCollection(Of String)
         Dim obsv As New ObservableCollection(Of String)
         Dim delimiter As String = "/"
         If Not foldername.EndsWith(delimiter) Then
@@ -149,7 +150,7 @@ Public Class AWSHelper
         End If
         Try
             Try
-                Dim request As New ListObjectsRequest() With {.BucketName = bucketName}
+                Dim request As New ListObjectsRequest() With {.BucketName = AWS_BUCKET_NAME}
                 Do
                     Dim response As ListObjectsResponse = s3Client.ListObjects(request)
                     For Each entry As S3Object In response.S3Objects
@@ -180,15 +181,15 @@ Public Class AWSHelper
         Return obsv
     End Function
 
-    Public Function DeleteFileFromFolder(bucketName As String, foldername As String, keyname As String) As String
+    Public Function DeleteFileFromFolder(foldername As String, keyname As String) As String
         Dim retVal As String = ""
         Try
             Try
-                If Not AmazonS3Util.DoesS3BucketExist(s3Client, bucketName) Then
+                If Not AmazonS3Util.DoesS3BucketExist(s3Client, AWS_BUCKET_NAME) Then
                     retVal = "Bucket does not exist"
                 Else
                     foldername = foldername.Replace("\", "/")
-                    Dim dor As DeleteObjectRequest = New DeleteObjectRequest() With {.BucketName = bucketName, .Key = String.Format("{0}/{1}", foldername, keyname)}
+                    Dim dor As DeleteObjectRequest = New DeleteObjectRequest() With {.BucketName = AWS_BUCKET_NAME, .Key = String.Format("{0}/{1}", foldername, keyname)}
                     s3Client.DeleteObject(dor)
                 End If
 
@@ -203,13 +204,13 @@ Public Class AWSHelper
         Return retVal
     End Function
 
-    Public Function DeleteFolder(bucketName As String, foldername As String) As Boolean
+    Public Function DeleteFolder(foldername As String) As Boolean
         Try
             If Not foldername.EndsWith("/") Then
                 foldername = foldername & "/"
             End If
 
-            Dim dor As DeleteObjectRequest = New DeleteObjectRequest() With {.BucketName = bucketName, .Key = foldername}
+            Dim dor As DeleteObjectRequest = New DeleteObjectRequest() With {.BucketName = AWS_BUCKET_NAME, .Key = foldername}
             s3Client.DeleteObject(dor)
 
             Return True
@@ -219,20 +220,20 @@ Public Class AWSHelper
         End Try
     End Function
 
-    Public Function GetFileFromFolder(bucketName As String, folderName As String, FileName As String, target As String) As String
+    Public Function GetFileFromFolder(folderName As String, FileName As String, target As String) As String
         Dim retVal As String = ""
         Try
             Try
-                If Not AmazonS3Util.DoesS3BucketExist(s3Client, bucketName) Then
+                If Not AmazonS3Util.DoesS3BucketExist(s3Client, AWS_BUCKET_NAME) Then
                     retVal = "Bucket does not exist"
                 Else
-                    Dim request As ListObjectsRequest = New ListObjectsRequest() With {.BucketName = bucketName}
+                    Dim request As ListObjectsRequest = New ListObjectsRequest() With {.BucketName = AWS_BUCKET_NAME}
                     Do
                         Dim response As ListObjectsResponse = s3Client.ListObjects(request)
                         For i As Integer = 1 To response.S3Objects.Count - 1
                             Dim entry As S3Object = response.S3Objects(i)
                             If Replace(entry.Key, folderName & "/", "") = FileName Then
-                                Dim objRequest As GetObjectRequest = New GetObjectRequest() With {.BucketName = bucketName, .Key = entry.Key}
+                                Dim objRequest As GetObjectRequest = New GetObjectRequest() With {.BucketName = AWS_BUCKET_NAME, .Key = entry.Key}
                                 Dim objResponse As GetObjectResponse = s3Client.GetObject(objRequest)
                                 objResponse.WriteResponseStreamToFile(target & FileName)
                                 Exit Do
@@ -257,8 +258,8 @@ Public Class AWSHelper
         Return retVal
     End Function
 
-    Public Function OpenFile(bucketName As String, folderName As String, FileName As String) As String
-        Dim retVal As String = DownloadFile(bucketName, folderName, FileName)
+    Public Function OpenFile(folderName As String, FileName As String) As String
+        Dim retVal As String = DownloadFile(folderName, FileName)
         If retVal = "" Then
             Dim target As String = Path.GetTempPath()
             System.Diagnostics.Process.Start(target & FileName)
@@ -266,14 +267,14 @@ Public Class AWSHelper
         Return retVal
     End Function
 
-    Public Function CopyingObject(bucketName As String, folderFile As String, destinationfolder As String) As String
+    Public Function CopyingObject(folderFile As String, destinationfolder As String) As String
         Dim retVal As String = ""
         Try
             Using s3Client
                 Dim request As CopyObjectRequest = New CopyObjectRequest
-                request.SourceBucket = bucketName
+                request.SourceBucket = AWS_BUCKET_NAME
                 request.SourceKey = folderFile.Replace("\", "/")
-                request.DestinationBucket = bucketName
+                request.DestinationBucket = AWS_BUCKET_NAME
                 request.DestinationKey = destinationfolder.Replace("\", "/")
 
                 Dim response As CopyObjectResponse = s3Client.CopyObject(request)
@@ -286,12 +287,12 @@ Public Class AWSHelper
         Return retVal
     End Function
 
-    Public Function RenameObject(bucketName As String, folderFile As String, destinationfolder As String) As String
+    Public Function RenameObject(folderFile As String, destinationfolder As String) As String
         Dim retVal As String = ""
 
         Try
             'Dim copyRequest As CopyObjectRequest = New CopyObjectRequest
-            'copyRequest.SourceBucket = bucketName
+            'copyRequest.SourceBucket = AWS_BUCKET_NAME
             'copyRequest.SourceKey = folderFile.rep
             'copyRequest.WithSourceBucket("SourceBucket").WithSourceKey("SourceKey").WithDestinationBucket("DestinationBucket").WithDestinationKey("DestinationKey").WithCannedACL(S3CannedACL.PublicRead)
             'S3.CopyObject(copyRequest)
@@ -305,24 +306,32 @@ Public Class AWSHelper
         Return retVal
     End Function
 
-    Public Function DownloadFile(bucketName As String, folderName As String, FileName As String) As String
-        Dim target As String = Path.GetTempPath()
+    Public Function DownloadFile(folderName As String, FileName As String) As String
+        Return DownloadFile(folderName, FileName, "")
+    End Function
+    Public Function DownloadFile(folderName As String, FileName As String, DestFolder As String) As String
+        If DestFolder = "" Then DestFolder = Path.GetTempPath
+        Dim target As String = DestFolder
+        If Not My.Computer.FileSystem.DirectoryExists(target) Then My.Computer.FileSystem.CreateDirectory(target)
+
         Dim retVal As String = ""
+        If folderName = "" Then folderName = "/"
         folderName = folderName.Replace("\", "/")
+
         Try
             Try
-                If Not AmazonS3Util.DoesS3BucketExist(s3Client, bucketName) Then
+                If Not AmazonS3Util.DoesS3BucketExist(s3Client, AWS_BUCKET_NAME) Then
                     retVal = "Bucket does not exist"
                 Else
-                    Dim request As ListObjectsRequest = New ListObjectsRequest() With {.BucketName = bucketName}
+                    Dim request As ListObjectsRequest = New ListObjectsRequest() With {.BucketName = AWS_BUCKET_NAME}
                     Do
                         Dim response As ListObjectsResponse = s3Client.ListObjects(request)
                         For i As Integer = 1 To response.S3Objects.Count - 1
                             Dim entry As S3Object = response.S3Objects(i)
                             If Replace(entry.Key, folderName & "/", "") = FileName Then
-                                Dim objRequest As GetObjectRequest = New GetObjectRequest() With {.BucketName = bucketName, .Key = entry.Key}
+                                Dim objRequest As GetObjectRequest = New GetObjectRequest() With {.BucketName = AWS_BUCKET_NAME, .Key = entry.Key}
                                 Dim objResponse As GetObjectResponse = s3Client.GetObject(objRequest)
-                                objResponse.WriteResponseStreamToFile(target & FileName)
+                                objResponse.WriteResponseStreamToFile(My.Computer.FileSystem.CombinePath(target, FileName))
                                 Exit Do
                             End If
                         Next

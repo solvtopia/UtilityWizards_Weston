@@ -21,11 +21,22 @@ Public Class fMain
     Private Sub ProcessS3Files()
         Dim aws As New AWSHelper
 
-        Dim lst As ObservableCollection(Of String) = aws.ListingFiles("wpg-file-upload")
+        ' make sure the temp folder exists
+        Dim tmpS3Path As String = My.Computer.FileSystem.CombinePath(My.Application.Info.DirectoryPath, "S3Temp")
+        If Not My.Computer.FileSystem.DirectoryExists(tmpS3Path) Then My.Computer.FileSystem.CreateDirectory(tmpS3Path)
 
-        If lst.Count > 0 Then
+        ' delete any files in the folder
+        For Each deleteFile In Directory.GetFiles(tmpS3Path, "*.*", SearchOption.TopDirectoryOnly)
+            File.Delete(deleteFile)
+        Next
 
-        End If
+        ' download the files from the S3 bucket to the temp folder
+        Dim lstS3Files As ObservableCollection(Of String) = aws.ListingFiles()
+        For Each f As String In lstS3Files
+            aws.DownloadFile("", f, tmpS3Path)
+        Next
+
+
     End Sub
 
     Private Sub ProcessSouthernImport()

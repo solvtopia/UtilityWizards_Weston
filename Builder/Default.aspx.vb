@@ -265,10 +265,10 @@ Public Class _Default4
             Me.tblModules.Rows.Add(tr)
         End If
 
-        If App.ActiveFolderID = 0 Then
-            Me.lblHeader.Text = "System Modules"
-        Else Me.lblHeader.Text = "System Modules > " & App.CurrentClient.Modules.GetByID(App.ActiveFolderID).Name
-        End If
+        'If App.ActiveFolderID = 0 Then
+        '    Me.lblHeader.Text = "System Modules"
+        'Else Me.lblHeader.Text = "System Modules > " & App.CurrentClient.Modules.GetByID(App.ActiveFolderID).Name
+        'End If
     End Sub
 
     Private Sub tabs_TabClick(sender As Object, e As RadTabStripEventArgs) Handles tabModules.TabClick, tabSearch.TabClick

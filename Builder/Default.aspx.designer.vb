@@ -140,15 +140,6 @@ Partial Public Class _Default4
     Protected WithEvents pnlBadges As Global.System.Web.UI.WebControls.PlaceHolder
     
     '''<summary>
-    '''lblHeader control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lblHeader As Global.System.Web.UI.WebControls.Label
-    
-    '''<summary>
     '''MainAjaxPanel control.
     '''</summary>
     '''<remarks>

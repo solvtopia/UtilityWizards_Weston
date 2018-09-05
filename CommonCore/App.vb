@@ -119,4 +119,43 @@ Public Class App
             HttpContext.Current.Session("CurrentAccountNumber") = value
         End Set
     End Property
+
+    Public Shared ReadOnly Property FieldInfoLookup As Hashtable
+        Get
+            If HttpContext.Current.Session("FieldInfoLookup") Is Nothing Then
+                Dim ht As New Hashtable
+
+                Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+
+                Dim retVal As Boolean = True
+
+                Try
+                    Dim cmd As New SqlClient.SqlCommand("SELECT [Table], [Key], [Value], [Description] FROM [FieldInfoLookup] ORDER BY [Table], [Key]", cn)
+                    If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+                    Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+                    Do While rs.Read
+                        Dim key As String = rs("Table").ToString & "|" & rs("Key").ToString
+                        Dim value As String = ""
+                        If Not IsDBNull(rs("Value")) Then value = rs("Value").ToString
+                        If Not IsDBNull(rs("Description")) Then value &= "|" & rs("Description").ToString Else value &= "|"
+                        If Not ht.ContainsKey(key) Then
+                            ht.Add(key, value)
+                        End If
+                    Loop
+                    cmd.Cancel()
+                    rs.Close()
+
+                Catch ex As Exception
+                    retVal = False
+                    ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+                Finally
+                    cn.Close()
+                End Try
+
+                HttpContext.Current.Session("FieldInfoLookup") = ht
+            End If
+
+            Return CType(HttpContext.Current.Session("FieldInfoLookup"), Hashtable)
+        End Get
+    End Property
 End Class
