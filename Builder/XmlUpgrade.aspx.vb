@@ -239,16 +239,11 @@ Public Class XmlUpgrade
                 If xDoc.Item("Data").Item("Required") IsNot Nothing Then obj.Required = xDoc.Item("Data").Item("Required").InnerText.ToBoolean
                 If xDoc.Item("Data").Item("Values") IsNot Nothing Then
                     For Each s As String In xDoc.Item("Data").Item("Values").InnerText.Split("|"c)
-                        If s.Trim <> "" Then obj.Values.Add(s.Trim.XmlDecode)
+                        If s.Trim <> "" Then obj.DropDownValues.Add(s.Trim.XmlDecode)
                     Next
                 End If
-                If xDoc.Item("Data").Item("SearchField") IsNot Nothing Then obj.SearchField = xDoc.Item("Data").Item("SearchField").InnerText.ToBoolean
                 If xDoc.Item("Data").Item("ReportField") IsNot Nothing Then obj.ReportField = xDoc.Item("Data").Item("ReportField").InnerText.ToBoolean
                 If xDoc.Item("Data").Item("ExportField") IsNot Nothing Then obj.ExportField = xDoc.Item("Data").Item("ExportField").InnerText.ToBoolean
-                If xDoc.Item("Data").Item("MobileField") IsNot Nothing Then obj.MobileField = xDoc.Item("Data").Item("MobileField").InnerText.ToBoolean
-                If xDoc.Item("Data").Item("MobileData") IsNot Nothing Then obj.MobileData = xDoc.Item("Data").Item("MobileData").InnerText
-                If xDoc.Item("Data").Item("NewMobileData") IsNot Nothing Then obj.NewMobileData = xDoc.Item("Data").Item("NewMobileData").InnerText
-                If xDoc.Item("Data").Item("Locked") IsNot Nothing Then obj.Locked = xDoc.Item("Data").Item("Locked").InnerText.ToBoolean
                 If xDoc.Item("Data").Item("Visible") IsNot Nothing Then obj.Visible = xDoc.Item("Data").Item("Visible").InnerText.ToBoolean
                 If xDoc.Item("Data").Item("Location") IsNot Nothing Then
                     obj.Location = CType(xDoc.Item("Data").Item("Location").InnerText, Enums.SystemQuestionLocation)

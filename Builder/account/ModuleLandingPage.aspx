@@ -23,7 +23,7 @@
     </style>
 </asp:Content>
 <asp:Content ID="Content4" ContentPlaceHolderID="menuContent" runat="server">
-    <ul class="sidebar-menu">
+    <%--<ul class="sidebar-menu">
         <li class="header">MODULE OPTIONS</li>
         <li runat="server" id="liEditModule">
             <asp:LinkButton runat="server" ID="lnkEditModule"><i class="fa fa-pencil"></i><span>Edit Module</span></asp:LinkButton></li>
@@ -33,7 +33,7 @@
             <asp:LinkButton runat="server" ID="lnkCopyModule"><i class="fa fa-files-o"></i><span>Copy Module</span></asp:LinkButton></li>
         <li runat="server" id="liMoveModule">
             <asp:LinkButton runat="server" ID="lnkMoveModule"><i class="fa fa-stack-overflow"></i><span>Move to Folder</span></asp:LinkButton></li>
-    </ul>
+    </ul>--%>
 </asp:Content>
 <asp:Content ID="Content6" ContentPlaceHolderID="breadcrumbContent" runat="server">
     <h1>Dashboard

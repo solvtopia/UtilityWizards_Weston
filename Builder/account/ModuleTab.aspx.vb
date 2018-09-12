@@ -33,36 +33,37 @@ Public Class ModuleTab
             Return Request.QueryString("custacctnum")
         End Get
     End Property
-    Private ReadOnly Property IsImportModule As Boolean
-        Get
-            Return App.ActiveModule.ImportModule
-        End Get
-    End Property
-    Private ReadOnly Property ImportTable As String
-        Get
-            Return App.ActiveModule.ImportTable
-        End Get
-    End Property
 
 #End Region
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
-        Me.LoadQuestions()
+        Me.ModuleView1.ModuleQuestions = App.ActiveModuleQuestions
+        Me.ModuleView1.CurrentModule = App.ActiveModule
+
+        Me.ModuleView1.TopLeftTitle = App.ActiveModule.TopLeftTitle
+        Me.ModuleView1.TopMiddleTitle = App.ActiveModule.TopMiddleTitle
+        Me.ModuleView1.TopRightTitle = App.ActiveModule.TopRightTitle
+        Me.ModuleView1.FullPageTitle = App.ActiveModule.FullPageTitle
+        Me.ModuleView1.BottomLeftTitle = App.ActiveModule.BottomLeftTitle
+        Me.ModuleView1.BottomMiddleTitle = App.ActiveModule.BottomMiddleTitle
+        Me.ModuleView1.BottomRightTitle = App.ActiveModule.BottomRightTitle
+
+        Me.ModuleView1.BuildQuestionList()
+        'Me.LoadQuestions()
 
         If Not IsPostBack Then
             'Me.lblHeader.Text = GetFolderName(App.ActiveFolderID) & " > " & App.ActiveModule.Name & " Module (Work Order #" & Me.RecordId & ")"
 
             Me.LoadLists()
 
-            If Me.RecordId > 0 Or Me.IsImportModule Then
+            If Me.RecordId > 0 Then
                 Me.LoadData()
-                If Me.IsImportModule Then
-                    Me.txtUserEmail.Text = App.CurrentUser.Email
-                    Me.txtAcctNumber.Text = Me.CustAcctNum
-                End If
-            Else
                 Me.txtUserEmail.Text = App.CurrentUser.Email
-                Me.txtAcctNumber.Text = Me.CustAcctNum
+                'Me.txtAcctNumber.Text = Me.CustAcctNum
+            ElseIf Me.CustAcctNum <> "" Then
+                Me.txtUserEmail.Text = App.CurrentUser.Email
+                Me.LoadMasterFeed()
+                'Me.txtAcctNumber.Text = Me.CustAcctNum
                 'Me.txtLocationNum.Text = Me.LocationNum
             End If
 
@@ -85,22 +86,15 @@ Public Class ModuleTab
 
         'Me.txtTechComments.Enabled = True
 
-        If App.ActiveModule.ID = 108 Then
-            Me.pnlCustomerDetails.Visible = False
-            Me.RadTabStrip1.Tabs(0).Text = "Header Details"
-            'Me.RadTabStrip1.Tabs(1).Visible = False
-            'Me.lnkNew.Visible = False
-        Else
-            Me.pnlCustomerDetails.Visible = True
-            Me.RadTabStrip1.Tabs(0).Text = "Header &amp; Customer Details"
-            'Me.RadTabStrip1.Tabs(1).Visible = True
-            'Me.lnkNew.Visible = True
-        End If
+        'Me.pnlCustomerDetails.Visible = True
+        'Me.RadTabStrip1.Tabs(0).Text = "Header &amp; Customer Details"
+        'Me.RadTabStrip1.Tabs(1).Visible = True
+        'Me.lnkNew.Visible = True
 
         'Me.RadTabStrip1.Tabs(1).Visible = (App.ActiveModule.ID <> 108)
         'Me.RadTabStrip1.Tabs(2).Visible = False
-        Me.lblAcctNum.Visible = True
-        Me.txtAcctNumber.Visible = True
+        'Me.lblAcctNum.Visible = True
+        'Me.txtAcctNumber.Visible = True
         'Me.lblLocationNum.Visible = True
         'Me.txtLocationNum.Visible = True
         'Me.tbl811SignOff.Visible = False
@@ -185,35 +179,35 @@ Public Class ModuleTab
             Dim rs As SqlClient.SqlDataReader
 
             ' now run the query to pull the new record
-            cmd = New SqlClient.SqlCommand("procSearchAccounts", cn)
-            cmd.Parameters.AddWithValue("@search", Me.CustAcctNum)
+            cmd = New SqlClient.SqlCommand("procGetMasterFeedRecord", cn)
+            cmd.Parameters.AddWithValue("@CustAcctNum", Me.CustAcctNum)
             cmd.CommandType = CommandType.StoredProcedure
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             rs = cmd.ExecuteReader
             If rs.Read Then
-                Me.txtCustomerName.Text = rs("PRIMARY NAME").ToString
-                Me.txtCustomerServiceAddress.Text = rs("PROPERTY ADDRESS").ToString & ", " & rs("PROPERTY CITY").ToString & " " & rs("PROPERTY STATE").ToString & " " & rs("PROPERTY ZIP").ToString
+                'Me.txtCustomerName.Text = rs("PRIMARY NAME").ToString
+                'Me.txtCustomerServiceAddress.Text = rs("PROPERTY ADDRESS").ToString & ", " & rs("PROPERTY CITY").ToString & " " & rs("PROPERTY STATE").ToString & " " & rs("PROPERTY ZIP").ToString
 
-                Dim latLon As List(Of String) = AddressToLatLon(Me.txtCustomerServiceAddress.Text)
-                Me.txtCustomerServiceAddressLat.Text = latLon(0)
-                Me.txtCustomerServiceAddressLon.Text = latLon(1)
+                'Dim latLon As List(Of String) = AddressToLatLon(Me.txtCustomerServiceAddress.Text)
+                'Me.txtCustomerServiceAddressLat.Text = latLon(0)
+                'Me.txtCustomerServiceAddressLon.Text = latLon(1)
 
-                Dim ds As New DataSet("ServiceLocation")
-                Dim dt As New DataTable("ServiceLocationTable")
-                dt.Columns.Add("Shape", Type.[GetType]("System.String"))
-                dt.Columns.Add("Country", Type.[GetType]("System.String"))
-                dt.Columns.Add("City", Type.[GetType]("System.String"))
-                dt.Columns.Add("Address", Type.[GetType]("System.String"))
-                dt.Columns.Add("Latitude", Type.[GetType]("System.Decimal"))
-                dt.Columns.Add("Longitude", Type.[GetType]("System.Decimal"))
-                dt.Rows.Add("PinTarget", "", rs("PRIMARY NAME").ToString, rs("PROPERTY ADDRESS").ToString & "<br />" & rs("PROPERTY CITY").ToString & " " & rs("PROPERTY ZIP").ToString, latLon(0).ToDecimal, latLon(1).ToDecimal)
-                ds.Tables.Add(dt)
+                'Dim ds As New DataSet("ServiceLocation")
+                'Dim dt As New DataTable("ServiceLocationTable")
+                'dt.Columns.Add("Shape", Type.[GetType]("System.String"))
+                'dt.Columns.Add("Country", Type.[GetType]("System.String"))
+                'dt.Columns.Add("City", Type.[GetType]("System.String"))
+                'dt.Columns.Add("Address", Type.[GetType]("System.String"))
+                'dt.Columns.Add("Latitude", Type.[GetType]("System.Decimal"))
+                'dt.Columns.Add("Longitude", Type.[GetType]("System.Decimal"))
+                'dt.Rows.Add("PinTarget", "", rs("PRIMARY NAME").ToString, rs("PROPERTY ADDRESS").ToString & "<br />" & rs("PROPERTY CITY").ToString & " " & rs("PROPERTY ZIP").ToString, latLon(0).ToDecimal, latLon(1).ToDecimal)
+                'ds.Tables.Add(dt)
 
-                Me.RadMap1.CenterSettings.Latitude = latLon(0).ToDecimal
-                RadMap1.CenterSettings.Longitude = latLon(1).ToDecimal
+                'Me.RadMap1.CenterSettings.Latitude = latLon(0).ToDecimal
+                'RadMap1.CenterSettings.Longitude = latLon(1).ToDecimal
 
-                RadMap1.DataSource = ds
-                RadMap1.DataBind()
+                'RadMap1.DataSource = ds
+                'RadMap1.DataBind()
             End If
             rs.Close()
             cmd.Cancel()
@@ -225,224 +219,21 @@ Public Class ModuleTab
         End Try
     End Sub
 
-    Private Sub LoadQuestions()
-        If App.RootFolderQuestions.Count > 0 Then
-            Dim folderName As String = GetFolderName(App.ActiveModule.FolderID)
-            Me.LoadQuestions(App.RootFolderQuestions, tblFolderQuestions, folderName.Replace(" ", "_"))
-        Else
-            Me.tblFolderQuestions.Visible = False
-        End If
-        Me.LoadQuestions(App.ActiveModuleQuestions, "")
-    End Sub
-    Private Sub LoadQuestions(ByVal qList As List(Of SystemQuestion), ByVal xmlPath As String)
-        LoadQuestions(qList, Nothing, xmlPath)
-    End Sub
-    Private Sub LoadQuestions(ByVal qList As List(Of SystemQuestion), ByVal tbl As Table, ByVal xmlPath As String)
-        ' sort the list by the sort order and id
-        qList = qList.OrderBy(Function(q) q.Sort).ThenBy(Function(q) q.ID).ToList
+    'Private Sub LoadQuestions()
+    '    'If App.RootFolderQuestions.Count > 0 Then
+    '    '    Dim folderName As String = GetFolderName(App.ActiveModule.FolderID)
+    '    '    Me.LoadQuestions(App.RootFolderQuestions, tblFolderQuestions, folderName.Replace(" ", "_"))
+    '    'Else
+    '    '    Me.tblFolderQuestions.Visible = False
+    '    'End If
+    '    Me.LoadQuestions(App.ActiveModuleQuestions, "")
+    'End Sub
+    'Private Sub LoadQuestions(ByVal qList As List(Of SystemQuestion), ByVal xmlPath As String)
+    '    LoadQuestions(qList, Nothing, xmlPath)
+    'End Sub
+    'Private Sub LoadQuestions(ByVal qList As List(Of SystemQuestion), ByVal tbl As Table, ByVal xmlPath As String)
 
-        If tbl IsNot Nothing Then
-            ' table specified so just use that
-            tbl.Rows.Clear()
-        End If
-
-        ' module question go to their selected locations
-        Me.tblModuleQuestions_TopLeft.Rows.Clear()
-        Me.tblModuleQuestions_TopMiddle.Rows.Clear()
-        Me.tblModuleQuestions_TopRight.Rows.Clear()
-        Me.tblModuleQuestions_FullPage.Rows.Clear()
-        Me.tblModuleQuestions_BottomLeft.Rows.Clear()
-        Me.tblModuleQuestions_BottomMiddle.Rows.Clear()
-        Me.tblModuleQuestions_BottomRight.Rows.Clear()
-
-        If qList.Count = 0 Then
-            Dim tr As New TableRow
-            Dim tc1 As New TableCell
-            tc1.Text = "There are no questions To show In this view."
-            tc1.VerticalAlign = VerticalAlign.Top
-            tr.Cells.Add(tc1)
-            If tbl Is Nothing Then tbl = Me.tblModuleQuestions_FullPage
-            tbl.Rows.Add(tr)
-        Else
-            For Each q In qList
-                ' load any extra info we have in the lookup table
-                Common.GetExtraInfo(App.ActiveModule.ImportTable, q)
-
-                Dim tr1 As New TableRow
-                Dim tc1 As New TableCell
-                If q.Visible Then
-                    If q.Description <> "" Then
-                        Dim lnk As New HyperLink
-                        lnk.ID = "lnk" & q.ID
-                        lnk.ToolTip = q.Description
-                        lnk.Text = q.Question.XmlDecode
-                        tc1.Controls.Add(lnk)
-                    Else
-                        tc1.Text = q.Question.XmlDecode
-                    End If
-
-                    Select Case q.Location
-                        Case Enums.SystemQuestionLocation.TopLeft, Enums.SystemQuestionLocation.FullPage, Enums.SystemQuestionLocation.BottomLeft
-                        Case Else
-                            tc1.Style.Add("padding-left", "10px")
-                    End Select
-                End If
-                tc1.VerticalAlign = VerticalAlign.Top
-                tr1.Cells.Add(tc1)
-
-                Dim tr2 As New TableRow
-                Dim tc2 As New TableCell
-                Select Case q.Type
-                    Case Enums.SystemQuestionType.CheckBox
-                        Dim chk As New Controls.CheckBoxes.CheckBox
-                        chk.ID = "chk_" & q.ID
-                        chk.Required = q.Required
-                        chk.XmlPath = xmlPath
-                        chk.DataFieldName = q.DataFieldName
-                        chk.AutoPostBack = (q.Rule <> "")
-                        chk.ReadOnly = Me.IsImportModule
-                        chk.Visible = q.Visible
-                        Select Case q.Location
-                            Case Enums.SystemQuestionLocation.TopLeft, Enums.SystemQuestionLocation.FullPage, Enums.SystemQuestionLocation.BottomLeft
-                            Case Else
-                                If q.Visible Then tc2.Style.Add("padding-left", "10px")
-                        End Select
-                        If q.Rule <> "" Then AddHandler chk.CheckedChanged, AddressOf CheckBox_CheckedChanged
-                        tc2.Controls.Add(chk)
-
-                    Case Enums.SystemQuestionType.DropDownList
-                        Dim ddl As New Controls.DropDownLists.DropDownList
-                        ddl.ID = "ddl_" & q.ID
-                        ddl.Width = New Unit(100, UnitType.Percentage)
-                        For Each itm As String In q.Values
-                            ddl.Items.Add(New RadComboBoxItem(itm, itm))
-                        Next
-                        ddl.Required = q.Required
-                        ddl.XmlPath = xmlPath
-                        ddl.DataFieldName = q.DataFieldName
-                        ddl.AutoPostBack = (q.Rule <> "")
-                        ' there is no "readonly" property for the radcombobox so we have to use a workaround
-                        ddl.AllowCustomText = Me.IsImportModule
-                        ddl.MarkFirstMatch = ddl.AllowCustomText
-                        ddl.EnableLoadOnDemand = ddl.AllowCustomText
-                        ddl.ShowDropDownOnTextboxClick = ddl.AllowCustomText
-                        ddl.EnableAutomaticLoadOnDemand = ddl.AllowCustomText
-                        ddl.Visible = q.Visible
-                        Select Case q.Location
-                            Case Enums.SystemQuestionLocation.TopLeft, Enums.SystemQuestionLocation.FullPage, Enums.SystemQuestionLocation.BottomLeft
-                            Case Else
-                                If q.Visible Then tc2.Style.Add("padding-left", "10px")
-                        End Select
-                        If q.Rule <> "" Then AddHandler ddl.SelectedIndexChanged, AddressOf DropDownList_SelectedIndexChanged
-                        tc2.Controls.Add(ddl)
-
-                    Case Enums.SystemQuestionType.MemoField
-                        Dim txt As New Controls.TextBoxes.TextBox
-                        txt.ID = "txt_" & q.ID
-                        txt.Width = New Unit(100, UnitType.Percentage)
-                        txt.Rows = 3
-                        txt.TextMode = InputMode.MultiLine
-                        txt.Required = q.Required
-                        txt.XmlPath = xmlPath
-                        txt.DataFieldName = q.DataFieldName
-                        txt.AutoPostBack = (q.Rule <> "")
-                        txt.ReadOnly = Me.IsImportModule
-                        txt.Visible = q.Visible
-                        Select Case q.Location
-                            Case Enums.SystemQuestionLocation.TopLeft, Enums.SystemQuestionLocation.FullPage, Enums.SystemQuestionLocation.BottomLeft
-                            Case Else
-                                If q.Visible Then tc2.Style.Add("padding-left", "10px")
-                        End Select
-                        If q.Rule <> "" Then AddHandler txt.TextChanged, AddressOf TextBox_TextChanged
-                        tc2.Controls.Add(txt)
-
-                    Case Enums.SystemQuestionType.TextBox
-                        Dim txt As New Controls.TextBoxes.TextBox
-                        txt.ID = "txt_" & q.ID
-                        txt.Width = New Unit(100, UnitType.Percentage)
-                        txt.MaxLength = 255
-                        txt.Required = q.Required
-                        txt.XmlPath = xmlPath
-                        txt.DataFieldName = q.DataFieldName
-                        txt.AutoPostBack = (q.Rule <> "")
-                        txt.ReadOnly = Me.IsImportModule
-                        txt.Visible = q.Visible
-                        Select Case q.Location
-                            Case Enums.SystemQuestionLocation.TopLeft, Enums.SystemQuestionLocation.FullPage, Enums.SystemQuestionLocation.BottomLeft
-                            Case Else
-                                If q.Visible Then tc2.Style.Add("padding-left", "10px")
-                        End Select
-                        If q.Rule <> "" Then AddHandler txt.TextChanged, AddressOf TextBox_TextChanged
-                        tc2.Controls.Add(txt)
-
-                    Case Enums.SystemQuestionType.NumericTextBox
-                        Dim txt As New Controls.TextBoxes.NumericTextBox
-                        txt.ID = "txt_" & q.ID
-                        txt.Width = New Unit(100, UnitType.Percentage)
-                        txt.Required = q.Required
-                        txt.XmlPath = xmlPath
-                        txt.DataFieldName = q.DataFieldName
-                        txt.NumberFormat.DecimalDigits = 0
-                        txt.AutoPostBack = (q.Rule <> "")
-                        txt.ReadOnly = Me.IsImportModule
-                        txt.Visible = q.Visible
-                        Select Case q.Location
-                            Case Enums.SystemQuestionLocation.TopLeft, Enums.SystemQuestionLocation.FullPage, Enums.SystemQuestionLocation.BottomLeft
-                            Case Else
-                                If q.Visible Then tc2.Style.Add("padding-left", "10px")
-                        End Select
-                        If q.Rule <> "" Then AddHandler txt.TextChanged, AddressOf TextBox_TextChanged
-                        tc2.Controls.Add(txt)
-                End Select
-                tc2.VerticalAlign = VerticalAlign.Top
-                tr2.Cells.Add(tc2)
-
-                If tbl Is Nothing Then
-                    ' select the correct location for this question
-                    Select Case q.Location
-                        Case Enums.SystemQuestionLocation.TopLeft
-                            Me.tblModuleQuestions_TopLeft.Rows.Add(tr1)
-                            Me.tblModuleQuestions_TopLeft.Rows.Add(tr2)
-                        Case Enums.SystemQuestionLocation.TopMiddle
-                            Me.tblModuleQuestions_TopMiddle.Rows.Add(tr1)
-                            Me.tblModuleQuestions_TopMiddle.Rows.Add(tr2)
-                        Case Enums.SystemQuestionLocation.TopRight
-                            Me.tblModuleQuestions_TopRight.Rows.Add(tr1)
-                            Me.tblModuleQuestions_TopRight.Rows.Add(tr2)
-                        Case Enums.SystemQuestionLocation.FullPage
-                            Me.tblModuleQuestions_FullPage.Rows.Add(tr1)
-                            Me.tblModuleQuestions_FullPage.Rows.Add(tr2)
-                        Case Enums.SystemQuestionLocation.BottomLeft
-                            Me.tblModuleQuestions_BottomLeft.Rows.Add(tr1)
-                            Me.tblModuleQuestions_BottomLeft.Rows.Add(tr2)
-                        Case Enums.SystemQuestionLocation.BottomMiddle
-                            Me.tblModuleQuestions_BottomMiddle.Rows.Add(tr1)
-                            Me.tblModuleQuestions_BottomMiddle.Rows.Add(tr2)
-                        Case Enums.SystemQuestionLocation.BottomRight
-                            Me.tblModuleQuestions_BottomRight.Rows.Add(tr1)
-                            Me.tblModuleQuestions_BottomRight.Rows.Add(tr2)
-                    End Select
-                Else
-                    tbl.Rows.Add(tr1)
-                    tbl.Rows.Add(tr2)
-                End If
-            Next
-        End If
-
-        ' hide the location tables if they're empty
-        Me.tblModuleQuestions_TopLeft.Visible = (Me.tblModuleQuestions_TopLeft.Rows.Count > 0)
-        Me.tblModuleQuestions_TopMiddle.Visible = (Me.tblModuleQuestions_TopMiddle.Rows.Count > 0)
-        Me.tblModuleQuestions_TopRight.Visible = (Me.tblModuleQuestions_TopRight.Rows.Count > 0)
-        Me.tblModuleQuestions_FullPage.Visible = (Me.tblModuleQuestions_FullPage.Rows.Count > 0)
-        Me.tblModuleQuestions_BottomLeft.Visible = (Me.tblModuleQuestions_BottomLeft.Rows.Count > 0)
-        Me.tblModuleQuestions_BottomMiddle.Visible = (Me.tblModuleQuestions_BottomMiddle.Rows.Count > 0)
-        Me.tblModuleQuestions_BottomRight.Visible = (Me.tblModuleQuestions_BottomRight.Rows.Count > 0)
-
-        If Me.OnMobile Then
-            Me.SetSkin(tbl, System.Configuration.ConfigurationManager.AppSettings("Telerik_Skin_Mobile"))
-        Else Me.SetSkin(tbl, System.Configuration.ConfigurationManager.AppSettings("Telerik_Skin_Desktop"))
-        End If
-    End Sub
+    'End Sub
 
     Private Sub LoadData()
         Dim cn As New SqlClient.SqlConnection(ConnectionString)
@@ -451,44 +242,69 @@ Public Class ModuleTab
             Dim cmd As New SqlClient.SqlCommand()
             Dim rs As SqlClient.SqlDataReader
             Dim sql As String = ""
-            If Me.IsImportModule Then
-                ' import modules load the data for the current customer
-                sql = "SELECT * FROM [" & App.ActiveModule.ImportTable & "] WHERE [ACCOUNT_NUMBER] = " & Me.CustAcctNum
-                cmd = New SqlClient.SqlCommand("procLoadImportRecord", cn)
-                cmd.Parameters.AddWithValue("@AcctNum", Me.CustAcctNum)
-                cmd.Parameters.AddWithValue("@ImportTable", App.ActiveModule.ImportTable)
-                cmd.CommandType = CommandType.StoredProcedure
-            Else
-                cmd = New SqlClient.SqlCommand("Select [ID], [xmlData], [xUserEmail] FROM [vwModuleData] WHERE [ID] = " & Me.RecordId, cn)
-            End If
+            cmd = New SqlClient.SqlCommand("Select [ID], [xmlData], [xUserEmail] FROM [vwModuleData] WHERE [ID] = " & Me.RecordId, cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             rs = cmd.ExecuteReader
-            If Me.IsImportModule Then
-                Dim DataTable = New DataTable()
-                DataTable.Load(rs)
-                Session("ImportDataTable" & Me.ModId) = DataTable
-                Me.FromDataTable(DataTable, 1)
-                If DataTable.Rows.Count = 0 Then
-                    Me.litNoData.Text = "No Import Data available for this customer.<br/>"
-                    Me.pnlDataNav.Visible = False
-                Else
-                    Me.litNoData.Text = ""
-                    Me.pnlDataNav.Visible = True
-                    Me.lblTotalRecords.Text = FormatNumber(DataTable.Rows.Count, 0)
-                End If
+            Me.pnlDataNav.Visible = False
+            If rs.Read Then
+                Me.FromXml(rs("xmlData").ToString)
+                Me.litNoData.Text = ""
             Else
-                Me.pnlDataNav.Visible = False
-                If rs.Read Then
-                    Me.FromXml(rs("xmlData").ToString)
-                    Me.litNoData.Text = ""
-                Else
-                    Me.litNoData.Text = "No Data available for this customer.<br/>"
-                End If
+                Me.litNoData.Text = "No Data available for this customer.<br/>"
             End If
             rs.Close()
             cmd.Cancel()
 
             'If Me.txtLocationNum.Text = "" Then Me.txtLocationNum.Text = Me.LocationNum
+
+        Catch ex As Exception
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+        Finally
+            cn.Close()
+        End Try
+    End Sub
+
+    Private Sub LoadMasterFeed()
+        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+
+        Try
+            Dim dt As New DataTable()
+            Dim lstFields As New List(Of String)
+
+            Dim fields As String = ""
+            For Each q As SystemQuestion In Me.ModuleView1.ModuleQuestions
+                If q.BindingType = Enums.SystemQuestionBindingType.MasterFeed Then
+                    If fields = "" Then
+                        fields = "[" & q.MasterFeedField & "]"
+                    Else fields &= ", [" & q.MasterFeedField & "]"
+                    End If
+                    dt.Columns.Add(q.MasterFeedField)
+                    lstFields.Add(q.MasterFeedField)
+                End If
+            Next
+
+            Dim cmd As New SqlClient.SqlCommand("procGetMasterFeedRecord", cn)
+            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+            cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.AddWithValue("@CustAcctNum", Me.CustAcctNum)
+            cmd.Parameters.AddWithValue("@Fields", fields)
+            Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+            Do While rs.Read
+                Dim r As DataRow = dt.NewRow
+                For Each f As String In lstFields
+                    r(f) = rs(f)
+                Next
+                dt.Rows.Add(r)
+            Loop
+            rs.Close()
+            cmd.Cancel()
+
+            Me.lblTotalRecords.Text = dt.Rows.Count.ToString
+            Me.pnlDataNav.Visible = (dt.Rows.Count > 1)
+
+            Session("ImportDataTable" & Me.ModId) = dt
+
+            lnkFirstRecord_Click(Nothing, New EventArgs)
 
         Catch ex As Exception
             ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))

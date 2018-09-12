@@ -10,6 +10,10 @@ Public Class builderPage
         ShowModuleWizard(0, folderId, Enums.SystemModuleType.Module)
     End Sub
 
+    Public Sub Layout_ManageModulesClicked(ByVal folderId As Integer)
+        ShowModuleManager(folderId)
+    End Sub
+
     Public Sub Layout_ShowModule(ByVal modId As Integer, ByVal modName As String)
         ShowModule(modId, modName)
     End Sub
@@ -21,6 +25,11 @@ Public Class builderPage
 #End Region
 
 #Region "Workers"
+
+    Public Sub ShowModuleManager(ByVal folderId As Integer)
+        Dim url As String = "~/account/ModuleManager.aspx?fid=" & folderId
+        Response.Redirect(url, False)
+    End Sub
 
     Public Sub ShowModuleWizard(ByVal id As Integer, ByVal folderId As Integer, ByVal type As Enums.SystemModuleType)
         Try

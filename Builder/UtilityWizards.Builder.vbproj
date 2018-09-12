@@ -25,6 +25,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TypeScriptToolsVersion>2.2</TypeScriptToolsVersion>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,32 +48,39 @@
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="itextsharp, Version=5.5.12.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
-      <HintPath>..\packages\iTextSharp.5.5.12\lib\itextsharp.dll</HintPath>
+    <Reference Include="AjaxControlToolkit, Version=18.1.0.0, Culture=neutral, PublicKeyToken=28f01b0e84b6d53e, processorArchitecture=MSIL">
+      <HintPath>..\packages\AjaxControlToolkit.18.1.0\lib\net40\AjaxControlToolkit.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Logging, Version=1.1.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.IdentityModel.Logging.1.1.4\lib\net451\Microsoft.IdentityModel.Logging.dll</HintPath>
+    <Reference Include="itextsharp, Version=5.5.13.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.13\lib\itextsharp.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Tokens, Version=5.1.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.5.1.4\lib\net451\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.5.2.4\lib\net451\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Microsoft.IdentityModel.Logging, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Logging.5.2.4\lib\net451\Microsoft.IdentityModel.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.105.2.3\lib\net452\RestSharp.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.IdentityModel.Tokens, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.5.2.4\lib\net451\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=106.3.1.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.3.1\lib\net452\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.1.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.5.1.4\lib\net451\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.5.2.4\lib\net451\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web.DynamicData" />
@@ -92,8 +100,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Telerik\UI for ASP.NET AJAX Q1 2015\Bin45\Telerik.Web.UI.Skins.dll</HintPath>
     </Reference>
-    <Reference Include="Twilio, Version=5.6.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Twilio.5.6.4\lib\net451\Twilio.dll</HintPath>
+    <Reference Include="Twilio, Version=5.16.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Twilio.5.16.4\lib\net451\Twilio.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -128,17 +136,18 @@
     <Content Include=".gitignore" />
     <Content Include="account\LoginHelp.aspx" />
     <Content Include="account\MobileLandingPage.aspx" />
+    <Content Include="account\ModuleManager.aspx" />
+    <Content Include="account\Modules.aspx" />
     <Content Include="account\ModuleTab.aspx" />
     <Content Include="account\PrintPreview.aspx" />
     <Content Include="account\SearchTab.aspx" />
     <Content Include="admin\Customers.aspx" />
     <Content Include="admin\DebrisTally.aspx" />
     <Content Include="controls\Menu.ascx" />
+    <Content Include="controls\ModuleView.ascx" />
     <Content Include="documentation\api\Default.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
-    <Content Include="images\gallery\modules\811.png" />
-    <Content Include="images\gallery\modules_large\811.png" />
     <Content Include="Register.aspx" />
     <Content Include="Register_Web.aspx" />
     <Content Include="admin\UserEditor.aspx" />
@@ -240,16 +249,10 @@
     <Content Include="images\gallery\clients\4\logo.png" />
     <Content Include="images\gallery\modules\folder.png" />
     <Content Include="images\gallery\modules\module.png" />
-    <Content Include="images\gallery\modules\sanitation.png" />
-    <Content Include="images\gallery\modules\sewer.png" />
     <Content Include="images\gallery\modules\up_folder.png" />
-    <Content Include="images\gallery\modules\water.png" />
     <Content Include="images\gallery\modules_large\folder.png" />
     <Content Include="images\gallery\modules_large\module.png" />
-    <Content Include="images\gallery\modules_large\sanitation.png" />
-    <Content Include="images\gallery\modules_large\sewer.png" />
     <Content Include="images\gallery\modules_large\up_folder.png" />
-    <Content Include="images\gallery\modules_large\water.png" />
     <Content Include="images\icon_114.png" />
     <Content Include="images\icon_120.png" />
     <Content Include="images\icon_180.png" />
@@ -1162,6 +1165,7 @@
     <Content Include="plugins\timepicker\bootstrap-timepicker.min.js" />
     <Content Include="RadEditor.aspx" />
     <Content Include="ServiceTester.aspx" />
+    <Content Include="styles\moduleTabs.css" />
     <Content Include="styles\utilityWizards_webApp.css" />
     <Content Include="App_Browsers\telerik.browser" />
     <Content Include="docs\Requirements.pdf" />
@@ -1187,6 +1191,20 @@
     </Compile>
     <Compile Include="account\MobileLandingPage.aspx.vb">
       <DependentUpon>MobileLandingPage.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="account\ModuleManager.aspx.designer.vb">
+      <DependentUpon>ModuleManager.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="account\ModuleManager.aspx.vb">
+      <DependentUpon>ModuleManager.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="account\Modules.aspx.designer.vb">
+      <DependentUpon>Modules.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="account\Modules.aspx.vb">
+      <DependentUpon>Modules.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
     <Compile Include="account\ModuleTab.aspx.designer.vb">
@@ -1229,6 +1247,13 @@
     </Compile>
     <Compile Include="controls\Menu.ascx.vb">
       <DependentUpon>Menu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="controls\ModuleView.ascx.designer.vb">
+      <DependentUpon>ModuleView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ModuleView.ascx.vb">
+      <DependentUpon>ModuleView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="documentation\api\Default.aspx.designer.vb">
@@ -1701,7 +1726,7 @@
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties UseAjaxifiedTemplates="False" UseJQuerySupport="False" />
+      <UserProperties UseJQuerySupport="False" UseAjaxifiedTemplates="False" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

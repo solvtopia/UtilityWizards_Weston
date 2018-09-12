@@ -12,6 +12,15 @@
         End Set
     End Property
 
+    Public Property InfoBoxTitleText As String
+        Get
+            Return Me.lblInfoBoxTitle.Text
+        End Get
+        Set(value As String)
+            Me.lblInfoBoxTitle.Text = value
+        End Set
+    End Property
+
 #End Region
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load

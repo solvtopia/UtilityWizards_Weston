@@ -11,86 +11,89 @@ Option Strict On
 Option Explicit On
 
 
-Partial Public Class Wizard_V2
+Partial Public Class Modules
     
     '''<summary>
-    '''wizardHeadContent control.
+    '''pnlRootOptions control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents wizardHeadContent As Global.System.Web.UI.WebControls.ContentPlaceHolder
+    Protected WithEvents pnlRootOptions As Global.System.Web.UI.WebControls.PlaceHolder
     
     '''<summary>
-    '''wizardMenuContent control.
+    '''liModules control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents wizardMenuContent As Global.System.Web.UI.WebControls.ContentPlaceHolder
+    Protected WithEvents liModules As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
-    '''wizardBreadcrumbContent control.
+    '''lnkModules control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents wizardBreadcrumbContent As Global.System.Web.UI.WebControls.ContentPlaceHolder
+    Protected WithEvents lnkModules As Global.System.Web.UI.WebControls.LinkButton
     
     '''<summary>
-    '''RadAjaxPanel1 control.
+    '''pnlRecordOptions control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents RadAjaxPanel1 As Global.Telerik.Web.UI.RadAjaxPanel
+    Protected WithEvents pnlRecordOptions As Global.System.Web.UI.WebControls.PlaceHolder
     
     '''<summary>
-    '''lblHeader control.
+    '''lnkSearch control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lblHeader As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents lnkSearch As Global.System.Web.UI.WebControls.LinkButton
     
     '''<summary>
-    '''wizardContent_Ajax control.
+    '''tabModules control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents wizardContent_Ajax As Global.System.Web.UI.WebControls.ContentPlaceHolder
+    Protected WithEvents tabModules As Global.Telerik.Web.UI.RadTabStrip
     
     '''<summary>
-    '''lblInfoBoxTitle control.
+    '''mpModules control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lblInfoBoxTitle As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents mpModules As Global.Telerik.Web.UI.RadMultiPage
     
     '''<summary>
-    '''wizardInfoContent control.
+    '''pvModules control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents wizardInfoContent As Global.System.Web.UI.WebControls.ContentPlaceHolder
+    Protected WithEvents pvModules As Global.Telerik.Web.UI.RadPageView
     
     '''<summary>
-    '''wizardContent_OutsideAjax control.
+    '''Master property.
     '''</summary>
     '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
+    '''Auto-generated property.
     '''</remarks>
-    Protected WithEvents wizardContent_OutsideAjax As Global.System.Web.UI.WebControls.ContentPlaceHolder
+    Public Shadows ReadOnly Property Master() As UtilityWizards.Builder.ContentPage
+        Get
+            Return CType(MyBase.Master,UtilityWizards.Builder.ContentPage)
+        End Get
+    End Property
 End Class

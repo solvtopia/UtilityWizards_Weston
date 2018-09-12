@@ -191,20 +191,4 @@ Public Class ModuleLandingPage
 
         Response.Redirect("~/account/Search.aspx?modid=" & Me.ModId & "&custacctnum=" & e.Item.Cells(3).Text & "&locationnum=" & e.Item.Cells(4).Text, False)
     End Sub
-
-    Private Sub lnkCopyModule_Click(sender As Object, e As EventArgs) Handles lnkCopyModule.Click
-
-    End Sub
-
-    Private Sub lnkDeleteModule_Click(sender As Object, e As EventArgs) Handles lnkDeleteModule.Click
-        ShowInformationPopup(Enums.InformationPopupType.DeleteModule, Enums.InformationPopupButtons.YesNo, Me.ModId)
-    End Sub
-
-    Private Sub lnkEditModule_Click(sender As Object, e As EventArgs) Handles lnkEditModule.Click
-        Response.Redirect("~/account/ModuleWizard.aspx?id=" & Me.ModId & "&fid=" & App.ActiveFolderID & "&t=" & CStr(Enums.SystemModuleType.Module), False)
-    End Sub
-
-    Private Sub lnkMoveModule_Click(sender As Object, e As EventArgs) Handles lnkMoveModule.Click
-        ShowInformationPopup(Enums.InformationPopupType.MoveModule, Enums.InformationPopupButtons.OkCancel, Me.ModId)
-    End Sub
 End Class

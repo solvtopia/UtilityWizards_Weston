@@ -8,7 +8,7 @@ Public Class _Default4
         AddHandler Master.NewModuleClicked, AddressOf Layout_NewModuleClicked
         AddHandler Master.FolderClicked, AddressOf Layout_FolderClicked
 
-        If App.CurrentClient.ID > 0 Then Me.LoadModules()
+        'If App.CurrentClient.ID > 0 Then Me.LoadModules()
         'And Me.hfSearchDone.Value.ToBoolean = True
 
         If Not IsPostBack Then
@@ -63,7 +63,7 @@ Public Class _Default4
             Me.pnlBadges.Visible = False
             'Me.pnlActivity.Visible = False
             Me.pnlRecordOptions.Visible = (App.CurrentAccountNumber <> "")
-            Me.pnlModuleOptions.Visible = False
+            'Me.pnlModuleOptions.Visible = False
 
         ElseIf Me.OnTablet Then
             Me.pnlRootOptions.Visible = False
@@ -73,10 +73,10 @@ Public Class _Default4
                                       App.CurrentUser.Permissions = Enums.SystemUserPermissions.SystemAdministrator)
             'Me.pnlActivity.Visible = Me.pnlBadges.Visible
             Me.pnlRecordOptions.Visible = (App.CurrentAccountNumber <> "")
-            Me.pnlModuleOptions.Visible = (App.ActiveModule.ID > 0)
+            'Me.pnlModuleOptions.Visible = (App.ActiveModule.ID > 0)
 
         Else ' desktop
-            Me.pnlRootOptions.Visible = (App.ActiveFolderID = 0 And App.CurrentUser.IsSysAdmin)
+            Me.pnlRootOptions.Visible = (App.CurrentUser.IsSysAdmin)
 
             If App.CurrentUser.Permissions = Enums.SystemUserPermissions.User Then
                 Me.pnlRootOptions.Visible = False
@@ -87,7 +87,7 @@ Public Class _Default4
                                       App.CurrentUser.Permissions = Enums.SystemUserPermissions.SystemAdministrator)
             'Me.pnlActivity.Visible = Me.pnlBadges.Visible
             Me.pnlRecordOptions.Visible = (App.CurrentAccountNumber <> "")
-            Me.pnlModuleOptions.Visible = (App.ActiveModule.ID > 0)
+            'Me.pnlModuleOptions.Visible = (App.ActiveModule.ID > 0)
         End If
 
         Me.Master.MenuAjaxPanel.RaisePostBackEvent("")
@@ -123,194 +123,195 @@ Public Class _Default4
         End Try
     End Sub
 
-    Private Sub LoadModules()
-        Me.tblModules.Rows.Clear()
+    'Private Sub LoadModules()
+    '    Me.tblModules.Rows.Clear()
 
-        Me.tabModules.Tabs.Clear()
+    '    Me.tabModules.Tabs.Clear()
 
-        Dim tr As New TableRow
+    '    Dim tr As New TableRow
 
-        Dim goHomeAdded As Boolean = False
+    '    Dim goHomeAdded As Boolean = False
 
-        Dim iconFolder As String = "modules"
-        Dim iconSize As Integer = 80
-        If App.CurrentClient.IconSize = Enums.IconSize.Large Then
-            iconFolder = "modules_large"
-            iconSize = 128
-        End If
+    '    Dim iconFolder As String = "modules"
+    '    Dim iconSize As Integer = 80
+    '    If App.CurrentClient.IconSize = Enums.IconSize.Large Then
+    '        iconFolder = "modules_large"
+    '        iconSize = 128
+    '    End If
 
-        If App.CurrentUser.ApprovedModules.Count = App.CurrentClient.Modules.Count Or App.CurrentUser.ApprovedModules.Count = 0 Then
-            If App.ActiveFolderID > 0 Then
-                ' inside a folder, show the description if the folder has one
-                Dim f As New SystemModule(App.ActiveFolderID)
-                If f.Description <> "" AndAlso f.Description.Trim <> "" Then
-                    Dim trDesc As New TableRow
-                    Dim tcDesc As New TableCell
-                    tcDesc.Attributes.Add("style", "display: inline-block;")
-                    tcDesc.BorderColor = Drawing.Color.Silver
-                    tcDesc.BorderStyle = BorderStyle.Solid
-                    tcDesc.BorderWidth = New Unit(1, UnitType.Pixel)
-                    tcDesc.BackColor = Drawing.Color.White
-                    tcDesc.Text = f.Description
-                    trDesc.Cells.Add(tcDesc)
-                    Me.tblModules.Rows.Add(trDesc)
-                End If
-            End If
+    '    If App.CurrentUser.ApprovedModules.Count = App.CurrentClient.Modules.Count Or App.CurrentUser.ApprovedModules.Count = 0 Then
+    '        If App.ActiveFolderID > 0 Then
+    '            ' inside a folder, show the description if the folder has one
+    '            Dim f As New SystemModule(App.ActiveFolderID)
+    '            If f.Description <> "" AndAlso f.Description.Trim <> "" Then
+    '                Dim trDesc As New TableRow
+    '                Dim tcDesc As New TableCell
+    '                tcDesc.Attributes.Add("style", "display: inline-block;")
+    '                tcDesc.BorderColor = Drawing.Color.Silver
+    '                tcDesc.BorderStyle = BorderStyle.Solid
+    '                tcDesc.BorderWidth = New Unit(1, UnitType.Pixel)
+    '                tcDesc.BackColor = Drawing.Color.White
+    '                tcDesc.Text = f.Description
+    '                trDesc.Cells.Add(tcDesc)
+    '                Me.tblModules.Rows.Add(trDesc)
+    '            End If
+    '        End If
 
-            If App.CurrentClient.Modules.Count > 0 Then
-                If App.ActiveFolderID > 0 And Not goHomeAdded Then
-                    ' add the go home button if we are inside a folder
-                    Dim tc As New TableCell
-                    tc.Attributes.Add("style", "display: inline-block; padding: 10px;")
-                    tc.Height = New Unit(80, UnitType.Pixel)
-                    tc.VerticalAlign = VerticalAlign.Top
-                    tc.HorizontalAlign = HorizontalAlign.Center
-                    Dim ibtn As New Telerik.Web.UI.RadButton
-                    ibtn.ID = "ibtnModule_0"
-                    ibtn.Image.ImageUrl = "~/images/gallery/" & iconFolder & "/up_folder.png"
-                    ibtn.Image.IsBackgroundImage = True
-                    ibtn.Height = New Unit(iconSize, UnitType.Pixel)
-                    ibtn.Width = New Unit(iconSize, UnitType.Pixel)
-                    'AddHandler ibtn.Click, AddressOf ibtnModule_Click
-                    Dim lit As New Literal
-                    lit.ID = "litModule_0"
-                    lit.Text = "<br/>"
-                    Dim lbl As New Label
-                    lbl.ID = "lblModule_0"
-                    lbl.Text = "Go Home"
-                    tc.Controls.Add(ibtn)
-                    tc.Controls.Add(lit)
-                    'tc.Controls.Add(lbl)
-                    tr.Cells.Add(tc)
+    '        If App.CurrentClient.Modules.Count > 0 Then
+    '            If App.ActiveFolderID > 0 And Not goHomeAdded Then
+    '                ' add the go home button if we are inside a folder
+    '                Dim tc As New TableCell
+    '                tc.Attributes.Add("style", "display: inline-block; padding: 10px;")
+    '                tc.Height = New Unit(80, UnitType.Pixel)
+    '                tc.VerticalAlign = VerticalAlign.Top
+    '                tc.HorizontalAlign = HorizontalAlign.Center
+    '                Dim ibtn As New Telerik.Web.UI.RadButton
+    '                ibtn.ID = "ibtnModule_0"
+    '                ibtn.Image.ImageUrl = "~/images/gallery/" & iconFolder & "/up_folder.png"
+    '                ibtn.Image.IsBackgroundImage = True
+    '                ibtn.Height = New Unit(iconSize, UnitType.Pixel)
+    '                ibtn.Width = New Unit(iconSize, UnitType.Pixel)
+    '                'AddHandler ibtn.Click, AddressOf ibtnModule_Click
+    '                Dim lit As New Literal
+    '                lit.ID = "litModule_0"
+    '                lit.Text = "<br/>"
+    '                Dim lbl As New Label
+    '                lbl.ID = "lblModule_0"
+    '                lbl.Text = "Go Home"
+    '                tc.Controls.Add(ibtn)
+    '                tc.Controls.Add(lit)
+    '                'tc.Controls.Add(lbl)
+    '                tr.Cells.Add(tc)
 
-                    goHomeAdded = True
-                End If
+    '                goHomeAdded = True
+    '            End If
 
-                For Each m As SystemModule In App.CurrentClient.Modules
-                    If m.FolderID = App.ActiveFolderID Then
-                        If m.ID <> 109 Then
-                            Dim tc As New TableCell
-                            tc.Attributes.Add("style", "display: inline-block; padding: 10px;")
-                            tc.VerticalAlign = VerticalAlign.Top
-                            tc.HorizontalAlign = HorizontalAlign.Center
-                            Dim ibtn As New Telerik.Web.UI.RadButton
-                            ibtn.ID = "ibtnModule_" & m.ID
-                            ibtn.Image.ImageUrl = m.Icon
-                            ibtn.Image.IsBackgroundImage = True
-                            ibtn.Height = New Unit(iconSize, UnitType.Pixel)
-                            ibtn.Width = New Unit(iconSize, UnitType.Pixel)
-                            'AddHandler ibtn.Click, AddressOf ibtnModule_Click
-                            Dim lit As New Literal
-                            lit.ID = "litModule_" & m.ID
-                            lit.Text = "<br/>"
-                            Dim lbl As New Label
-                            lbl.ID = "lblModule_" & m.ID
-                            lbl.Text = m.Name
-                            tc.Controls.Add(ibtn)
-                            tc.Controls.Add(lit)
-                            tc.Controls.Add(lbl)
-                            tr.Cells.Add(tc)
+    '            For Each m As SystemModule In App.CurrentClient.Modules
+    '                If m.FolderID = App.ActiveFolderID Then
+    '                    If m.ID <> 109 Then
+    '                        Dim tc As New TableCell
+    '                        tc.Attributes.Add("style", "display: inline-block; padding: 10px;")
+    '                        tc.VerticalAlign = VerticalAlign.Top
+    '                        tc.HorizontalAlign = HorizontalAlign.Center
+    '                        Dim ibtn As New Telerik.Web.UI.RadButton
+    '                        ibtn.ID = "ibtnModule_" & m.ID
+    '                        ibtn.Image.ImageUrl = m.Icon
+    '                        ibtn.Image.IsBackgroundImage = True
+    '                        ibtn.Height = New Unit(iconSize, UnitType.Pixel)
+    '                        ibtn.Width = New Unit(iconSize, UnitType.Pixel)
+    '                        'AddHandler ibtn.Click, AddressOf ibtnModule_Click
+    '                        Dim lit As New Literal
+    '                        lit.ID = "litModule_" & m.ID
+    '                        lit.Text = "<br/>"
+    '                        Dim lbl As New Label
+    '                        lbl.ID = "lblModule_" & m.ID
+    '                        lbl.Text = m.Name
+    '                        tc.Controls.Add(ibtn)
+    '                        tc.Controls.Add(lit)
+    '                        tc.Controls.Add(lbl)
+    '                        tr.Cells.Add(tc)
 
-                            Dim roFlag As String = If(m.ImportModule, " (Read-Only)", "")
-                            Dim tab As New RadTab(m.Name & roFlag, m.ID.ToString)
-                            tab.Enabled = (Me.hfSearchDone.Value.ToBoolean = True)
-                            Me.tabModules.Tabs.Add(tab)
-                        End If
-                    End If
-                Next
+    '                        Dim roFlag As String = If(m.ImportModule, " (Read-Only)", "")
+    '                        Dim tab As New RadTab(m.Name & roFlag, m.ID.ToString)
+    '                        tab.Enabled = (Me.hfSearchDone.Value.ToBoolean = True)
+    '                        Me.tabModules.Tabs.Add(tab)
+    '                    End If
+    '                End If
+    '            Next
 
-                Me.tblModules.Rows.Add(tr)
-            Else
-                Dim tc As New TableCell
-                tc.Attributes.Add("style", "display: inline-block;")
-                tc.Text = "Click on &lt;Add A New Module&gt; on the left under &lt;" & IIf(App.ActiveFolderID = 0, "Dashboard", "Folder").ToString & " Actions&gt; to begin."
-                tr.Cells.Add(tc)
-                Me.tblModules.Rows.Add(tr)
-            End If
-        ElseIf App.CurrentUser.ApprovedModules.Count > 0 Then
-            For Each m As SystemModule In App.CurrentClient.Modules
-                ' add modules only for the active folder
-                Dim addModule As Boolean = App.CurrentUser.ApprovedModules.Contains(m.ID) And m.ID <> 109
+    '            Me.tblModules.Rows.Add(tr)
+    '        Else
+    '            Dim tc As New TableCell
+    '            tc.Attributes.Add("style", "display: inline-block;")
+    '            tc.Text = "Click on &lt;Manage Tabs&gt; on the left under &lt;" & IIf(App.ActiveFolderID = 0, "Dashboard", "Folder").ToString & " Actions&gt; to begin."
+    '            tr.Cells.Add(tc)
+    '            Me.tblModules.Rows.Add(tr)
+    '        End If
+    '    ElseIf App.CurrentUser.ApprovedModules.Count > 0 Then
+    '        For Each m As SystemModule In App.CurrentClient.Modules
+    '            ' add modules only for the active folder
+    '            Dim addModule As Boolean = App.CurrentUser.ApprovedModules.Contains(m.ID) And m.ID <> 109
 
-                If addModule Then
-                    Dim tc As New TableCell
-                    tc.Attributes.Add("style", "display: inline-block; padding: 10px;")
-                    tc.VerticalAlign = VerticalAlign.Top
-                    tc.HorizontalAlign = HorizontalAlign.Center
-                    Dim ibtn As New Telerik.Web.UI.RadButton
-                    ibtn.ID = "ibtnModule_" & m.ID
-                    ibtn.Image.ImageUrl = m.Icon
-                    ibtn.Image.IsBackgroundImage = True
-                    ibtn.Height = New Unit(iconSize, UnitType.Pixel)
-                    ibtn.Width = New Unit(iconSize, UnitType.Pixel)
-                    'AddHandler ibtn.Click, AddressOf ibtnModule_Click
-                    Dim lit As New Literal
-                    lit.ID = "litModule_" & m.ID
-                    lit.Text = "<br/>"
-                    Dim lbl As New Label
-                    lbl.ID = "lblModule_" & m.ID
-                    If m.FolderID = 0 Then lbl.Text = m.Name Else lbl.Text = GetFolderName(m.FolderID) & " > " & m.Name
-                    tc.Controls.Add(ibtn)
-                    tc.Controls.Add(lit)
-                    tc.Controls.Add(lbl)
-                    tr.Cells.Add(tc)
+    '            If addModule Then
+    '                Dim tc As New TableCell
+    '                tc.Attributes.Add("style", "display: inline-block; padding: 10px;")
+    '                tc.VerticalAlign = VerticalAlign.Top
+    '                tc.HorizontalAlign = HorizontalAlign.Center
+    '                Dim ibtn As New Telerik.Web.UI.RadButton
+    '                ibtn.ID = "ibtnModule_" & m.ID
+    '                ibtn.Image.ImageUrl = m.Icon
+    '                ibtn.Image.IsBackgroundImage = True
+    '                ibtn.Height = New Unit(iconSize, UnitType.Pixel)
+    '                ibtn.Width = New Unit(iconSize, UnitType.Pixel)
+    '                'AddHandler ibtn.Click, AddressOf ibtnModule_Click
+    '                Dim lit As New Literal
+    '                lit.ID = "litModule_" & m.ID
+    '                lit.Text = "<br/>"
+    '                Dim lbl As New Label
+    '                lbl.ID = "lblModule_" & m.ID
+    '                If m.FolderID = 0 Then lbl.Text = m.Name Else lbl.Text = GetFolderName(m.FolderID) & " > " & m.Name
+    '                tc.Controls.Add(ibtn)
+    '                tc.Controls.Add(lit)
+    '                tc.Controls.Add(lbl)
+    '                tr.Cells.Add(tc)
 
-                    Dim roFlag As String = If(m.ImportModule, " (Read-Only)", "")
-                    Dim tab As New RadTab(m.Name & roFlag, m.ID.ToString)
-                    tab.Enabled = (Me.hfSearchDone.Value.ToBoolean = True)
-                    Me.tabModules.Tabs.Add(tab)
-                End If
-            Next
+    '                Dim roFlag As String = If(m.ImportModule, " (Read-Only)", "")
+    '                Dim tab As New RadTab(m.Name & roFlag, m.ID.ToString)
+    '                tab.Enabled = (Me.hfSearchDone.Value.ToBoolean = True)
+    '                Me.tabModules.Tabs.Add(tab)
+    '            End If
+    '        Next
 
-            Me.tblModules.Rows.Add(tr)
-        End If
+    '        Me.tblModules.Rows.Add(tr)
+    '    End If
 
-        'If App.ActiveFolderID = 0 Then
-        '    Me.lblHeader.Text = "System Modules"
-        'Else Me.lblHeader.Text = "System Modules > " & App.CurrentClient.Modules.GetByID(App.ActiveFolderID).Name
-        'End If
-    End Sub
+    '    'If App.ActiveFolderID = 0 Then
+    '    '    Me.lblHeader.Text = "System Modules"
+    '    'Else Me.lblHeader.Text = "System Modules > " & App.CurrentClient.Modules.GetByID(App.ActiveFolderID).Name
+    '    'End If
+    'End Sub
 
-    Private Sub tabs_TabClick(sender As Object, e As RadTabStripEventArgs) Handles tabModules.TabClick, tabSearch.TabClick
-        If e.Tab.Value.ToLower = "search" Then
-            Me.txtSearch.Text = ""
-            Me.RadSearchGrid.Visible = False
-            Me.txtSearch.Focus()
-            App.ActiveModule = New SystemModule
-            App.CurrentAccountNumber = ""
-            Me.tabModules.SelectedIndex = -1
-            Me.RadMultiPage2.SelectedIndex = 0
-        ElseIf IsNumeric(e.Tab.Value) Then
-            Session("ImportDataTable" & e.Tab.Value) = Nothing
-            Me.LoadModule(e.Tab.Value.ToInteger)
-        End If
+    'Private Sub tabs_TabClick(sender As Object, e As RadTabStripEventArgs) Handles tabModules.TabClick, tabSearch.TabClick
+    '    If e.Tab.Value.ToLower = "search" Then
+    '        Me.txtSearch.Text = ""
+    '        Me.RadSearchGrid.Visible = False
+    '        Me.txtSearch.Focus()
+    '        App.ActiveModule = New SystemModule
+    '        App.CurrentAccountNumber = ""
+    '        Me.tabModules.SelectedIndex = -1
+    '        Me.RadMultiPage2.SelectedIndex = 0
+    '    ElseIf IsNumeric(e.Tab.Value) Then
+    '        Session("ImportDataTable" & e.Tab.Value) = Nothing
+    '        Me.LoadModule(e.Tab.Value.ToInteger)
+    '    End If
 
-        Me.ShowOptions()
-    End Sub
+    '    Me.ShowOptions()
+    'End Sub
 
     Private Sub LoadModule(ByVal modId As Integer)
         ' find the tab and select it
-        For x As Integer = 0 To Me.tabModules.Tabs.Count - 1
-            If Me.tabModules.Tabs(x).Value.ToInteger = modId Then
-                Me.tabModules.SelectedIndex = x
-                Me.RadMultiPage2.SelectedIndex = 1
-                Exit For
-            End If
-        Next
+        'For x As Integer = 0 To Me.tabModules.Tabs.Count - 1
+        '    If Me.tabModules.Tabs(x).Value.ToInteger = modId Then
+        '        Me.tabModules.SelectedIndex = x
+        '        Me.RadMultiPage2.SelectedIndex = 1
+        '        Exit For
+        '    End If
+        'Next
 
         ' deselect the search tab
-        Me.tabSearch.SelectedIndex = -1
+        'Me.tabSearch.SelectedIndex = -1
 
         If modId = 0 Then
             App.ActiveFolderID = 0
-            Me.LoadModules()
+            'Me.LoadModules()
         Else
             If App.CurrentClient.Modules.GetByID(modId).Type = Enums.SystemModuleType.Folder Then
                 App.ActiveFolderID = modId
-                Me.LoadModules()
+                'Me.LoadModules()
             Else
                 App.ActiveModule = New SystemModule(modId)
-                Me.RadPageView2.ContentUrl = "~/account/ModuleTab.aspx?modid=" & modId & "&custacctnum=" & App.CurrentAccountNumber
+                Response.Redirect("~/account/Modules.aspx?fid=" & App.ActiveFolderID & "&custacctnum=" & App.CurrentAccountNumber, False)
+                'Me.RadPageView2.ContentUrl = "~/account/ModuleTab.aspx?modid=" & modId & "&custacctnum=" & App.CurrentAccountNumber
             End If
         End If
 
@@ -345,10 +346,10 @@ Public Class _Default4
         e.Item.Edit = False
 
         App.CurrentAccountNumber = e.Item.Cells(3).Text
-        Me.LoadModules()
+        'Me.LoadModules()
 
-        ' load the first module
-        Me.LoadModule(Me.tabModules.Tabs(0).Value.ToInteger)
+        ' load the first module that has a name
+        Me.LoadModule(App.CurrentClient.Modules(0).ID)
 
         'Dim modId As Integer = Me.ModId
         'If modId = 0 Then modId = e.Item.Cells(8).Text.ToInteger
@@ -358,33 +359,23 @@ Public Class _Default4
         'Response.Redirect("~/account/Module.aspx?modid=" & Me.ModId & "&id=" & e.Item.Cells(3).Text & "&custacctnum=" & e.Item.Cells(4).Text, False)
     End Sub
 
-    Private Sub lnkNewModule_Click(sender As Object, e As EventArgs) Handles lnkNewModule.Click
-        Layout_NewModuleClicked(App.ActiveFolderID)
+    Private Sub lnkModules_Click(sender As Object, e As EventArgs) Handles lnkModules.Click
+        Layout_ManageModulesClicked(App.ActiveFolderID)
     End Sub
 
     Private Sub lnkSearch_Click(sender As Object, e As EventArgs) Handles lnkSearch.Click
-        Me.tabModules.SelectedIndex = 0
-        Me.RadMultiPage2.SelectedIndex = 0
+        'Me.tabModules.SelectedIndex = 0
+        'Me.RadMultiPage2.SelectedIndex = 0
 
-        Me.txtSearch.Text = ""
-        Me.RadSearchGrid.Visible = False
-        Me.txtSearch.Focus()
+        'Me.txtSearch.Text = ""
+        'Me.RadSearchGrid.Visible = False
+        'Me.txtSearch.Focus()
         App.ActiveModule = New SystemModule
         App.CurrentAccountNumber = ""
 
-        Me.ShowOptions()
-    End Sub
+        Response.Redirect("~/Default.aspx", False)
 
-    Private Sub lnkCopyModule_Click(sender As Object, e As EventArgs) Handles lnkCopyModule.Click
-
-    End Sub
-
-    Private Sub lnkDeleteModule_Click(sender As Object, e As EventArgs) Handles lnkDeleteModule.Click
-        ShowInformationPopup(Enums.InformationPopupType.DeleteModule, Enums.InformationPopupButtons.YesNo, App.ActiveModule.ID)
-    End Sub
-
-    Private Sub lnkEditModule_Click(sender As Object, e As EventArgs) Handles lnkEditModule.Click
-        Response.Redirect("~/account/ModuleWizard.aspx?id=" & App.ActiveModule.ID & "&fid=" & App.ActiveFolderID & "&t=" & CStr(Enums.SystemModuleType.Module), False)
+        'Me.ShowOptions()
     End Sub
 
 End Class

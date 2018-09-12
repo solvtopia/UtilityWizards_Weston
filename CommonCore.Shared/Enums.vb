@@ -56,6 +56,26 @@
         NumericTextBox
     End Enum
 
+    Public Enum SystemQuestionTextBoxSize
+        XSmall = 50
+        Small = 100
+        Medium = 200
+        Large = 300
+    End Enum
+
+    Public Enum SystemQuestionDropDownSize
+        Auto = 0
+        Small = 100
+        Medium = 200
+        Large = 300
+    End Enum
+
+    Public Enum SystemQuestionBindingType
+        UserInput = 0
+        MasterFeed = 1
+        Formula = 2
+    End Enum
+
     Public Enum SystemQuestionLocation
         TopLeft
         TopMiddle

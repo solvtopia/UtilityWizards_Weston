@@ -6,6 +6,7 @@
 <%@ Register Assembly="UtilityWizards.CommonCore.Shared" Namespace="UtilityWizards.CommonCore.Shared.Controls.TextBoxes" TagPrefix="Builder" %>
 <%@ Register Assembly="UtilityWizards.CommonCore.Shared" Namespace="UtilityWizards.CommonCore.Shared.Controls.CheckBoxes" TagPrefix="Builder" %>
 <%@ Register Assembly="UtilityWizards.CommonCore.Shared" Namespace="UtilityWizards.CommonCore.Shared.Controls.DropDownLists" TagPrefix="Builder" %>
+<%@ Register Src="~/controls/ModuleView.ascx" TagPrefix="uw" TagName="ModuleView" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="headContent" runat="server">
     <style type="text/css">
@@ -39,146 +40,8 @@
                 <td>&nbsp;</td>
             </tr>
         </table>
-
     </asp:Panel>
-    <div class="row">
-        <!-- Left col -->
-        <div class="col-md-8">
-            <div class="row">
-                <div class="col-md-6">
-                </div>
-                <!-- /.col -->
-
-                <div class="col-md-6">
-                </div>
-                <!-- /.col -->
-            </div>
-            <!-- /.row -->
-
-            <!-- MAIN CONTENT -->
-            <div class="box box-info">
-                <%--<div class="box-header with-border">
-                    <h3 class="box-title">
-                        <asp:Label ID="lblHeader" runat="server" Text="Wizard Title"></asp:Label></h3>
-
-                    <div class="box-tools pull-right">
-                        <h3 class="box-title"></h3>
-                    </div>
-                </div>--%>
-                <!-- /.box-header -->
-                <div class="box-body">
-                    <asp:Table ID="tblFolderQuestions" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
-                    <table class="nav-justified">
-                        <tr>
-                            <td style="background-color: #E4E4E4; vertical-align: top;">
-                                <asp:Table ID="tblModuleQuestions_TopLeft" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
-                            </td>
-                            <td style="background-color: #C0C0C0; vertical-align: top;">
-                                <asp:Table ID="tblModuleQuestions_TopMiddle" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
-                            </td>
-                            <td style="background-color: #808080; vertical-align: top;">
-                                <asp:Table ID="tblModuleQuestions_TopRight" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" style="background-color: #FFFFFF; vertical-align: top;">
-                                <asp:Table ID="tblModuleQuestions_FullPage" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="background-color: #E4E4E4; vertical-align: top;">
-                                <asp:Table ID="tblModuleQuestions_BottomLeft" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
-                            </td>
-                            <td style="background-color: #C0C0C0; vertical-align: top;">
-                                <asp:Table ID="tblModuleQuestions_BottomMiddle" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
-                            </td>
-                            <td style="background-color: #808080; vertical-align: top;">
-                                <asp:Table ID="tblModuleQuestions_BottomRight" runat="server" CellPadding="1" CellSpacing="2" Width="100%" />
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <!-- /.box-body -->
-            </div>
-            <!-- /.box -->
-        </div>
-        <!-- /.col -->
-
-        <div class="col-md-4">
-
-            <!-- HEADER & DETAILS -->
-            <div class="box box-primary">
-                <div class="box-header with-border">
-                    <telerik:RadTabStrip ID="RadTabStrip1" runat="server" SelectedIndex="0" MultiPageID="RadMultiPage1" Skin="Metro">
-                        <Tabs>
-                            <telerik:RadTab runat="server" Text="Header &amp; Customer Details">
-                            </telerik:RadTab>
-                            <telerik:RadTab runat="server" Text="Location Map">
-                            </telerik:RadTab>
-                        </Tabs>
-                    </telerik:RadTabStrip>
-
-                    <div class="box-tools pull-right">
-                    </div>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                    <telerik:RadMultiPage ID="RadMultiPage1" runat="server" SelectedIndex="0" Width="100%">
-                        <telerik:RadPageView ID="RadPageView1" runat="server" Selected="true">
-                            <asp:Panel runat="server" ID="pnlCustomerDetails">
-                                <table class="wrap-table-module">
-                                    <tr>
-                                        <td>
-                                            <asp:Label runat="server" ID="lblAcctNum">Customer Account Number</asp:Label></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <Builder:TextBox ID="txtAcctNumber" runat="server" DataFieldName="CustAcctNum" ReadOnly="True" Width="100%" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Primary Name</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <Builder:TextBox ID="txtCustomerName" runat="server" DataFieldName="CustomerName" ReadOnly="True" Width="100%">
-                                            </Builder:TextBox>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: top;">Primary Address</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <Builder:TextBox ID="txtCustomerServiceAddress" runat="server" DataFieldName="CustomerServiceAddress" ReadOnly="True" Rows="3" TextMode="MultiLine" Width="100%">
-                                            </Builder:TextBox>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </asp:Panel>
-                        </telerik:RadPageView>
-                        <telerik:RadPageView ID="RadPageView2" runat="server">
-                            <telerik:RadMap RenderMode="Auto" runat="server" ID="RadMap1" Zoom="16" Skin="Metro" Height="350px" Width="100%">
-                                <DataBindings>
-                                    <MarkerBinding DataShapeField="Shape" DataTitleField="City" DataLocationLatitudeField="Latitude" DataLocationLongitudeField="Longitude" />
-                                </DataBindings>
-                                <LayersCollection>
-                                    <telerik:MapLayer Type="Tile" Subdomains="a,b,c"
-                                        UrlTemplate="http://#= subdomain #.tile.openstreetmap.org/#= zoom #/#= x #/#= y #.png"
-                                        Attribution="&copy; <a href='http://osm.org/copyright' title='OpenStreetMap contributors' target='_blank'>OpenStreetMap contributors</a>.">
-                                    </telerik:MapLayer>
-                                </LayersCollection>
-                            </telerik:RadMap>
-                        </telerik:RadPageView>
-                    </telerik:RadMultiPage>
-                </div>
-                <!-- /.box-body -->
-            </div>
-            <!-- /.box -->
-        </div>
-        <!-- /.col -->
-    </div>
-    <!-- /.row -->
+    <uw:ModuleView runat="server" ID="ModuleView1" Mode="View" />
     <asp:Panel runat="server" ID="pnlHidden" Visible="false" BackColor="#CC0000">
         <Builder:TextBox ID="txtID" runat="server" DataFieldName="ID" Enabled="False" Width="80px" />
         <Builder:TextBox ID="txtUserEmail" runat="server" DataFieldName="UserEmail" Enabled="False" Width="250px" />
@@ -188,6 +51,36 @@
         <Builder:TextBox ID="txtCustomerServiceAddressLon" runat="server" DataFieldName="CustomerServiceAddressLon" Enabled="False" Visible="False">
         </Builder:TextBox>
     </asp:Panel>
+    <script type="text/javascript">
+        function resize() {
+            var height = getDocHeight();
+            var elements = window.top.document.getElementsByTagName("div");
+
+            for (var i = 0; i < elements.length; i++) {
+                var containerPageViewID = "pvModules";
+
+                if (elements[i].id.indexOf(containerPageViewID) > -1) {
+                    elements[i].style.height = height + "px";
+                    break;
+                }
+            }
+        }
+
+        if (window.addEventListener)
+            window.addEventListener("load", resize, false);
+        else if (window.attachEvent)
+            window.attachEvent("onload", resize);
+        else window.onload = resize;
+
+        function getDocHeight() {
+            var D = document;
+            return Math.max(
+                Math.max(D.body.scrollHeight, D.documentElement.scrollHeight),
+                Math.max(D.body.offsetHeight, D.documentElement.offsetHeight),
+                Math.max(D.body.clientHeight, D.documentElement.clientHeight)
+            );
+        }
+    </script>
 </asp:Content>
 <asp:Content ID="Content4" ContentPlaceHolderID="pageContent_OutsideAjax" runat="server">
 </asp:Content>

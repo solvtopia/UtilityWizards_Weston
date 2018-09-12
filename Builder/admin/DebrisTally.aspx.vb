@@ -81,7 +81,7 @@ Public Class DebrisTally
                         Dim ddl As New Controls.DropDownLists.DropDownList
                         ddl.ID = "ddl_" & q.ID
                         ddl.Width = New Unit(100, UnitType.Percentage)
-                        For Each itm As String In q.Values
+                        For Each itm As String In q.DropDownValues
                             ddl.Items.Add(New RadComboBoxItem(itm, itm))
                         Next
                         ddl.Required = q.Required

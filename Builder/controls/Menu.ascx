@@ -28,7 +28,7 @@
                 <asp:LinkButton runat="server" ID="lnkCustomers"><i class="fa fa-address-book-o"></i><span>Customers</span></asp:LinkButton>
             </li>
             <li runat="server" id="liUsers">
-                <asp:LinkButton runat="server" ID="lnkUsers"><i class="fa fa-users"></i><span>Users & Technicians</span></asp:LinkButton>
+                <asp:LinkButton runat="server" ID="lnkUsers"><i class="fa fa-users"></i><span>Users Management</span></asp:LinkButton>
             </li>
             <li runat="server" id="liReports">
                 <asp:LinkButton runat="server" ID="lnkReports"><i class="fa fa-file-text-o"></i><span>System Reports</span></asp:LinkButton>

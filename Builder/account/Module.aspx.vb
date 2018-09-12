@@ -43,16 +43,6 @@ Public Class _Module
             Return App.ActiveModule.Name.Contains("811")
         End Get
     End Property
-    Private ReadOnly Property IsImportModule As Boolean
-        Get
-            Return App.ActiveModule.ImportModule
-        End Get
-    End Property
-    Private ReadOnly Property ImportTable As String
-        Get
-            Return App.ActiveModule.ImportTable
-        End Get
-    End Property
 
 #End Region
 
@@ -64,7 +54,7 @@ Public Class _Module
 
             Me.LoadLists()
 
-            If Me.RecordId > 0 Or App.ActiveModule.ImportModule Then
+            If Me.RecordId > 0 Then
                 Me.LoadData()
             Else
                 Me.txtUserEmail.Text = App.CurrentUser.Email
@@ -85,9 +75,9 @@ Public Class _Module
         Me.ddlTechnician.Enabled = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Supervisor Or
                                     App.CurrentUser.IsAdminUser Or
                                     App.CurrentUser.IsSysAdmin)
-        Me.pnlModuleOptions.Visible = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Supervisor Or
-                                    App.CurrentUser.IsAdminUser Or
-                                    App.CurrentUser.IsSysAdmin)
+        'Me.pnlModuleOptions.Visible = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Supervisor Or
+        '                            App.CurrentUser.IsAdminUser Or
+        '                            App.CurrentUser.IsSysAdmin)
 
         Me.txtTechComments.Enabled = True
 
@@ -105,7 +95,7 @@ Public Class _Module
 
         ' setup the form for the 811 locates
         If Me.Is811Module Then
-            Me.pnlModuleOptions.Visible = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Solvtopia Or Me.OnLocal)
+            'Me.pnlModuleOptions.Visible = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Solvtopia Or Me.OnLocal)
             Me.RadTabStrip1.Tabs(1).Visible = False
             Me.RadTabStrip1.Tabs(2).Visible = True
             Me.lblAcctNum.Visible = False
@@ -378,7 +368,7 @@ Public Class _Module
                         Dim ddl As New Controls.DropDownLists.DropDownList
                         ddl.ID = "ddl_" & q.ID
                         ddl.Width = New Unit(100, UnitType.Percentage)
-                        For Each itm As String In q.Values
+                        For Each itm As String In q.DropDownValues
                             ddl.Items.Add(New RadComboBoxItem(itm, itm))
                         Next
                         ddl.Required = q.Required
@@ -694,21 +684,21 @@ Public Class _Module
         Response.Redirect("~/account/ModuleLandingPage.aspx?t=" & CStr(Enums.TransactionType.[New]) & "&modid=" & Me.ModId, False)
     End Sub
 
-    Private Sub lnkCopyModule_Click(sender As Object, e As EventArgs) Handles lnkCopyModule.Click
+    'Private Sub lnkCopyModule_Click(sender As Object, e As EventArgs) Handles lnkCopyModule.Click
 
-    End Sub
+    'End Sub
 
-    Private Sub lnkDeleteModule_Click(sender As Object, e As EventArgs) Handles lnkDeleteModule.Click
-        ShowInformationPopup(Enums.InformationPopupType.DeleteModule, Enums.InformationPopupButtons.YesNo, Me.ModId)
-    End Sub
+    'Private Sub lnkDeleteModule_Click(sender As Object, e As EventArgs) Handles lnkDeleteModule.Click
+    '    ShowInformationPopup(Enums.InformationPopupType.DeleteModule, Enums.InformationPopupButtons.YesNo, Me.ModId)
+    'End Sub
 
-    Private Sub lnkEditModule_Click(sender As Object, e As EventArgs) Handles lnkEditModule.Click
-        Response.Redirect("~/account/ModuleWizard.aspx?id=" & Me.ModId & "&fid=" & App.ActiveFolderID & "&t=" & CStr(Enums.SystemModuleType.Module), False)
-    End Sub
+    'Private Sub lnkEditModule_Click(sender As Object, e As EventArgs) Handles lnkEditModule.Click
+    '    Response.Redirect("~/account/ModuleWizard.aspx?id=" & Me.ModId & "&fid=" & App.ActiveFolderID & "&t=" & CStr(Enums.SystemModuleType.Module), False)
+    'End Sub
 
-    Private Sub lnkMoveModule_Click(sender As Object, e As EventArgs) Handles lnkMoveModule.Click
-        ShowInformationPopup(Enums.InformationPopupType.MoveModule, Enums.InformationPopupButtons.OkCancel, Me.ModId)
-    End Sub
+    'Private Sub lnkMoveModule_Click(sender As Object, e As EventArgs) Handles lnkMoveModule.Click
+    '    ShowInformationPopup(Enums.InformationPopupType.MoveModule, Enums.InformationPopupButtons.OkCancel, Me.ModId)
+    'End Sub
 
     Private Sub lnkPrint_Click(sender As Object, e As EventArgs) Handles lnkPrint.Click
         Dim fName As String = Me.PrintPdf("window")

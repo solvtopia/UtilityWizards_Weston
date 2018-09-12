@@ -75,29 +75,29 @@ Public Class Search
     Private Function LoadSearchFields() As String
         Dim retVal As String = ""
 
-        ' add the folder search fields
-        If App.ActiveModule.FolderID > 0 Then
-            Dim folderName As String = GetFolderName(App.ActiveModule.FolderID)
+        '' add the folder search fields
+        'If App.ActiveModule.FolderID > 0 Then
+        '    Dim folderName As String = GetFolderName(App.ActiveModule.FolderID)
 
-            For Each q As SystemQuestion In App.RootFolderQuestions
-                If q.SearchField Then
-                    If retVal = "" Then
-                        retVal = "ISNULL(xmlData.value('(/Data/" & folderName & "/" & q.DataFieldName & "/text())[1]', 'varchar(255)'), '') AS [" & q.Question & "]"
-                    Else retVal &= ", ISNULL(xmlData.value('(/Data/" & folderName & "/" & q.DataFieldName & "/text())[1]', 'varchar(255)'), '') AS [" & q.Question & "]"
-                    End If
-                End If
-            Next
-        End If
+        '    For Each q As SystemQuestion In App.RootFolderQuestions
+        '        If q.SearchField Then
+        '            If retVal = "" Then
+        '                retVal = "ISNULL(xmlData.value('(/Data/" & folderName & "/" & q.DataFieldName & "/text())[1]', 'varchar(255)'), '') AS [" & q.DisplayText & "]"
+        '            Else retVal &= ", ISNULL(xmlData.value('(/Data/" & folderName & "/" & q.DataFieldName & "/text())[1]', 'varchar(255)'), '') AS [" & q.DisplayText & "]"
+        '            End If
+        '        End If
+        '    Next
+        'End If
 
-        ' add the module search fields
-        For Each q As SystemQuestion In App.ActiveModuleQuestions
-            If q.SearchField Then
-                If retVal = "" Then
-                    retVal = "ISNULL(xmlData.value('(/Data/" & q.DataFieldName & "/text())[1]', 'varchar(255)'), '') AS [" & q.Question & "]"
-                Else retVal &= ", ISNULL(xmlData.value('(/Data/" & q.DataFieldName & "/text())[1]', 'varchar(255)'), '') AS [" & q.Question & "]"
-                End If
-            End If
-        Next
+        '' add the module search fields
+        'For Each q As SystemQuestion In App.ActiveModuleQuestions
+        '    If q.SearchField Then
+        '        If retVal = "" Then
+        '            retVal = "ISNULL(xmlData.value('(/Data/" & q.DataFieldName & "/text())[1]', 'varchar(255)'), '') AS [" & q.DisplayText & "]"
+        '        Else retVal &= ", ISNULL(xmlData.value('(/Data/" & q.DataFieldName & "/text())[1]', 'varchar(255)'), '') AS [" & q.DisplayText & "]"
+        '        End If
+        '    End If
+        'Next
 
         Return retVal
     End Function

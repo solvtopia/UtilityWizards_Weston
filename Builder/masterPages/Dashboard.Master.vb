@@ -108,12 +108,14 @@ Public Class Dashboard
             Case Enums.SystemUserPermissions.Solvtopia
                 Me.lblUserInfo_Role.Text = "Solvtopia User"
         End Select
+        Dim avitarUrl As String = ""
         If My.Computer.FileSystem.FileExists(HttpContext.Current.Server.MapPath("~/images/gallery/clients/" & App.CurrentClient.ID & "/logo.png")) Then
-            Me.ibtnAvitar.ImageUrl = "~/images/gallery/clients/" & App.CurrentClient.ID & "/logo.png"
-        Else Me.ibtnAvitar.ImageUrl = App.CurrentUser.ImageUrl
+            avitarUrl = "~/images/gallery/clients/" & App.CurrentClient.ID & "/logo.png"
+        Else avitarUrl = App.CurrentUser.ImageUrl
         End If
-        Me.ibtnAvitar2.ImageUrl = Me.ibtnAvitar.ImageUrl
-        Me.ibtnAvitar3.ImageUrl = Me.ibtnAvitar.ImageUrl
+        'Me.ibtnAvitar.ImageUrl = avitarUrl
+        Me.ibtnAvitar2.ImageUrl = avitarUrl
+        Me.ibtnAvitar3.ImageUrl = avitarUrl
         'Me.pbrMain.Items(0).Expanded = (App.CurrentUser.ID > 0)
         'Me.pbrMain.Items(1).Expanded = (App.CurrentUser.ID > 0)
         'Me.ibtnEditNews.Visible = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.Solvtopia)

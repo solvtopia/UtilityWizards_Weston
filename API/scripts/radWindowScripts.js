@@ -2,13 +2,13 @@
 function GetRadWindow() {
     var oWindow = null;
     if (window.radWindow) oWindow = window.radWindow;
-    else if (window.frameElement != null && window.frameElement.radWindow) oWindow = window.frameElement.radWindow;
+    else if (window.frameElement !== null && window.frameElement.radWindow) oWindow = window.frameElement.radWindow;
     return oWindow;
 }
 
 function forceRadWindow(url) {
     var oWnd = GetRadWindow();
-    if (oWnd == null) {
+    if (oWnd === null) {
         location.href = url;
     }
 }
@@ -19,7 +19,7 @@ function returnToParent(value, url) {
 
     //get the arguments
     oArg.newGood = value;
-    if (url != '') {
+    if (url !== '') {
         oArg.Url = url;
     }
 

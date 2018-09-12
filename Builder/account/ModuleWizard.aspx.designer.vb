@@ -77,33 +77,6 @@ Partial Public Class ModuleWizard
     Protected WithEvents pnlModuleStep1Questions As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
-    '''chkImportModule control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents chkImportModule As Global.System.Web.UI.WebControls.CheckBox
-    
-    '''<summary>
-    '''imgHelp_Folder control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents imgHelp_Folder As Global.System.Web.UI.WebControls.Image
-    
-    '''<summary>
-    '''ddlImportTable control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents ddlImportTable As Global.Telerik.Web.UI.RadComboBox
-    
-    '''<summary>
     '''imgHelp_Icon control.
     '''</summary>
     '''<remarks>
@@ -140,222 +113,6 @@ Partial Public Class ModuleWizard
     Protected WithEvents pnlStep2 As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
-    '''imgHelp_Question control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents imgHelp_Question As Global.System.Web.UI.WebControls.Image
-    
-    '''<summary>
-    '''ddlQuestion control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents ddlQuestion As Global.Telerik.Web.UI.RadComboBox
-    
-    '''<summary>
-    '''lblDataField control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lblDataField As Global.System.Web.UI.WebControls.Label
-    
-    '''<summary>
-    '''imgHelp_Type control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents imgHelp_Type As Global.System.Web.UI.WebControls.Image
-    
-    '''<summary>
-    '''ddlQuestionType control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents ddlQuestionType As Global.Telerik.Web.UI.RadComboBox
-    
-    '''<summary>
-    '''imgHelp_Required control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents imgHelp_Required As Global.System.Web.UI.WebControls.Image
-    
-    '''<summary>
-    '''chkRequired control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents chkRequired As Global.System.Web.UI.WebControls.CheckBox
-    
-    '''<summary>
-    '''imgHelp_Search control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents imgHelp_Search As Global.System.Web.UI.WebControls.Image
-    
-    '''<summary>
-    '''chkSearch control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents chkSearch As Global.System.Web.UI.WebControls.CheckBox
-    
-    '''<summary>
-    '''imgHelp_Reporting control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents imgHelp_Reporting As Global.System.Web.UI.WebControls.Image
-    
-    '''<summary>
-    '''chkReporting control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents chkReporting As Global.System.Web.UI.WebControls.CheckBox
-    
-    '''<summary>
-    '''imgHelp_Export control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents imgHelp_Export As Global.System.Web.UI.WebControls.Image
-    
-    '''<summary>
-    '''chkExport control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents chkExport As Global.System.Web.UI.WebControls.CheckBox
-    
-    '''<summary>
-    '''chkMobile control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents chkMobile As Global.System.Web.UI.WebControls.CheckBox
-    
-    '''<summary>
-    '''chkDisplay control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents chkDisplay As Global.System.Web.UI.WebControls.CheckBox
-    
-    '''<summary>
-    '''ddlDisplay control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents ddlDisplay As Global.Telerik.Web.UI.RadComboBox
-    
-    '''<summary>
-    '''txtSort control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents txtSort As Global.Telerik.Web.UI.RadTextBox
-    
-    '''<summary>
-    '''pnlDropDownValues control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents pnlDropDownValues As Global.System.Web.UI.WebControls.Panel
-    
-    '''<summary>
-    '''imgHelp_Values control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents imgHelp_Values As Global.System.Web.UI.WebControls.Image
-    
-    '''<summary>
-    '''txtDDLValue control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents txtDDLValue As Global.Telerik.Web.UI.RadTextBox
-    
-    '''<summary>
-    '''btnAddValue control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents btnAddValue As Global.Telerik.Web.UI.RadButton
-    
-    '''<summary>
-    '''lstValues control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lstValues As Global.System.Web.UI.WebControls.ListBox
-    
-    '''<summary>
-    '''btnRemoveValue control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents btnRemoveValue As Global.Telerik.Web.UI.RadButton
-    
-    '''<summary>
-    '''btnAdd control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents btnAdd As Global.Telerik.Web.UI.RadButton
-    
-    '''<summary>
     '''imgHelp_Preview control.
     '''</summary>
     '''<remarks>
@@ -365,67 +122,13 @@ Partial Public Class ModuleWizard
     Protected WithEvents imgHelp_Preview As Global.System.Web.UI.WebControls.Image
     
     '''<summary>
-    '''tblModuleQuestions_TopLeft control.
+    '''ModuleView1 control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents tblModuleQuestions_TopLeft As Global.System.Web.UI.WebControls.Table
-    
-    '''<summary>
-    '''tblModuleQuestions_TopMiddle control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents tblModuleQuestions_TopMiddle As Global.System.Web.UI.WebControls.Table
-    
-    '''<summary>
-    '''tblModuleQuestions_TopRight control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents tblModuleQuestions_TopRight As Global.System.Web.UI.WebControls.Table
-    
-    '''<summary>
-    '''tblModuleQuestions_FullPage control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents tblModuleQuestions_FullPage As Global.System.Web.UI.WebControls.Table
-    
-    '''<summary>
-    '''tblModuleQuestions_BottomLeft control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents tblModuleQuestions_BottomLeft As Global.System.Web.UI.WebControls.Table
-    
-    '''<summary>
-    '''tblModuleQuestions_BottomMiddle control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents tblModuleQuestions_BottomMiddle As Global.System.Web.UI.WebControls.Table
-    
-    '''<summary>
-    '''tblModuleQuestions_BottomRight control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents tblModuleQuestions_BottomRight As Global.System.Web.UI.WebControls.Table
+    Protected WithEvents ModuleView1 As Global.UtilityWizards.Builder.ModuleView
     
     '''<summary>
     '''pnlStep3 control.
@@ -536,103 +239,319 @@ Partial Public Class ModuleWizard
     Protected WithEvents lblID As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''pnlStepInfo1 control.
+    '''btnAddNewQuestion control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlStepInfo1 As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents btnAddNewQuestion As Global.Telerik.Web.UI.RadButton
     
     '''<summary>
-    '''pnlFolderStepInfo1 control.
+    '''pnlQuestionEditor control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlFolderStepInfo1 As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents pnlQuestionEditor As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
-    '''pnlModuleStepInfo1 control.
+    '''pbProperties control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlModuleStepInfo1 As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents pbProperties As Global.Telerik.Web.UI.RadPanelBar
     
     '''<summary>
-    '''pnlStepInfo2 control.
+    '''txtQuestion control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlStepInfo2 As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents txtQuestion As Global.Telerik.Web.UI.RadTextBox
     
     '''<summary>
-    '''pnlFolderStepInfo2 control.
+    '''lblDataField control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlFolderStepInfo2 As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents lblDataField As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''pnlModuleStepInfo2 control.
+    '''ddlQuestionType control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlModuleStepInfo2 As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents ddlQuestionType As Global.System.Web.UI.WebControls.DropDownList
     
     '''<summary>
-    '''lblModuleName control.
+    '''chkDisplay control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lblModuleName As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents chkDisplay As Global.System.Web.UI.WebControls.CheckBox
     
     '''<summary>
-    '''pnlStepInfo3 control.
+    '''ddlDisplay control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlStepInfo3 As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents ddlDisplay As Global.System.Web.UI.WebControls.DropDownList
     
     '''<summary>
-    '''pnlStepInfo4 control.
+    '''txtSort control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlStepInfo4 As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents txtSort As Global.Telerik.Web.UI.RadTextBox
     
     '''<summary>
-    '''pnlStepInfo5 control.
+    '''pnlTextBoxAppearanceOptions control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlStepInfo5 As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents pnlTextBoxAppearanceOptions As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
-    '''pnlStepInfo6 control.
+    '''ddlTextBoxSize control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlStepInfo6 As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents ddlTextBoxSize As Global.System.Web.UI.WebControls.DropDownList
+    
+    '''<summary>
+    '''pnlNumericTextBoxAppearanceOptions control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlNumericTextBoxAppearanceOptions As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
+    '''txtNumbersAfterComma control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtNumbersAfterComma As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''pnlMemoTextBoxAppearanceOptions control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlMemoTextBoxAppearanceOptions As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
+    '''txtMemoRows control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtMemoRows As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''pnlDropDownAppearanceOptions control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlDropDownAppearanceOptions As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
+    '''ddlDropDownSize control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddlDropDownSize As Global.System.Web.UI.WebControls.DropDownList
+    
+    '''<summary>
+    '''ddlBindingType control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddlBindingType As Global.System.Web.UI.WebControls.DropDownList
+    
+    '''<summary>
+    '''pnlMasterFeedField control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlMasterFeedField As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
+    '''ddlMasterFeedField control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddlMasterFeedField As Global.System.Web.UI.WebControls.DropDownList
+    
+    '''<summary>
+    '''pnlFormulaField control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlFormulaField As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
+    '''txtFormula control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtFormula As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''pnlTextBoxDataOptions control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlTextBoxDataOptions As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
+    '''pnlDropDownDataOptions control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlDropDownDataOptions As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
+    '''txtDDLText control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtDDLText As Global.Telerik.Web.UI.RadTextBox
+    
+    '''<summary>
+    '''txtDDLValue control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtDDLValue As Global.Telerik.Web.UI.RadTextBox
+    
+    '''<summary>
+    '''btnAddValue control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnAddValue As Global.Telerik.Web.UI.RadButton
+    
+    '''<summary>
+    '''lstValues control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lstValues As Global.System.Web.UI.WebControls.ListBox
+    
+    '''<summary>
+    '''btnRemoveValue control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnRemoveValue As Global.Telerik.Web.UI.RadButton
+    
+    '''<summary>
+    '''chkRequired control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents chkRequired As Global.System.Web.UI.WebControls.CheckBox
+    
+    '''<summary>
+    '''chkReporting control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents chkReporting As Global.System.Web.UI.WebControls.CheckBox
+    
+    '''<summary>
+    '''chkExport control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents chkExport As Global.System.Web.UI.WebControls.CheckBox
+    
+    '''<summary>
+    '''btnAdd control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnAdd As Global.Telerik.Web.UI.RadButton
+    
+    '''<summary>
+    '''btnDelete control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnDelete As Global.Telerik.Web.UI.RadButton
+    
+    '''<summary>
+    '''btnCancelEditor control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnCancelEditor As Global.Telerik.Web.UI.RadButton
     
     '''<summary>
     '''Master property.

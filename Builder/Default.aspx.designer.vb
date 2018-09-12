@@ -23,22 +23,22 @@ Partial Public Class _Default4
     Protected WithEvents pnlRootOptions As Global.System.Web.UI.WebControls.PlaceHolder
     
     '''<summary>
-    '''liNewModule control.
+    '''liModules control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents liNewModule As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    Protected WithEvents liModules As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
-    '''lnkNewModule control.
+    '''lnkModules control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lnkNewModule As Global.System.Web.UI.WebControls.LinkButton
+    Protected WithEvents lnkModules As Global.System.Web.UI.WebControls.LinkButton
     
     '''<summary>
     '''pnlRecordOptions control.
@@ -66,69 +66,6 @@ Partial Public Class _Default4
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents lnkPrint As Global.System.Web.UI.WebControls.LinkButton
-    
-    '''<summary>
-    '''pnlModuleOptions control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents pnlModuleOptions As Global.System.Web.UI.WebControls.PlaceHolder
-    
-    '''<summary>
-    '''liEditModule control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents liEditModule As Global.System.Web.UI.HtmlControls.HtmlGenericControl
-    
-    '''<summary>
-    '''lnkEditModule control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lnkEditModule As Global.System.Web.UI.WebControls.LinkButton
-    
-    '''<summary>
-    '''liDeleteModule control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents liDeleteModule As Global.System.Web.UI.HtmlControls.HtmlGenericControl
-    
-    '''<summary>
-    '''lnkDeleteModule control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lnkDeleteModule As Global.System.Web.UI.WebControls.LinkButton
-    
-    '''<summary>
-    '''liCopyModule control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents liCopyModule As Global.System.Web.UI.HtmlControls.HtmlGenericControl
-    
-    '''<summary>
-    '''lnkCopyModule control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lnkCopyModule As Global.System.Web.UI.WebControls.LinkButton
     
     '''<summary>
     '''pnlBadges control.
@@ -210,6 +147,15 @@ Partial Public Class _Default4
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents pnlCustomerSearch As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
+    '''ddlSearchField control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddlSearchField As Global.Telerik.Web.UI.RadComboBox
     
     '''<summary>
     '''txtSearch control.

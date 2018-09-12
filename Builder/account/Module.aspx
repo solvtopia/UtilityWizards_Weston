@@ -29,7 +29,7 @@
             <asp:LinkButton runat="server" ID="lnkPrint"><i class="fa fa-print"></i><span>Print</span></asp:LinkButton></li>
         <li>
             <asp:LinkButton runat="server" ID="lnkSaveHome"><i class="fa fa-window-close-o"></i><span>Save & Close</span></asp:LinkButton></li>
-        <asp:PlaceHolder runat="server" ID="pnlModuleOptions">
+        <%--<asp:PlaceHolder runat="server" ID="pnlModuleOptions">
             <li class="header">MODULE OPTIONS</li>
             <li runat="server" id="liEditModule">
                 <asp:LinkButton runat="server" ID="lnkEditModule"><i class="fa fa-pencil"></i><span>Edit Module</span></asp:LinkButton></li>
@@ -39,7 +39,7 @@
                 <asp:LinkButton runat="server" ID="lnkCopyModule"><i class="fa fa-files-o"></i><span>Copy Module</span></asp:LinkButton></li>
             <li runat="server" id="liMoveModule">
                 <asp:LinkButton runat="server" ID="lnkMoveModule"><i class="fa fa-stack-overflow"></i><span>Move to Folder</span></asp:LinkButton></li>
-        </asp:PlaceHolder>
+        </asp:PlaceHolder>--%>
     </ul>
 </asp:Content>
 <asp:Content ID="Content6" ContentPlaceHolderID="breadcrumbContent" runat="server">

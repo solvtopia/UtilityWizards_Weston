@@ -902,7 +902,7 @@ Public Module Xml
             Dim row As DataRow = data.Rows(recordNum - 1)
 
             For Each dc As DataColumn In data.Columns
-                Dim name As String = StrConv(dc.ColumnName.Replace("_", " "), VbStrConv.ProperCase).Replace(" ", "")
+                Dim name As String = dc.ColumnName
                 If ht.ContainsKey(name) Then
                     ht(name) = row(dc.ColumnName).ToString
                 Else ht.Add(name, row(dc.ColumnName).ToString)

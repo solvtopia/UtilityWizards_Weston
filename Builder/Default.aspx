@@ -10,8 +10,8 @@
     <ul class="sidebar-menu">
         <asp:PlaceHolder runat="server" ID="pnlRootOptions">
             <li class="header">DASHBOARD OPTIONS</li>
-            <li runat="server" id="liNewModule">
-                <asp:LinkButton runat="server" ID="lnkNewModule"><i class="fa fa-puzzle-piece"></i><span>Add Module</span></asp:LinkButton>
+            <li runat="server" id="liModules">
+                <asp:LinkButton runat="server" ID="lnkModules"><i class="fa fa-puzzle-piece"></i><span>Manage Tabs</span></asp:LinkButton>
             </li>
         </asp:PlaceHolder>
         <asp:PlaceHolder runat="server" ID="pnlRecordOptions">
@@ -20,7 +20,7 @@
                 <asp:LinkButton runat="server" ID="lnkSearch"><i class="fa fa-search"></i><span>Search</span></asp:LinkButton></li>
             <li>
                 <asp:LinkButton runat="server" ID="lnkPrint"><i class="fa fa-print"></i><span>Print</span></asp:LinkButton></li>
-            <asp:PlaceHolder runat="server" ID="pnlModuleOptions">
+            <%--<asp:PlaceHolder runat="server" ID="pnlModuleOptions">
                 <li class="header">MODULE OPTIONS</li>
                 <li runat="server" id="liEditModule">
                     <asp:LinkButton runat="server" ID="lnkEditModule"><i class="fa fa-pencil"></i><span>Edit Module</span></asp:LinkButton></li>
@@ -28,7 +28,7 @@
                     <asp:LinkButton runat="server" ID="lnkDeleteModule"><i class="fa fa-trash-o"></i><span>Delete Module</span></asp:LinkButton></li>
                 <li runat="server" id="liCopyModule">
                     <asp:LinkButton runat="server" ID="lnkCopyModule"><i class="fa fa-files-o"></i><span>Copy Module</span></asp:LinkButton></li>
-            </asp:PlaceHolder>
+            </asp:PlaceHolder>--%>
         </asp:PlaceHolder>
     </ul>
 </asp:Content>
@@ -107,7 +107,8 @@
                             </Tabs>
                         </telerik:RadTabStrip>
                         <telerik:RadTabStrip ID="tabModules" runat="server" SelectedIndex="0" Skin="Metro" MultiPageID="RadMultiPage2" />
-                        <telerik:RadMultiPage runat="server" ID="RadMultiPage2" Width="100%" SelectedIndex="0" ><!--Height="550px"-->
+                        <telerik:RadMultiPage runat="server" ID="RadMultiPage2" Width="100%" SelectedIndex="0">
+                            <!--Height="550px"-->
                             <telerik:RadPageView runat="server" ID="RadPageView1">
                                 <asp:Panel runat="server" ID="pnlCustomerSearch" DefaultButton="btnSearch">
                                     <div class="row">
@@ -129,24 +130,39 @@
                                                 <div class="box-body">
                                                     <table class="nav-justified">
                                                         <tr>
-                                                            <td>Criteria</td>
+                                                            <td colspan="3">Criteria</td>
+                                                            <td>&nbsp;</td>
                                                         </tr>
                                                         <tr>
+                                                            <td style="width: 100px;">Search Field:
+                                                            </td>
+                                                            <td style="width: 130px;">
+                                                                <telerik:RadComboBox runat="server" ID="ddlSearchField" Width="120px">
+                                                                    <Items>
+                                                                        <telerik:RadComboBoxItem Text="LN#" Value="[Standard_ACCOUNT_NUMBER]" Selected="true" />
+                                                                        <telerik:RadComboBoxItem Text="INV LN#" Value="[Standard_ACCOUNT_NUMBER_INVESTOR]" />
+                                                                        <telerik:RadComboBoxItem Text="Prior LN#" Value="[Standard_ACCOUNT_NUMBER_PRIOR_SERVICER]" />
+                                                                        <telerik:RadComboBoxItem Text="Borrower 1" Value="[Standard_BORROWER_PRIMARY_NAME]" />
+                                                                        <telerik:RadComboBoxItem Text="Diligence ID#" Value="[Diligence_Loan Number]" />
+                                                                        <telerik:RadComboBoxItem Text="WF LN#" Value="[WF_Feed_Account ID]" />
+                                                                        <telerik:RadComboBoxItem Text="WF Pool" Value="[WF_Feed_Pool ID]" />
+                                                                        <telerik:RadComboBoxItem Text="Property" Value="[Standard_PROPERTY_ADDRESS_1]" />
+                                                                    </Items>
+                                                                </telerik:RadComboBox>
+                                                            </td>
                                                             <td>
                                                                 <telerik:RadTextBox ID="txtSearch" runat="server" Skin="Metro" Width="100%">
                                                                 </telerik:RadTextBox>
                                                             </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <telerik:RadButton ID="btnSearch" runat="server" ButtonType="LinkButton" CssClass="fixedWidth" Skin="Metro" Text="Search" Width="100%" />
+                                                            <td style="width: 110px; text-align:right;">
+                                                                <telerik:RadButton ID="btnSearch" runat="server" ButtonType="LinkButton" CssClass="fixedWidth" Skin="Metro" Text="Search" Width="100px" />
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td>&nbsp;</td>
+                                                            <td colspan="4">&nbsp;</td>
                                                         </tr>
                                                         <tr>
-                                                            <td>
+                                                            <td colspan="4">
                                                                 <telerik:RadGrid ID="RadSearchGrid" runat="server" AllowSorting="True" GroupPanelPosition="Top" AutoGenerateEditColumn="True" Skin="Metro" DataSourceID="SqlDataSource1">
                                                                     <MasterTableView AutoGenerateColumns="True" DataSourceID="SqlDataSource1">
                                                                         <%--<Columns>
@@ -160,6 +176,7 @@
                                                                 <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:UtilityWizardsConnectionString %>" SelectCommand="procSearchAccounts" SelectCommandType="StoredProcedure">
                                                                     <SelectParameters>
                                                                         <asp:ControlParameter ControlID="txtSearch" DefaultValue="" Name="search" PropertyName="Text" Type="String" />
+                                                                        <asp:ControlParameter ControlID="ddlSearchField" Name="field" PropertyName="SelectedValue" Type="String" />
                                                                     </SelectParameters>
                                                                 </asp:SqlDataSource>
                                                             </td>
@@ -175,7 +192,8 @@
                                     </div>
                                 </asp:Panel>
                             </telerik:RadPageView>
-                            <telerik:RadPageView runat="server" ID="RadPageView2" ContentUrl="~/account/SearchTab.aspx" /><%--Height="550px" />--%>
+                            <telerik:RadPageView runat="server" ID="RadPageView2" ContentUrl="~/account/SearchTab.aspx" />
+                            <%--Height="550px" />--%>
                         </telerik:RadMultiPage>
                         <asp:Table runat="server" ID="tblModules" CellPadding="1" CellSpacing="2" Width="100%" Style="display: block;" Visible="false" />
                     </telerik:RadAjaxPanel>

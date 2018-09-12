@@ -11,230 +11,257 @@ Option Strict On
 Option Explicit On
 
 
-Partial Public Class Dashboard
+Partial Public Class ModuleView
     
     '''<summary>
-    '''headContent control.
+    '''boxTopLeft control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents headContent As Global.System.Web.UI.WebControls.ContentPlaceHolder
+    Protected WithEvents boxTopLeft As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
-    '''form1 control.
+    '''txtTopLeftTitle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents form1 As Global.System.Web.UI.HtmlControls.HtmlForm
+    Protected WithEvents txtTopLeftTitle As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''RadScriptManager control.
+    '''lblTopLeftTitle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents RadScriptManager As Global.Telerik.Web.UI.RadScriptManager
+    Protected WithEvents lblTopLeftTitle As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''MainAjaxLoadingPanel control.
+    '''tblModuleQuestions_TopLeft control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents MainAjaxLoadingPanel As Global.Telerik.Web.UI.RadAjaxLoadingPanel
+    Protected WithEvents tblModuleQuestions_TopLeft As Global.System.Web.UI.WebControls.Table
     
     '''<summary>
-    '''pnlTopRight control.
+    '''boxTopMiddle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlTopRight As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents boxTopMiddle As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
-    '''ibtnAvitar2 control.
+    '''txtTopMiddleTitle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ibtnAvitar2 As Global.System.Web.UI.WebControls.Image
+    Protected WithEvents txtTopMiddleTitle As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''lblUserInfo_Name2 control.
+    '''lblTopMiddleTitle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lblUserInfo_Name2 As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents lblTopMiddleTitle As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''ibtnAvitar3 control.
+    '''tblModuleQuestions_TopMiddle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ibtnAvitar3 As Global.System.Web.UI.WebControls.Image
+    Protected WithEvents tblModuleQuestions_TopMiddle As Global.System.Web.UI.WebControls.Table
     
     '''<summary>
-    '''lblUserInfo_Name3 control.
+    '''boxTopRight control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lblUserInfo_Name3 As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents boxTopRight As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
-    '''lblUserInfo_Role control.
+    '''txtTopRightTitle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lblUserInfo_Role As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents txtTopRightTitle As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''lblUserInfo_Email control.
+    '''lblTopRightTitle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lblUserInfo_Email As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents lblTopRightTitle As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''RadAjaxPanel1 control.
+    '''tblModuleQuestions_TopRight control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents RadAjaxPanel1 As Global.Telerik.Web.UI.RadAjaxPanel
+    Protected WithEvents tblModuleQuestions_TopRight As Global.System.Web.UI.WebControls.Table
     
     '''<summary>
-    '''btnProfile control.
+    '''boxFullPage control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents btnProfile As Global.Telerik.Web.UI.RadButton
+    Protected WithEvents boxFullPage As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
-    '''btnSignOut control.
+    '''txtFullPageTitle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents btnSignOut As Global.Telerik.Web.UI.RadButton
+    Protected WithEvents txtFullPageTitle As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''pnlUserInfo control.
+    '''lblFullPageTitle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlUserInfo As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents lblFullPageTitle As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''lblUserInfo_Name control.
+    '''tblModuleQuestions_FullPage control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lblUserInfo_Name As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents tblModuleQuestions_FullPage As Global.System.Web.UI.WebControls.Table
     
     '''<summary>
-    '''pnlMenu control.
+    '''boxBottomLeft control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlMenu As Global.System.Web.UI.WebControls.PlaceHolder
+    Protected WithEvents boxBottomLeft As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
-    '''MenuAjaxPanel1 control.
+    '''txtBottomLeftTitle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents MenuAjaxPanel1 As Global.Telerik.Web.UI.RadAjaxPanel
+    Protected WithEvents txtBottomLeftTitle As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''Menu control.
+    '''lblBottomLeftTitle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents Menu As Global.UtilityWizards.Builder.Menu
+    Protected WithEvents lblBottomLeftTitle As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''menuContent control.
+    '''tblModuleQuestions_BottomLeft control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents menuContent As Global.System.Web.UI.WebControls.ContentPlaceHolder
+    Protected WithEvents tblModuleQuestions_BottomLeft As Global.System.Web.UI.WebControls.Table
     
     '''<summary>
-    '''pnlBreadcrumbs control.
+    '''boxBottomMiddle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlBreadcrumbs As Global.System.Web.UI.WebControls.PlaceHolder
+    Protected WithEvents boxBottomMiddle As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
-    '''breadcrumbContent control.
+    '''txtBottomMiddleTitle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents breadcrumbContent As Global.System.Web.UI.WebControls.ContentPlaceHolder
+    Protected WithEvents txtBottomMiddleTitle As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''pageContent_Ajax control.
+    '''lblBottomMiddleTitle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pageContent_Ajax As Global.System.Web.UI.WebControls.ContentPlaceHolder
+    Protected WithEvents lblBottomMiddleTitle As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''pageContent_OutsideAjax control.
+    '''tblModuleQuestions_BottomMiddle control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pageContent_OutsideAjax As Global.System.Web.UI.WebControls.ContentPlaceHolder
+    Protected WithEvents tblModuleQuestions_BottomMiddle As Global.System.Web.UI.WebControls.Table
     
     '''<summary>
-    '''lnkSolvtopia control.
+    '''boxBottomRight control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lnkSolvtopia As Global.System.Web.UI.WebControls.HyperLink
+    Protected WithEvents boxBottomRight As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
+    '''txtBottomRightTitle control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtBottomRightTitle As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''lblBottomRightTitle control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblBottomRightTitle As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
+    '''tblModuleQuestions_BottomRight control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents tblModuleQuestions_BottomRight As Global.System.Web.UI.WebControls.Table
 End Class

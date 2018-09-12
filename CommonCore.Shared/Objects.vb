@@ -643,8 +643,13 @@ Public Class SystemModule
     Public Icon As String
     Public Type As SystemModuleType
     Public SupervisorID As Integer
-    Public ImportModule As Boolean
-    Public ImportTable As String
+    Public TopLeftTitle As String
+    Public TopMiddleTitle As String
+    Public TopRightTitle As String
+    Public FullPageTitle As String
+    Public BottomLeftTitle As String
+    Public BottomMiddleTitle As String
+    Public BottomRightTitle As String
 
     Public APIResponseCode As ApiResultCode
     Public APIResponseMessage As String
@@ -816,6 +821,8 @@ Public Class SystemModule
                 End If
             End If
         End If
+
+        If Me.Name = "" Then Me.Name = "New Module"
     End Sub
 
 #End Region
@@ -826,7 +833,12 @@ Public Class SystemQuestion
     Sub New()
         Me.Type = SystemQuestionType.TextBox
         Me.Location = SystemQuestionLocation.FullPage
-        Me.Values = New List(Of String)
+        Me.BindingType = SystemQuestionBindingType.UserInput
+        Me.TextBoxSize = SystemQuestionTextBoxSize.Medium
+        Me.DropDownSize = SystemQuestionDropDownSize.Auto
+        Me.DropDownValues = New List(Of String)
+        Me.Rows = 3
+        Me.DecimalDigits = 0
         Me.Visible = True
     End Sub
     Public Sub New(ByVal id As Integer)
@@ -853,22 +865,28 @@ Public Class SystemQuestion
         Me.Initialize(xData)
     End Sub
 
+    ' definition
     Public ID As Integer
     Public ModuleID As Integer
     Public Question As String
     Public Property DataFieldName As String
         Get
-            Dim retVal As String = StrConv(Me.Question, VbStrConv.ProperCase).Replace(" ", "")
+            Dim retVal As String = ""
 
-            If Me.DataFieldNameOverride <> "" Then retVal = Me.DataFieldNameOverride
+            If Me.BindingType = SystemQuestionBindingType.MasterFeed Then
+                retVal = Me.MasterFeedField
+            Else
+                retVal = StrConv(Me.Question, VbStrConv.ProperCase).Replace(" ", "")
+                If Me.DataFieldNameOverride <> "" Then retVal = Me.DataFieldNameOverride
 
-            retVal = retVal.Replace("?", "")
-            retVal = retVal.Replace("/", "")
-            retVal = retVal.Replace("'", "")
-            retVal = retVal.Replace("&", "And")
-            retVal = retVal.Replace("#", "Number")
-            retVal = retVal.Replace("%", "Percent")
-            retVal = retVal.Replace("'", "")
+                retVal = retVal.Replace("?", "")
+                retVal = retVal.Replace("/", "")
+                retVal = retVal.Replace("'", "")
+                retVal = retVal.Replace("&", "And")
+                retVal = retVal.Replace("#", "Number")
+                retVal = retVal.Replace("%", "Percent")
+                retVal = retVal.Replace("'", "")
+            End If
 
             Return retVal
         End Get
@@ -877,22 +895,33 @@ Public Class SystemQuestion
         End Set
     End Property
     Public DataFieldNameOverride As String
-    Public Rule As String
     Public Type As SystemQuestionType
-    Public Required As Boolean
-    Public Values As List(Of String)
-    Public SearchField As Boolean
-    Public ReportField As Boolean
-    Public ExportField As Boolean
-    Public MobileField As Boolean
-    Public MobileData As String
-    Public NewMobileData As String
-    Public Locked As Boolean
+    Public FriendlyName As String
+    Public Description As String
+
+    ' appearance
     Public Visible As Boolean
     Public Location As SystemQuestionLocation
     Public Sort As Integer
-    Public FriendlyName As String
-    Public Description As String
+    ' text boxes
+    Public TextBoxSize As SystemQuestionTextBoxSize
+    ' drop-downs
+    Public DropDownSize As SystemQuestionDropDownSize
+    ' memos
+    Public Rows As Integer
+    ' numeric text boxes
+    Public DecimalDigits As Integer
+
+    ' data
+    Public BindingType As SystemQuestionBindingType
+    Public MasterFeedField As String
+    Public Rule As String
+    Public DropDownValues As List(Of String)
+
+    ' miscellaneous
+    Public Required As Boolean
+    Public ReportField As Boolean
+    Public ExportField As Boolean
 
 #Region "Workers"
 

@@ -42,10 +42,8 @@ Public Class ModuleWizard
             For x As Integer = 1 To maxSteps
                 If x <> value Then
                     CType(Me.FindInControl("pnlStep" & x), Panel).Visible = False
-                    CType(Me.FindInControl("pnlStepInfo" & x), Panel).Visible = False
                 Else
                     CType(Me.FindInControl("pnlStep" & x), Panel).Visible = True
-                    CType(Me.FindInControl("pnlStepInfo" & x), Panel).Visible = True
 
                     If value < wizardMaxSteps Then
                         Me.btnNext.Text = "Next"
@@ -58,74 +56,59 @@ Public Class ModuleWizard
             Next
         End Set
     End Property
-    Private Property ModuleQuestions As List(Of SystemQuestion)
-        Get
-            Dim retVal As New List(Of SystemQuestion)
-
-            If Session("ModuleWizardQuestions") Is Nothing Then Session("ModuleWizardQuestions") = New List(Of SystemQuestion)
-
-            retVal = CType(Session("ModuleWizardQuestions"), List(Of SystemQuestion))
-
-            Return retVal
-        End Get
-        Set(value As List(Of SystemQuestion))
-            Session("ModuleWizardQuestions") = value
-        End Set
-    End Property
-    Private currentModule As SystemModule
+    Private CurrentModule As SystemModule
 
 #End Region
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         If Not IsPostBack Then
-            Session("ModuleWizardQuestions") = Nothing
+            'Session("ModuleWizardQuestions") = Nothing
 
             Me.WizardStep = 1
             Me.LoadLists()
             Me.txtName.Focus()
 
             If Me.EditId > 0 Then
-                Me.currentModule = New SystemModule(Me.EditId)
-                Me.txtName.Text = Me.currentModule.Name
-                Me.txtDescription.Text = Me.currentModule.Description
-                If Me.currentModule.SupervisorID > 0 Then
-                    Me.ddlSupervisor.SelectedValue = Me.currentModule.SupervisorID.ToString
+                Me.CurrentModule = New SystemModule(Me.EditId)
+                Me.txtName.Text = Me.CurrentModule.Name
+                Me.txtDescription.Text = Me.CurrentModule.Description
+                If Me.CurrentModule.SupervisorID > 0 Then
+                    Me.ddlSupervisor.SelectedValue = Me.CurrentModule.SupervisorID.ToString
                 Else
-                    Dim fldr As New SystemModule(Me.currentModule.FolderID)
+                    Dim fldr As New SystemModule(Me.CurrentModule.FolderID)
                     If fldr.SupervisorID > 0 Then
                         Me.ddlSupervisor.SelectedValue = fldr.SupervisorID.ToString
                     End If
                 End If
-                Me.chkImportModule.Checked = Me.currentModule.ImportModule
-                Me.ddlImportTable.SelectedValue = Me.currentModule.FolderID.ToString
-                Me.ddlIcon.SelectedValue = Me.currentModule.Icon
-                Me.imgIcon.ImageUrl = Me.currentModule.Icon
+                Me.ddlIcon.SelectedValue = Me.CurrentModule.Icon
+                Me.imgIcon.ImageUrl = Me.CurrentModule.Icon
 
-                Me.ModuleQuestions = LoadModuleQuestions(Me.EditId)
+                Me.ModuleView1.ModuleQuestions = LoadModuleQuestions(Me.EditId)
+
+                Me.ModuleView1.TopLeftTitle = Me.CurrentModule.TopLeftTitle
+                Me.ModuleView1.TopMiddleTitle = Me.CurrentModule.TopMiddleTitle
+                Me.ModuleView1.TopRightTitle = Me.CurrentModule.TopRightTitle
+                Me.ModuleView1.FullPageTitle = Me.CurrentModule.FullPageTitle
+                Me.ModuleView1.BottomLeftTitle = Me.CurrentModule.BottomLeftTitle
+                Me.ModuleView1.BottomMiddleTitle = Me.CurrentModule.BottomMiddleTitle
+                Me.ModuleView1.BottomRightTitle = Me.CurrentModule.BottomRightTitle
             Else
-                Me.currentModule = New SystemModule()
-                Me.ddlImportTable.SelectedValue = Me.FolderId.ToString
+                Me.CurrentModule = New SystemModule()
             End If
         End If
 
-        Me.ddlImportTable.Enabled = (Me.chkImportModule.Checked)
-
-        Me.lblModuleName.Text = Me.txtName.Text
-        Me.lblModuleName1.Text = Me.lblModuleName.Text & If(Me.chkImportModule.Checked, " Import", "")
+        Me.ModuleView1.CurrentModule = Me.CurrentModule
 
         If Me.Type = Enums.SystemModuleType.Module Then
             Me.Master.TitleText = "Module Wizard"
         ElseIf Me.Type = Enums.SystemModuleType.Folder Then
             Me.Master.TitleText = "Folder Wizard"
         End If
+        Me.Master.InfoBoxTitleText = "Field Editor"
 
-        Me.BuildQuestionList()
+        Me.ModuleView1.BuildQuestionList()
 
         Me.pnlModuleStep1Questions.Visible = (Me.Type = Enums.SystemModuleType.Module)
-        Me.pnlModuleStepInfo1.Visible = (Me.Type = Enums.SystemModuleType.Module)
-        Me.pnlModuleStepInfo2.Visible = (Me.Type = Enums.SystemModuleType.Module)
-        Me.pnlFolderStepInfo1.Visible = (Me.Type = Enums.SystemModuleType.Folder)
-        Me.pnlFolderStepInfo2.Visible = (Me.Type = Enums.SystemModuleType.Folder)
 
         Me.imgIcon.ImageUrl = Me.ddlIcon.SelectedItem.Value
 
@@ -133,7 +116,16 @@ Public Class ModuleWizard
     End Sub
 
     Private Sub ShowOptions()
-        Me.pnlDropDownValues.Visible = (Me.ddlQuestionType.SelectedValue = "1")
+        ' appearance
+        Me.pnlTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.TextBox))
+        Me.pnlMemoTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.MemoField))
+        Me.pnlNumericTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.NumericTextBox))
+        Me.pnlDropDownAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.DropDownList))
+
+        ' data
+        Me.pnlMasterFeedField.Visible = (Me.ddlBindingType.SelectedValue = CStr(Enums.SystemQuestionBindingType.MasterFeed))
+        Me.pnlFormulaField.Visible = (Me.ddlBindingType.SelectedValue = CStr(Enums.SystemQuestionBindingType.Formula))
+        Me.pnlDropDownDataOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.DropDownList))
     End Sub
 
     Private Sub LoadLists()
@@ -155,24 +147,16 @@ Public Class ModuleWizard
             cmd.Cancel()
             Me.ddlSupervisor.SelectedIndex = 0
 
-            Me.ddlQuestion.Items.Clear()
-            cmd = New SqlClient.SqlCommand("SELECT DISTINCT [xQuestion] FROM [Questions] WHERE [Active] = 1 ORDER BY [xQuestion];", cn)
+            Me.ddlMasterFeedField.Items.Clear()
+            Me.ddlMasterFeedField.Items.Add(New ListItem(""))
+            cmd = New SqlClient.SqlCommand("select COLUMN_NAME from information_schema.columns where table_name like '_MasterFeed' ORDER BY COLUMN_NAME", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             rs = cmd.ExecuteReader
             Do While rs.Read
-                Me.ddlQuestion.Items.Add(New RadComboBoxItem(rs("xQuestion").ToString))
+                Me.ddlMasterFeedField.Items.Add(New ListItem(rs("COLUMN_NAME").ToString))
             Loop
             rs.Close()
             cmd.Cancel()
-
-            Me.ddlImportTable.Items.Clear()
-            cmd = New SqlClient.SqlCommand("SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME LIKE '_import_%' ORDER BY TABLE_NAME;", cn)
-            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-            rs = cmd.ExecuteReader
-            Do While rs.Read
-                Me.ddlImportTable.Items.Add(New RadComboBoxItem(rs("TABLE_NAME").ToString.Replace("_import_", ""), rs("TABLE_NAME").ToString))
-            Loop
-            Me.ddlImportTable.SelectedIndex = 0
 
             Me.ddlIcon.Items.Clear()
             Dim files As List(Of String) = My.Computer.FileSystem.GetFiles(Server.MapPath("~/images/gallery/" & iconFolder & "/")).ToList
@@ -206,75 +190,40 @@ Public Class ModuleWizard
 
         Try
             If Me.WizardStep < Me.wizardMaxSteps Then
-                'If Me.chkImportModule.Checked = False Then
+                pnlQuestionEditor.Visible = False
                 Me.WizardStep += 1
                 Select Case Me.WizardStep
                     Case 2
-                        If Me.currentModule Is Nothing OrElse (Me.currentModule.ID = 0 And Me.chkImportModule.Checked) Then
-                            ' import module questions are generated from the fields in the table
-                            Me.ModuleQuestions = New List(Of SystemQuestion)
-
-                            Dim cmd As New SqlClient.SqlCommand("select column_name from information_schema.columns where table_name like '" & Me.ddlImportTable.SelectedValue & "'", cn)
-                            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-                            Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
-                            Do While rs.Read
-                                Dim q As New SystemQuestion
-
-                                q.ID = 0
-                                q.ModuleID = 0
-                                q.Question = rs("column_name").ToString.Replace("_", " ")
-                                If q.Question.ToLower.Contains("desc") Or q.Question.ToLower.Contains("comment") Then
-                                    q.Type = Enums.SystemQuestionType.MemoField
-                                Else q.Type = Enums.SystemQuestionType.TextBox
-                                End If
-                                q.Required = False
-                                q.SearchField = False
-                                q.ReportField = True
-                                q.ExportField = True
-                                q.MobileField = True
-                                q.Sort = 0
-                                Select Case rs("column_name").ToString.ToLower
-                                    Case "id", "filepart1", "filedate", "filename"
-                                        q.Visible = False
-                                    Case Else
-                                        q.Visible = True
-                                End Select
-
-                                Me.ModuleQuestions.Add(q)
-                            Loop
-
-                            Me.BuildQuestionList()
-                        End If
-                        Me.ddlQuestion.Focus()
+                        Me.txtQuestion.Focus()
                 End Select
-                'Else
-                '    ' import tables setup their questions from the table structure so cannot be edited
-                '    ' so jump straight to the last step
-                '    Me.WizardStep = Me.wizardMaxSteps
-                'End If
             Else
-                If Me.EditId > 0 Then Me.currentModule = New SystemModule(Me.EditId) Else Me.currentModule = New SystemModule()
+                If Me.EditId > 0 Then Me.CurrentModule = New SystemModule(Me.EditId) Else Me.CurrentModule = New SystemModule()
 
                 ' save the module
-                Me.currentModule.ID = Me.EditId
-                Me.currentModule.ClientID = App.CurrentClient.ID
-                Me.currentModule.Name = Me.txtName.Text
-                Me.currentModule.Description = Me.txtDescription.Text
-                Me.currentModule.Icon = Me.ddlIcon.SelectedValue
-                Me.currentModule.Type = Me.Type
-                Me.currentModule.FolderID = 0
-                Me.currentModule.ImportModule = Me.chkImportModule.Checked
-                Me.currentModule.ImportTable = Me.ddlImportTable.SelectedValue
-                Me.currentModule.SupervisorID = Me.ddlSupervisor.SelectedValue.ToInteger
-                Me.currentModule = Me.currentModule.Save
+                Me.CurrentModule.ID = Me.EditId
+                Me.CurrentModule.ClientID = App.CurrentClient.ID
+                Me.CurrentModule.Name = Me.txtName.Text
+                Me.CurrentModule.Description = Me.txtDescription.Text
+                Me.CurrentModule.Icon = Me.ddlIcon.SelectedValue
+                Me.CurrentModule.Type = Me.Type
+                Me.CurrentModule.FolderID = 0
+                Me.CurrentModule.SupervisorID = Me.ddlSupervisor.SelectedValue.ToInteger
+                Me.CurrentModule.TopLeftTitle = Me.ModuleView1.TopLeftTitle
+                Me.CurrentModule.TopMiddleTitle = Me.ModuleView1.TopMiddleTitle
+                Me.CurrentModule.TopRightTitle = Me.ModuleView1.TopRightTitle
+                Me.CurrentModule.FullPageTitle = Me.ModuleView1.FullPageTitle
+                Me.CurrentModule.BottomLeftTitle = Me.ModuleView1.BottomLeftTitle
+                Me.CurrentModule.BottomMiddleTitle = Me.ModuleView1.BottomMiddleTitle
+                Me.CurrentModule.BottomRightTitle = Me.ModuleView1.BottomRightTitle
+                Me.CurrentModule = Me.CurrentModule.Save
 
                 ' save the questions
-                Dim cmd As New SqlClient.SqlCommand("DELETE FROM [Questions] WHERE [xModuleID] = " & Me.currentModule.ID, cn)
+                Dim cmd As New SqlClient.SqlCommand("DELETE FROM [Questions] WHERE [xModuleID] = " & Me.CurrentModule.ID, cn)
                 If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
                 cmd.ExecuteNonQuery()
 
-                For Each q As SystemQuestion In Me.ModuleQuestions
-                    q.ModuleID = Me.currentModule.ID
+                For Each q As SystemQuestion In Me.ModuleView1.ModuleQuestions
+                    q.ModuleID = Me.CurrentModule.ID
                     q.ID = 0
                     q = q.Save()
                 Next
@@ -291,7 +240,7 @@ Public Class ModuleWizard
 
                 If Me.Type = Enums.SystemModuleType.Folder Then
                     CommonCore.Shared.Common.LogHistory(Me.txtName.Text & " Folder Updated", App.CurrentUser.ID)
-                Else CommonCore.Shared.Common.LogHistory(Me.txtName.Text & " Module Updated", App.CurrentUser.ID)
+                Else CommonCore.Shared.Common.LogHistory(Me.txtName.Text & " Tab Updated", App.CurrentUser.ID)
                 End If
 
                 Response.Redirect("~/Default.aspx", False)
@@ -306,7 +255,7 @@ Public Class ModuleWizard
     End Sub
 
     Protected Sub btnCancel_Click(sender As Object, e As EventArgs) Handles btnCancel.Click
-        Response.Redirect("~/Default.aspx", False)
+        Response.Redirect("~/account/ModuleManager.aspx?fid=" & Me.FolderId, False)
         Exit Sub
     End Sub
 
@@ -314,248 +263,77 @@ Public Class ModuleWizard
         Try
             Dim btn As RadButton = CType(sender, RadButton)
             Dim q As New SystemQuestion
+
+            ' definition
             q.ID = 0
             q.ModuleID = 0
-            q.Question = Me.ddlQuestion.Text
+            q.Question = Me.txtQuestion.Text
             q.Type = CType(Me.ddlQuestionType.SelectedValue, Enums.SystemQuestionType)
-            q.Required = Me.chkRequired.Checked
-            q.SearchField = Me.chkSearch.Checked
-            q.ReportField = Me.chkReporting.Checked
-            q.ExportField = Me.chkExport.Checked
-            q.MobileField = Me.chkMobile.Checked
+
+            ' appearance
             q.Visible = Me.chkDisplay.Checked
             q.Location = CType(Me.ddlDisplay.SelectedValue, Enums.SystemQuestionLocation)
             q.Sort = Me.txtSort.Text.ToInteger
+            ' text boxes
+            If q.Type = Enums.SystemQuestionType.TextBox Then
+                q.TextBoxSize = CType(Me.ddlTextBoxSize.SelectedValue, Enums.SystemQuestionTextBoxSize)
+            End If
+            ' drop-downs
+            If q.Type = Enums.SystemQuestionType.DropDownList Then
+                q.DropDownSize = CType(Me.ddlDropDownSize.SelectedValue, Enums.SystemQuestionDropDownSize)
+            End If
+            ' memos
+            If q.Type = Enums.SystemQuestionType.MemoField Then
+                q.Rows = Me.txtMemoRows.Text.ToInteger
+            End If
+            ' numeric text boxes
+            If q.Type = Enums.SystemQuestionType.NumericTextBox Then
+                q.DecimalDigits = Me.txtNumbersAfterComma.Text.ToInteger
+            End If
+
+            ' data
+            q.BindingType = CType(Me.ddlBindingType.SelectedValue, Enums.SystemQuestionBindingType)
+            If q.BindingType = Enums.SystemQuestionBindingType.MasterFeed Then
+                q.MasterFeedField = Me.ddlMasterFeedField.SelectedValue
+            ElseIf q.BindingType = Enums.SystemQuestionBindingType.Formula Then
+                q.Rule = Me.txtFormula.Text
+            End If
+
             If q.Type = Enums.SystemQuestionType.DropDownList Then
                 For Each itm As ListItem In Me.lstValues.Items
-                    If itm.Text.Trim <> "" Then q.Values.Add(itm.Text.Trim)
+                    If itm.Text.Trim <> "" Then q.DropDownValues.Add(itm.Text.Trim)
                 Next
             End If
 
-            If Me.btnAdd.Text.ToLower.Contains("add") Then
-                Me.ModuleQuestions.Add(q)
-            ElseIf Me.btnAdd.Text.ToLower.Contains("save") Then
-                Me.ModuleQuestions.Item(btn.CommandArgument.ToInteger) = q
+            ' miscellaneous
+            q.Required = Me.chkRequired.Checked
+            q.ReportField = Me.chkReporting.Checked
+            q.ExportField = Me.chkExport.Checked
+
+            If Not Me.btnDelete.Visible Then
+                Me.ModuleView1.ModuleQuestions.Add(q)
+            Else
+                Me.ModuleView1.ModuleQuestions.Item(btn.CommandArgument.ToInteger) = q
             End If
 
-            Me.BuildQuestionList()
+            Me.ModuleView1.Refresh()
 
-            Me.ddlQuestion.Text = ""
-            Me.ddlQuestionType.SelectedIndex = -1
-            Me.chkRequired.Checked = False
-            Me.chkSearch.Checked = False
-            Me.chkReporting.Checked = False
-            Me.chkExport.Checked = False
-            Me.chkMobile.Checked = False
-            Me.lstValues.Items.Clear()
-            Me.ddlQuestion.Focus()
-            Me.chkDisplay.Checked = False
-            Me.ddlDisplay.SelectedIndex = -1
-            Me.txtSort.Text = "0"
+            pnlQuestionEditor.Visible = False
+            Me.ModuleView1.Refresh()
 
         Catch ex As Exception
             ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         End Try
-    End Sub
-
-    Private Sub BuildQuestionList()
-        Try
-            ' sort the list by the sort order and id
-            Me.ModuleQuestions = Me.ModuleQuestions.OrderBy(Function(q) q.Sort).ThenBy(Function(q) q.ID).ToList
-
-            Me.tblModuleQuestions_TopLeft.Rows.Clear()
-            Me.tblModuleQuestions_TopMiddle.Rows.Clear()
-            Me.tblModuleQuestions_TopRight.Rows.Clear()
-            Me.tblModuleQuestions_FullPage.Rows.Clear()
-            Me.tblModuleQuestions_BottomLeft.Rows.Clear()
-            Me.tblModuleQuestions_BottomMiddle.Rows.Clear()
-            Me.tblModuleQuestions_BottomRight.Rows.Clear()
-
-            Dim x As Integer = 0
-            For Each q As SystemQuestion In Me.ModuleQuestions
-                Dim tr1 As New TableRow
-                Dim tc1 As New TableCell
-                tc1.Width = New Unit(20, UnitType.Pixel)
-                If q.Type = Enums.SystemQuestionType.MemoField Then tc1.VerticalAlign = VerticalAlign.Top
-                Dim ibtnDelete As New Telerik.Web.UI.RadButton
-                ibtnDelete.ID = "ibtnDelete_" & x
-                ibtnDelete.Icon.PrimaryIconUrl = "~/images/toolbar/icon_delete.png"
-                ibtnDelete.Width = New Unit(16, UnitType.Pixel)
-                AddHandler ibtnDelete.Click, AddressOf ibtnDelete_Click
-                tc1.Controls.Add(ibtnDelete)
-                tr1.Cells.Add(tc1)
-
-                Dim tc2 As New TableCell
-                tc2.Width = New Unit(20, UnitType.Pixel)
-                If q.Type = Enums.SystemQuestionType.MemoField Then tc2.VerticalAlign = VerticalAlign.Top
-                Dim ibtnEdit As New Telerik.Web.UI.RadButton
-                ibtnEdit.ID = "ibtnEdit_" & x
-                ibtnEdit.Icon.PrimaryIconUrl = "~/images/toolbar/icon_edit.png"
-                ibtnEdit.Width = New Unit(16, UnitType.Pixel)
-                AddHandler ibtnEdit.Click, AddressOf ibtnEdit_Click
-                tc2.Controls.Add(ibtnEdit)
-                tr1.Cells.Add(tc2)
-
-                Dim tc3 As New TableCell
-                tc3.Text = q.Question
-                If Not q.Visible Then tc3.Font.Strikeout = True
-                If q.Type = Enums.SystemQuestionType.MemoField Then tc3.VerticalAlign = VerticalAlign.Top
-                tr1.Cells.Add(tc3)
-
-                'Dim tr2 As New TableRow
-                Dim tc4 As New TableCell
-                tc4.ColumnSpan = 3
-                Select Case q.Type
-                    Case Enums.SystemQuestionType.CheckBox
-                        Dim chk As New Controls.CheckBoxes.CheckBox
-                        chk.ID = "chk_" & x
-                        tc4.Controls.Add(chk)
-
-                    Case Enums.SystemQuestionType.DropDownList
-                        Dim ddl As New Controls.DropDownLists.DropDownList
-                        ddl.ID = "ddl_" & x
-                        ddl.Width = New Unit(200, UnitType.Pixel)
-                        For Each itm As String In q.Values
-                            ddl.Items.Add(New RadComboBoxItem(itm, itm))
-                        Next
-                        tc4.Controls.Add(ddl)
-
-                    Case Enums.SystemQuestionType.MemoField
-                        Dim txt As New Controls.TextBoxes.TextBox
-                        txt.ID = "txt_" & x
-                        txt.Width = New Unit(250, UnitType.Pixel)
-                        txt.Rows = 3
-                        txt.TextMode = InputMode.MultiLine
-                        tc4.Controls.Add(txt)
-
-                    Case Enums.SystemQuestionType.TextBox
-                        Dim txt As New Controls.TextBoxes.TextBox
-                        txt.ID = "txt_" & x
-                        txt.Width = New Unit(250, UnitType.Pixel)
-                        txt.MaxLength = 255
-                        tc4.Controls.Add(txt)
-
-                    Case Enums.SystemQuestionType.NumericTextBox
-                        Dim txt As New Controls.TextBoxes.NumericTextBox
-                        txt.ID = "txt_" & x
-                        txt.Width = New Unit(100, UnitType.Pixel)
-                        txt.NumberFormat.DecimalDigits = 0
-                        tc4.Controls.Add(txt)
-                End Select
-                tc4.VerticalAlign = VerticalAlign.Top
-                tr1.Cells.Add(tc4)
-
-                'Dim tr3 As New TableRow
-                Dim tc5 As New TableCell
-                tc5.Width = New Unit(20, UnitType.Pixel)
-                Dim imgRequired As New Image
-                imgRequired.ID = "imgRequired" & x
-                imgRequired.ImageUrl = "~/images/toolbar/icon_error.png"
-                imgRequired.ToolTip = "Required Field"
-                If q.Required Then tc5.Controls.Add(imgRequired)
-                tc5.VerticalAlign = VerticalAlign.Top
-                tr1.Cells.Add(tc5)
-
-                Dim tc6 As New TableCell
-                tc6.Width = New Unit(20, UnitType.Pixel)
-                Dim imgSearch As New Image
-                imgSearch.ID = "imgSearch" & x
-                imgSearch.ImageUrl = "~/images/toolbar/icon_search.png"
-                imgSearch.ToolTip = "Include on Search Grid"
-                If q.SearchField Then tc6.Controls.Add(imgSearch)
-                tc6.VerticalAlign = VerticalAlign.Top
-                tr1.Cells.Add(tc6)
-
-                Dim tc7 As New TableCell
-                tc7.Width = New Unit(20, UnitType.Pixel)
-                Dim imgReporting As New Image
-                imgReporting.ID = "imgReporting" & x
-                imgReporting.ImageUrl = "~/images/toolbar/icon_report.png"
-                imgReporting.ToolTip = "Allow Reporting"
-                If q.ReportField Then tc7.Controls.Add(imgReporting)
-                tc7.VerticalAlign = VerticalAlign.Top
-                tr1.Cells.Add(tc7)
-
-                Dim tc8 As New TableCell
-                tc8.Width = New Unit(20, UnitType.Pixel)
-                Dim imgExport As New Image
-                imgExport.ID = "imgExport" & x
-                imgExport.ImageUrl = "~/images/toolbar/icon_saveweb.png"
-                imgExport.ToolTip = "Can be Exported"
-                If q.ExportField Then tc8.Controls.Add(imgExport)
-                tc8.VerticalAlign = VerticalAlign.Top
-                tr1.Cells.Add(tc8)
-
-                Select Case q.Location
-                    Case Enums.SystemQuestionLocation.TopLeft
-                        Me.tblModuleQuestions_TopLeft.Rows.Add(tr1)
-                    Case Enums.SystemQuestionLocation.TopMiddle
-                        Me.tblModuleQuestions_TopMiddle.Rows.Add(tr1)
-                    Case Enums.SystemQuestionLocation.TopRight
-                        Me.tblModuleQuestions_TopRight.Rows.Add(tr1)
-                    Case Enums.SystemQuestionLocation.FullPage
-                        Me.tblModuleQuestions_FullPage.Rows.Add(tr1)
-                    Case Enums.SystemQuestionLocation.BottomLeft
-                        Me.tblModuleQuestions_BottomLeft.Rows.Add(tr1)
-                    Case Enums.SystemQuestionLocation.BottomMiddle
-                        Me.tblModuleQuestions_BottomMiddle.Rows.Add(tr1)
-                    Case Enums.SystemQuestionLocation.BottomRight
-                        Me.tblModuleQuestions_BottomRight.Rows.Add(tr1)
-                End Select
-                'Me.tblQuestions.Rows.Add(tr2)
-                'Me.tblQuestions.Rows.Add(tr3)
-
-                x += 1
-            Next
-
-            If Me.OnMobile Then
-                Me.SetSkin(Me.pnlStep2, System.Configuration.ConfigurationManager.AppSettings("Telerik_Skin_Mobile"))
-            Else Me.SetSkin(Me.pnlStep2, System.Configuration.ConfigurationManager.AppSettings("Telerik_Skin_Desktop"))
-            End If
-
-        Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
-        End Try
-    End Sub
-
-    Protected Sub ibtnEdit_Click(sender As Object, e As EventArgs)
-        Dim ibtn As Telerik.Web.UI.RadButton = CType(sender, Telerik.Web.UI.RadButton)
-        Dim qId As Integer = ibtn.ID.Split("_"c)(1).ToInteger
-
-        Me.btnAdd.Text = "Save Changes"
-        Me.btnAdd.CommandArgument = qId.ToString
-
-        Dim q As SystemQuestion = Me.ModuleQuestions.Item(qId)
-        Me.ddlQuestion.Text = q.Question
-        Me.ddlQuestionType.SelectedValue = CStr(q.Type)
-        Me.chkRequired.Checked = q.Required
-        Me.chkSearch.Checked = q.SearchField
-        Me.chkReporting.Checked = q.ReportField
-        Me.chkExport.Checked = q.ExportField
-        Me.chkMobile.Checked = q.MobileField
-        Me.chkDisplay.Checked = q.Visible
-        Me.ddlDisplay.SelectedValue = CStr(q.Location)
-        Me.txtSort.Text = q.Sort.ToString
-        Me.lstValues.Items.Clear()
-        If q.Type = Enums.SystemQuestionType.DropDownList Then
-            For Each itm As String In q.Values
-                If itm.Trim <> "" Then Me.lstValues.Items.Add(New ListItem(itm, itm))
-            Next
-        End If
-    End Sub
-
-    Protected Sub ibtnDelete_Click(sender As Object, e As EventArgs)
-        Dim ibtn As Telerik.Web.UI.RadButton = CType(sender, Telerik.Web.UI.RadButton)
-        Dim qId As Integer = ibtn.ID.Split("_"c)(1).ToInteger
-
-        Me.ModuleQuestions.RemoveAt(qId)
-        Me.BuildQuestionList()
     End Sub
 
     Protected Sub btnAddValue_Click(sender As Object, e As EventArgs) Handles btnAddValue.Click
-        Me.lstValues.Items.Add(New ListItem(Me.txtDDLValue.Text.Trim))
-        Me.txtDDLValue.Text = ""
-        Me.txtDDLValue.Focus()
+        If Me.txtDDLText.Text.Trim <> "" Then
+            If Me.txtDDLValue.Text.Trim = "" Then Me.txtDDLValue.Text = Me.txtDDLText.Text.Trim
+            Me.lstValues.Items.Add(New ListItem(Me.txtDDLText.Text.Trim & "=" & Me.txtDDLValue.Text.Trim))
+            Me.txtDDLText.Text = ""
+            Me.txtDDLValue.Text = ""
+            Me.txtDDLText.Focus()
+        End If
     End Sub
 
     Protected Sub btnRemoveValue_Click(sender As Object, e As EventArgs) Handles btnRemoveValue.Click
@@ -564,5 +342,107 @@ Public Class ModuleWizard
 
     Protected Sub ddlIcon_SelectedIndexChanged(sender As Object, e As Telerik.Web.UI.RadComboBoxSelectedIndexChangedEventArgs) Handles ddlIcon.SelectedIndexChanged
         Me.imgIcon.ImageUrl = e.Value
+    End Sub
+
+    Private Sub btnAddNewQuestion_Click(sender As Object, e As EventArgs) Handles btnAddNewQuestion.Click
+        Me.btnDelete.Visible = False
+
+        ' set the wizard step to 2 so we see the editor
+        Me.WizardStep = 2
+
+        Dim q As New SystemQuestion
+
+        ' definition
+        Me.txtQuestion.Text = q.Question
+        Me.ddlQuestionType.SelectedValue = CStr(q.Type)
+
+        ' appearance
+        Me.chkDisplay.Checked = q.Visible
+        Me.ddlDisplay.SelectedValue = CStr(q.Location)
+        Me.txtSort.Text = q.Sort.ToString
+        ' text boxes
+        Me.ddlTextBoxSize.SelectedValue = CStr(q.TextBoxSize)
+        ' drop-downs
+        Me.ddlDropDownSize.SelectedValue = CStr(q.DropDownSize)
+        ' memos
+        Me.txtMemoRows.Text = q.Rows.ToString
+        ' numeric text boxes
+        Me.txtNumbersAfterComma.Text = q.DecimalDigits.ToString
+
+        ' data
+        Me.ddlBindingType.SelectedValue = CStr(q.BindingType)
+        Me.ddlMasterFeedField.SelectedValue = q.MasterFeedField
+        Me.txtFormula.Text = q.Rule
+        Me.lstValues.Items.Clear()
+
+        ' miscellaneous
+        Me.chkRequired.Checked = q.Required
+        Me.chkReporting.Checked = q.ReportField
+        Me.chkExport.Checked = q.ExportField
+
+        For Each itm As RadPanelItem In Me.pbProperties.GetAllItems()
+            itm.Expanded = True
+        Next
+        Me.ShowOptions()
+
+        Me.txtQuestion.Focus()
+        pnlQuestionEditor.Visible = True
+    End Sub
+
+    Private Sub btnCancelEditor_Click(sender As Object, e As EventArgs) Handles btnCancelEditor.Click
+        pnlQuestionEditor.Visible = False
+    End Sub
+
+    Protected Sub ModuleView_EditQuestion(ByVal q As SystemQuestion, ByVal qid As Integer) Handles ModuleView1.EditQuestion
+        Me.btnDelete.Visible = True
+        Me.btnAdd.CommandArgument = qid.ToString
+        Me.btnDelete.CommandArgument = qid.ToString
+
+        ' definition
+        Me.txtQuestion.Text = q.Question
+        Me.ddlQuestionType.SelectedValue = CStr(q.Type)
+
+        ' appearance
+        Me.chkDisplay.Checked = q.Visible
+        Me.ddlDisplay.SelectedValue = CStr(q.Location)
+        Me.txtSort.Text = q.Sort.ToString
+        ' text boxes
+        Me.ddlTextBoxSize.SelectedValue = CStr(q.TextBoxSize)
+        ' drop-downs
+        Me.ddlDropDownSize.SelectedValue = CStr(q.DropDownSize)
+        ' memos
+        Me.txtMemoRows.Text = q.Rows.ToString
+        ' numeric text boxes
+        Me.txtNumbersAfterComma.Text = q.DecimalDigits.ToString
+
+        ' data
+        Me.ddlBindingType.SelectedValue = CStr(q.BindingType)
+        Me.ddlMasterFeedField.SelectedValue = q.MasterFeedField
+        Me.txtFormula.Text = q.Rule
+        Me.lstValues.Items.Clear()
+        If q.Type = Enums.SystemQuestionType.DropDownList Then
+            For Each itm As String In q.DropDownValues
+                If itm.Trim <> "" Then Me.lstValues.Items.Add(New ListItem(itm, itm))
+            Next
+        End If
+
+        ' miscellaneous
+        Me.chkRequired.Checked = q.Required
+        Me.chkReporting.Checked = q.ReportField
+        Me.chkExport.Checked = q.ExportField
+
+        For Each itm As RadPanelItem In Me.pbProperties.GetAllItems()
+            itm.Expanded = True
+        Next
+        Me.ShowOptions()
+
+        Me.txtQuestion.Focus()
+        pnlQuestionEditor.Visible = True
+    End Sub
+
+    Private Sub btnDelete_Click(sender As Object, e As EventArgs) Handles btnDelete.Click
+        Dim btn As RadButton = CType(sender, RadButton)
+        Me.ModuleView1.ModuleQuestions.RemoveAt(btn.CommandArgument.ToInteger)
+        Me.ModuleView1.Refresh()
     End Sub
 End Class
