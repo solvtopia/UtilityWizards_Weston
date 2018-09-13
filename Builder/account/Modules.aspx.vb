@@ -102,4 +102,11 @@ Public Class Modules
         Layout_ManageModulesClicked(App.ActiveFolderID)
     End Sub
 
+    Private Sub lnkSearch_Click(sender As Object, e As EventArgs) Handles lnkSearch.Click
+        App.ActiveModule = New SystemModule
+        App.CurrentAccountNumber = ""
+
+        Response.Redirect("~/Default.aspx", False)
+    End Sub
+
 End Class

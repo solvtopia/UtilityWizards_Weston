@@ -74,6 +74,7 @@ Public Class ModuleTab
     End Sub
 
     Private Sub SetupForm()
+        Me.pnlScrollModuleView.Visible = (Me.ModuleView1.ModuleQuestions.Count > 0)
         'Me.ddlSupervisor.Enabled = (App.CurrentUser.Permissions = Enums.SystemUserPermissions.User Or
         '                            App.CurrentUser.IsAdminUser Or
         '                            App.CurrentUser.IsSysAdmin)
@@ -278,8 +279,10 @@ Public Class ModuleTab
                         fields = "[" & q.MasterFeedField & "]"
                     Else fields &= ", [" & q.MasterFeedField & "]"
                     End If
-                    dt.Columns.Add(q.MasterFeedField)
-                    lstFields.Add(q.MasterFeedField)
+                    If Not lstFields.Contains(q.MasterFeedField) Then
+                        lstFields.Add(q.MasterFeedField)
+                        dt.Columns.Add(q.MasterFeedField)
+                    End If
                 End If
             Next
 
@@ -291,8 +294,13 @@ Public Class ModuleTab
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
             Do While rs.Read
                 Dim r As DataRow = dt.NewRow
-                For Each f As String In lstFields
-                    r(f) = rs(f)
+                For Each q As SystemQuestion In Me.ModuleView1.ModuleQuestions
+                    If q.BindingType = Enums.SystemQuestionBindingType.MasterFeed Then
+                        If q.DisplayAsDate And IsDate(rs(q.MasterFeedField)) Then
+                            r(q.MasterFeedField) = FormatDateTime(CDate(rs(q.MasterFeedField)), vbShortDate)
+                        Else r(q.MasterFeedField) = rs(q.MasterFeedField)
+                        End If
+                    End If
                 Next
                 dt.Rows.Add(r)
             Loop

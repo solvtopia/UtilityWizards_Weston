@@ -86,6 +86,15 @@ Partial Public Class ModuleTab
     Protected WithEvents lblTotalRecords As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
+    '''pnlScrollModuleView control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlScrollModuleView As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
     '''ModuleView1 control.
     '''</summary>
     '''<remarks>

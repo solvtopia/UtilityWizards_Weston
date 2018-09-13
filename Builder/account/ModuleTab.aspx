@@ -41,7 +41,9 @@
             </tr>
         </table>
     </asp:Panel>
-    <uw:ModuleView runat="server" ID="ModuleView1" Mode="View" />
+    <asp:Panel runat="server" ID="pnlScrollModuleView" ScrollBars="Horizontal">
+        <uw:ModuleView runat="server" ID="ModuleView1" Mode="View" />
+    </asp:Panel>
     <asp:Panel runat="server" ID="pnlHidden" Visible="false" BackColor="#CC0000">
         <Builder:TextBox ID="txtID" runat="server" DataFieldName="ID" Enabled="False" Width="80px" />
         <Builder:TextBox ID="txtUserEmail" runat="server" DataFieldName="UserEmail" Enabled="False" Width="250px" />

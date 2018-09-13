@@ -1,9 +1,9 @@
 ﻿<%@ Control Language="vb" AutoEventWireup="false" CodeBehind="ModuleView.ascx.vb" Inherits="UtilityWizards.Builder.ModuleView" %>
-<table class="nav-justified" style="padding: 20px;">
+<table class="nav-justified" style="padding: 5px;">
     <tr>
         <td style="vertical-align: top;">
             <div class="box box-info" runat="server" id="boxTopLeft">
-                <div class="box-header with-border">
+                <div class="box-header with-border" runat="server" id="boxTopLeftHeader">
                     <h3 class="box-title">
                         <asp:TextBox runat="server" ID="txtTopLeftTitle" Width="100%" placeholder="Top-Left Title" /><asp:Label runat="server" ID="lblTopLeftTitle" />
                     </h3>
@@ -12,10 +12,10 @@
             </div>
         </td>
         <td>
-            <img src="../images/spacer.png" style="width: 20px; height: 10px;" alt="" /></td>
+            <img src="../images/spacer.png" style="width: 5px; height: 5px;" alt="" /></td>
         <td style="vertical-align: top;">
             <div class="box box-info" runat="server" id="boxTopMiddle">
-                <div class="box-header with-border">
+                <div class="box-header with-border" runat="server" id="boxTopMiddleHeader">
                     <h3 class="box-title">
                         <asp:TextBox runat="server" ID="txtTopMiddleTitle" Width="100%" placeholder="Top-Middle Title" /><asp:Label runat="server" ID="lblTopMiddleTitle" /></h3>
                 </div>
@@ -23,10 +23,10 @@
             </div>
         </td>
         <td>
-            <img src="../images/spacer.png" style="width: 20px; height: 10px;" alt="" /></td>
+            <img src="../images/spacer.png" style="width: 5px; height: 5px;" alt="" /></td>
         <td style="vertical-align: top;">
             <div class="box box-info" runat="server" id="boxTopRight">
-                <div class="box-header with-border">
+                <div class="box-header with-border" runat="server" id="boxTopRightHeader">
                     <h3 class="box-title">
                         <asp:TextBox runat="server" ID="txtTopRightTitle" Width="100%" placeholder="Top-Right Title" /><asp:Label runat="server" ID="lblTopRightTitle" /></h3>
                 </div>
@@ -37,7 +37,7 @@
     <tr>
         <td colspan="3" style="vertical-align: top;">
             <div class="box box-info" runat="server" id="boxFullPage">
-                <div class="box-header with-border">
+                <div class="box-header with-border" runat="server" id="boxFullPageHeader">
                     <h3 class="box-title">
                         <asp:TextBox runat="server" ID="txtFullPageTitle" Width="100%" placeholder="Full Page Title" /><asp:Label runat="server" ID="lblFullPageTitle" /></h3>
                 </div>
@@ -48,7 +48,7 @@
     <tr>
         <td style="vertical-align: top;">
             <div class="box box-info" runat="server" id="boxBottomLeft">
-                <div class="box-header with-border">
+                <div class="box-header with-border" runat="server" id="boxBottomLeftHeader">
                     <h3 class="box-title">
                         <asp:TextBox runat="server" ID="txtBottomLeftTitle" Width="100%" placeholder="Bottom-Left Title" /><asp:Label runat="server" ID="lblBottomLeftTitle" /></h3>
                 </div>
@@ -56,10 +56,10 @@
             </div>
         </td>
         <td>
-            <img src="../images/spacer.png" style="width: 20px; height: 10px;" alt="" /></td>
+            <img src="../images/spacer.png" style="width: 5px; height: 5px;" alt="" /></td>
         <td style="vertical-align: top;">
             <div class="box box-info" runat="server" id="boxBottomMiddle">
-                <div class="box-header with-border">
+                <div class="box-header with-border" runat="server" id="boxBottomMiddleHeader">
                     <h3 class="box-title">
                         <asp:TextBox runat="server" ID="txtBottomMiddleTitle" Width="100%" placeholder="Bottom-Middle Title" /><asp:Label runat="server" ID="lblBottomMiddleTitle" /></h3>
                 </div>
@@ -67,10 +67,10 @@
             </div>
         </td>
         <td>
-            <img src="../images/spacer.png" style="width: 20px; height: 10px;" alt="" /></td>
+            <img src="../images/spacer.png" style="width: 5px; height: 5px;" alt="" /></td>
         <td style="vertical-align: top;">
             <div class="box box-info" runat="server" id="boxBottomRight">
-                <div class="box-header with-border">
+                <div class="box-header with-border" runat="server" id="boxBottomRightHeader">
                     <h3 class="box-title">
                         <asp:TextBox runat="server" ID="txtBottomRightTitle" Width="100%" placeholder="Bottom-Right Title" /><asp:Label runat="server" ID="lblBottomRightTitle" /></h3>
                 </div>

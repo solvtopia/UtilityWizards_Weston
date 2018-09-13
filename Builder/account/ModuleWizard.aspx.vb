@@ -117,7 +117,10 @@ Public Class ModuleWizard
 
     Private Sub ShowOptions()
         ' appearance
-        Me.pnlTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.TextBox))
+        Me.pnlTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.TextBox) _
+            Or Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.NumericTextBox) _
+            Or Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.CurrencyTextBox))
+        Me.pnlPlainTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.TextBox))
         Me.pnlMemoTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.MemoField))
         Me.pnlNumericTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.NumericTextBox))
         Me.pnlDropDownAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.DropDownList))
@@ -277,6 +280,7 @@ Public Class ModuleWizard
             ' text boxes
             If q.Type = Enums.SystemQuestionType.TextBox Then
                 q.TextBoxSize = CType(Me.ddlTextBoxSize.SelectedValue, Enums.SystemQuestionTextBoxSize)
+                q.DisplayAsDate = Me.chkDisplayAsDate.Checked
             End If
             ' drop-downs
             If q.Type = Enums.SystemQuestionType.DropDownList Then
@@ -289,6 +293,7 @@ Public Class ModuleWizard
             ' numeric text boxes
             If q.Type = Enums.SystemQuestionType.NumericTextBox Then
                 q.DecimalDigits = Me.txtNumbersAfterComma.Text.ToInteger
+                q.ThousandsSeparator = Me.chkThousandsSeparator.Checked
             End If
 
             ' data
@@ -350,40 +355,7 @@ Public Class ModuleWizard
         ' set the wizard step to 2 so we see the editor
         Me.WizardStep = 2
 
-        Dim q As New SystemQuestion
-
-        ' definition
-        Me.txtQuestion.Text = q.Question
-        Me.ddlQuestionType.SelectedValue = CStr(q.Type)
-
-        ' appearance
-        Me.chkDisplay.Checked = q.Visible
-        Me.ddlDisplay.SelectedValue = CStr(q.Location)
-        Me.txtSort.Text = q.Sort.ToString
-        ' text boxes
-        Me.ddlTextBoxSize.SelectedValue = CStr(q.TextBoxSize)
-        ' drop-downs
-        Me.ddlDropDownSize.SelectedValue = CStr(q.DropDownSize)
-        ' memos
-        Me.txtMemoRows.Text = q.Rows.ToString
-        ' numeric text boxes
-        Me.txtNumbersAfterComma.Text = q.DecimalDigits.ToString
-
-        ' data
-        Me.ddlBindingType.SelectedValue = CStr(q.BindingType)
-        Me.ddlMasterFeedField.SelectedValue = q.MasterFeedField
-        Me.txtFormula.Text = q.Rule
-        Me.lstValues.Items.Clear()
-
-        ' miscellaneous
-        Me.chkRequired.Checked = q.Required
-        Me.chkReporting.Checked = q.ReportField
-        Me.chkExport.Checked = q.ExportField
-
-        For Each itm As RadPanelItem In Me.pbProperties.GetAllItems()
-            itm.Expanded = True
-        Next
-        Me.ShowOptions()
+        Me.FillEditor(New SystemQuestion)
 
         Me.txtQuestion.Focus()
         pnlQuestionEditor.Visible = True
@@ -393,11 +365,7 @@ Public Class ModuleWizard
         pnlQuestionEditor.Visible = False
     End Sub
 
-    Protected Sub ModuleView_EditQuestion(ByVal q As SystemQuestion, ByVal qid As Integer) Handles ModuleView1.EditQuestion
-        Me.btnDelete.Visible = True
-        Me.btnAdd.CommandArgument = qid.ToString
-        Me.btnDelete.CommandArgument = qid.ToString
-
+    Private Sub FillEditor(ByVal q As SystemQuestion)
         ' definition
         Me.txtQuestion.Text = q.Question
         Me.ddlQuestionType.SelectedValue = CStr(q.Type)
@@ -408,23 +376,20 @@ Public Class ModuleWizard
         Me.txtSort.Text = q.Sort.ToString
         ' text boxes
         Me.ddlTextBoxSize.SelectedValue = CStr(q.TextBoxSize)
+        Me.chkDisplayAsDate.Checked = q.DisplayAsDate
         ' drop-downs
         Me.ddlDropDownSize.SelectedValue = CStr(q.DropDownSize)
         ' memos
         Me.txtMemoRows.Text = q.Rows.ToString
         ' numeric text boxes
         Me.txtNumbersAfterComma.Text = q.DecimalDigits.ToString
+        Me.chkThousandsSeparator.Checked = q.ThousandsSeparator
 
         ' data
         Me.ddlBindingType.SelectedValue = CStr(q.BindingType)
         Me.ddlMasterFeedField.SelectedValue = q.MasterFeedField
         Me.txtFormula.Text = q.Rule
         Me.lstValues.Items.Clear()
-        If q.Type = Enums.SystemQuestionType.DropDownList Then
-            For Each itm As String In q.DropDownValues
-                If itm.Trim <> "" Then Me.lstValues.Items.Add(New ListItem(itm, itm))
-            Next
-        End If
 
         ' miscellaneous
         Me.chkRequired.Checked = q.Required
@@ -435,6 +400,14 @@ Public Class ModuleWizard
             itm.Expanded = True
         Next
         Me.ShowOptions()
+    End Sub
+
+    Protected Sub ModuleView_EditQuestion(ByVal q As SystemQuestion, ByVal qid As Integer) Handles ModuleView1.EditQuestion
+        Me.btnDelete.Visible = True
+        Me.btnAdd.CommandArgument = qid.ToString
+        Me.btnDelete.CommandArgument = qid.ToString
+
+        Me.FillEditor(q)
 
         Me.txtQuestion.Focus()
         pnlQuestionEditor.Visible = True

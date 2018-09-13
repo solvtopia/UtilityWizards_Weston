@@ -160,9 +160,11 @@ Public Class ModuleView
                 If Me.Mode = ControlMode.View Then
                     tc3.Text = q.Question
                 ElseIf Me.Mode = ControlMode.Edit Then
+                    Dim displayText As String = q.Question
+                    If displayText = "" Then displayText = "(No Label)"
                     Dim lnk As New LinkButton
                     lnk.ID = "lnk_" & x
-                    lnk.Text = q.Question
+                    lnk.Text = displayText
                     tc3.Controls.Add(lnk)
                     AddHandler lnk.Click, AddressOf lnkEdit_Click
                 End If
@@ -220,6 +222,17 @@ Public Class ModuleView
                         txt.ID = "txt_" & x
                         txt.Width = New Unit(100, UnitType.Pixel)
                         txt.NumberFormat.DecimalDigits = q.DecimalDigits
+                        If Not q.ThousandsSeparator Then txt.NumberFormat.GroupSeparator = ""
+                        txt.DataFieldName = q.DataFieldName
+                        txt.ReadOnly = (q.BindingType <> Enums.SystemQuestionBindingType.UserInput)
+                        tc4.Controls.Add(txt)
+
+                    Case Enums.SystemQuestionType.CurrencyTextBox
+                        Dim txt As New Controls.TextBoxes.NumericTextBox
+                        txt.ID = "txt_" & x
+                        txt.Width = New Unit(100, UnitType.Pixel)
+                        txt.NumberFormat.DecimalDigits = 2
+                        txt.Type = NumericType.Currency
                         txt.DataFieldName = q.DataFieldName
                         txt.ReadOnly = (q.BindingType <> Enums.SystemQuestionBindingType.UserInput)
                         tc4.Controls.Add(txt)
@@ -265,7 +278,7 @@ Public Class ModuleView
                 Dim addRow As Boolean = (tr1.Cells.Count > 0)
 
                 Select Case True
-                    Case addrow And q.Location = Enums.SystemQuestionLocation.TopLeft
+                    Case addRow And q.Location = Enums.SystemQuestionLocation.TopLeft
                         Me.tblModuleQuestions_TopLeft.Rows.Add(tr1)
                     Case addRow And q.Location = Enums.SystemQuestionLocation.TopMiddle
                         Me.tblModuleQuestions_TopMiddle.Rows.Add(tr1)
@@ -292,13 +305,15 @@ Public Class ModuleView
             Me.boxBottomMiddle.Visible = (Me.tblModuleQuestions_BottomMiddle.Rows.Count > 0)
             Me.boxBottomRight.Visible = (Me.tblModuleQuestions_BottomRight.Rows.Count > 0)
 
-            Me.lblTopLeftTitle.Visible = (Me.Mode = ControlMode.View And Me.TopLeftTitle <> "")
-            Me.lblTopMiddleTitle.Visible = (Me.Mode = ControlMode.View And Me.TopMiddleTitle <> "")
-            Me.lblTopRightTitle.Visible = (Me.Mode = ControlMode.View And Me.TopRightTitle <> "")
-            Me.lblFullPageTitle.Visible = (Me.Mode = ControlMode.View And Me.FullPageTitle <> "")
-            Me.lblBottomLeftTitle.Visible = (Me.Mode = ControlMode.View And Me.BottomLeftTitle <> "")
-            Me.lblBottomMiddleTitle.Visible = (Me.Mode = ControlMode.View And Me.BottomMiddleTitle <> "")
-            Me.lblBottomRightTitle.Visible = (Me.Mode = ControlMode.View And Me.BottomRightTitle <> "")
+            If Me.Mode = ControlMode.View Then
+                Me.boxTopLeftHeader.Visible = (Me.TopLeftTitle <> "")
+                Me.boxTopMiddleHeader.Visible = (Me.TopMiddleTitle <> "")
+                Me.boxTopRightHeader.Visible = (Me.TopRightTitle <> "")
+                Me.boxFullPageHeader.Visible = (Me.FullPageTitle <> "")
+                Me.boxBottomLeftHeader.Visible = (Me.BottomLeftTitle <> "")
+                Me.boxBottomMiddleHeader.Visible = (Me.BottomMiddleTitle <> "")
+                Me.boxBottomRightHeader.Visible = (Me.BottomRightTitle <> "")
+            End If
 
             'Me.SetSkin(Me, System.Configuration.ConfigurationManager.AppSettings("Telerik_Skin_Desktop"))
 

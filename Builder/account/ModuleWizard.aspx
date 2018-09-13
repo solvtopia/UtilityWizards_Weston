@@ -218,6 +218,7 @@
                                         <asp:ListItem Text="Text Box" Value="2" />
                                         <asp:ListItem Text="Memo Field" Value="3" />
                                         <asp:ListItem Text="Numeric Text Field" Value="4" />
+                                        <asp:ListItem Text="Currency Text Field" Value="5" />
                                     </asp:DropDownList></td>
                             </tr>
                         </table>
@@ -269,12 +270,26 @@
                                 </tr>
                             </table>
                         </asp:Panel>
+                        <asp:Panel runat="server" ID="pnlPlainTextBoxAppearanceOptions">
+                            <table class="wrap-table-wizard">
+                                <tr>
+                                    <td style="width: 100px;">Display As Date</td>
+                                    <td>
+                                        <asp:CheckBox runat="server" ID="chkDisplayAsDate" /></td>
+                                </tr>
+                            </table>
+                        </asp:Panel>
                         <asp:Panel runat="server" ID="pnlNumericTextBoxAppearanceOptions">
                             <table class="wrap-table-wizard">
                                 <tr>
                                     <td style="width: 100px;">Decimal Places</td>
                                     <td>
                                         <asp:TextBox runat="server" ID="txtNumbersAfterComma" Width="50px" /></td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 100px;">Thousands Separator</td>
+                                    <td>
+                                        <asp:CheckBox runat="server" ID="chkThousandsSeparator" /></td>
                                 </tr>
                             </table>
                         </asp:Panel>

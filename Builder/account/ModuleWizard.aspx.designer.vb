@@ -338,6 +338,24 @@ Partial Public Class ModuleWizard
     Protected WithEvents ddlTextBoxSize As Global.System.Web.UI.WebControls.DropDownList
     
     '''<summary>
+    '''pnlPlainTextBoxAppearanceOptions control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlPlainTextBoxAppearanceOptions As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
+    '''chkDisplayAsDate control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents chkDisplayAsDate As Global.System.Web.UI.WebControls.CheckBox
+    
+    '''<summary>
     '''pnlNumericTextBoxAppearanceOptions control.
     '''</summary>
     '''<remarks>
@@ -354,6 +372,15 @@ Partial Public Class ModuleWizard
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents txtNumbersAfterComma As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''chkThousandsSeparator control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents chkThousandsSeparator As Global.System.Web.UI.WebControls.CheckBox
     
     '''<summary>
     '''pnlMemoTextBoxAppearanceOptions control.

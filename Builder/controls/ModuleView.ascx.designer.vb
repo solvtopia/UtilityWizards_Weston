@@ -23,6 +23,15 @@ Partial Public Class ModuleView
     Protected WithEvents boxTopLeft As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
+    '''boxTopLeftHeader control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents boxTopLeftHeader As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
     '''txtTopLeftTitle control.
     '''</summary>
     '''<remarks>
@@ -57,6 +66,15 @@ Partial Public Class ModuleView
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents boxTopMiddle As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
+    '''boxTopMiddleHeader control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents boxTopMiddleHeader As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
     '''txtTopMiddleTitle control.
@@ -95,6 +113,15 @@ Partial Public Class ModuleView
     Protected WithEvents boxTopRight As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
+    '''boxTopRightHeader control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents boxTopRightHeader As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
     '''txtTopRightTitle control.
     '''</summary>
     '''<remarks>
@@ -129,6 +156,15 @@ Partial Public Class ModuleView
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents boxFullPage As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
+    '''boxFullPageHeader control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents boxFullPageHeader As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
     '''txtFullPageTitle control.
@@ -167,6 +203,15 @@ Partial Public Class ModuleView
     Protected WithEvents boxBottomLeft As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
+    '''boxBottomLeftHeader control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents boxBottomLeftHeader As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
     '''txtBottomLeftTitle control.
     '''</summary>
     '''<remarks>
@@ -203,6 +248,15 @@ Partial Public Class ModuleView
     Protected WithEvents boxBottomMiddle As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
+    '''boxBottomMiddleHeader control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents boxBottomMiddleHeader As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
     '''txtBottomMiddleTitle control.
     '''</summary>
     '''<remarks>
@@ -237,6 +291,15 @@ Partial Public Class ModuleView
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents boxBottomRight As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
+    '''boxBottomRightHeader control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents boxBottomRightHeader As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
     '''txtBottomRightTitle control.

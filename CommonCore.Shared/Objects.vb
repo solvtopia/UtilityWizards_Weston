@@ -840,6 +840,8 @@ Public Class SystemQuestion
         Me.Rows = 3
         Me.DecimalDigits = 0
         Me.Visible = True
+        Me.ThousandsSeparator = True
+        Me.DisplayAsDate = False
     End Sub
     Public Sub New(ByVal id As Integer)
         Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
@@ -905,12 +907,14 @@ Public Class SystemQuestion
     Public Sort As Integer
     ' text boxes
     Public TextBoxSize As SystemQuestionTextBoxSize
+    Public DisplayAsDate As Boolean
     ' drop-downs
     Public DropDownSize As SystemQuestionDropDownSize
     ' memos
     Public Rows As Integer
     ' numeric text boxes
     Public DecimalDigits As Integer
+    Public ThousandsSeparator As Boolean
 
     ' data
     Public BindingType As SystemQuestionBindingType

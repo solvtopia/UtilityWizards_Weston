@@ -54,6 +54,7 @@
         TextBox
         MemoField
         NumericTextBox
+        CurrencyTextBox
     End Enum
 
     Public Enum SystemQuestionTextBoxSize
