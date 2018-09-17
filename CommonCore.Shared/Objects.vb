@@ -877,6 +877,28 @@ Public Class SystemQuestion
 
             If Me.BindingType = SystemQuestionBindingType.MasterFeed Then
                 retVal = Me.MasterFeedField
+            ElseIf Me.BindingType = SystemQuestionBindingType.Formula Then
+                retVal = "FormulaField_" & StrConv(Me.Rule, VbStrConv.ProperCase).Replace(" ", "").Replace(vbCrLf, "").Replace("[", "").Replace("]", "").Replace("_", "")
+                retVal = retVal.Replace("?", "")
+                retVal = retVal.Replace("/", "")
+                retVal = retVal.Replace("'", "")
+                retVal = retVal.Replace("&", "And")
+                retVal = retVal.Replace("#", "Number")
+                retVal = retVal.Replace("%", "Percent")
+                retVal = retVal.Replace("'", "")
+                retVal = retVal.Replace("*", "")
+                retVal = retVal.Replace("+", "")
+                retVal = retVal.Replace("-", "")
+                retVal = retVal.Replace("(", "")
+                retVal = retVal.Replace(")", "")
+                retVal = retVal.Replace(".", "")
+
+                ' flag the datafieldname with an N or T for numeric or text
+                If Me.Type = SystemQuestionType.NumericTextBox Or Me.Type = SystemQuestionType.CurrencyTextBox Then
+                    retVal &= "_N"
+                ElseIf Me.Type = SystemQuestionType.TextBox Or Me.Type = SystemQuestionType.MemoField Then
+                    retVal &= "_T"
+                End If
             Else
                 retVal = StrConv(Me.Question, VbStrConv.ProperCase).Replace(" ", "")
                 If Me.DataFieldNameOverride <> "" Then retVal = Me.DataFieldNameOverride

@@ -244,37 +244,6 @@ Public Class ModuleView
                     tr1.Cells.Add(tc4)
                 End If
 
-                'Dim tr3 As New TableRow
-                'Dim tc5 As New TableCell
-                'tc5.Width = New Unit(20, UnitType.Pixel)
-                'Dim imgRequired As New Image
-                'imgRequired.ID = "imgRequired" & x
-                'imgRequired.ImageUrl = "~/images/toolbar/icon_error.png"
-                'imgRequired.ToolTip = "Required Field"
-                'If q.Required Then tc5.Controls.Add(imgRequired)
-                'tc5.VerticalAlign = VerticalAlign.Top
-                'tr1.Cells.Add(tc5)
-
-                'Dim tc7 As New TableCell
-                'tc7.Width = New Unit(20, UnitType.Pixel)
-                'Dim imgReporting As New Image
-                'imgReporting.ID = "imgReporting" & x
-                'imgReporting.ImageUrl = "~/images/toolbar/icon_report.png"
-                'imgReporting.ToolTip = "Allow Reporting"
-                'If q.ReportField Then tc7.Controls.Add(imgReporting)
-                'tc7.VerticalAlign = VerticalAlign.Top
-                'tr1.Cells.Add(tc7)
-
-                'Dim tc8 As New TableCell
-                'tc8.Width = New Unit(20, UnitType.Pixel)
-                'Dim imgExport As New Image
-                'imgExport.ID = "imgExport" & x
-                'imgExport.ImageUrl = "~/images/toolbar/icon_saveweb.png"
-                'imgExport.ToolTip = "Can be Exported"
-                'If q.ExportField Then tc8.Controls.Add(imgExport)
-                'tc8.VerticalAlign = VerticalAlign.Top
-                'tr1.Cells.Add(tc8)
-
                 Dim addRow As Boolean = (tr1.Cells.Count > 0)
 
                 Select Case True
@@ -314,8 +283,6 @@ Public Class ModuleView
                 Me.boxBottomMiddleHeader.Visible = (Me.BottomMiddleTitle <> "")
                 Me.boxBottomRightHeader.Visible = (Me.BottomRightTitle <> "")
             End If
-
-            'Me.SetSkin(Me, System.Configuration.ConfigurationManager.AppSettings("Telerik_Skin_Desktop"))
 
         Catch ex As Exception
             ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))

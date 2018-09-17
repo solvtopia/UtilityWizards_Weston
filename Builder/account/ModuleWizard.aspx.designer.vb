@@ -446,22 +446,85 @@ Partial Public Class ModuleWizard
     Protected WithEvents ddlMasterFeedField As Global.System.Web.UI.WebControls.DropDownList
     
     '''<summary>
-    '''pnlFormulaField control.
+    '''pnlNumericFormulaField control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents pnlFormulaField As Global.System.Web.UI.WebControls.Panel
+    Protected WithEvents pnlNumericFormulaField As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
-    '''txtFormula control.
+    '''txtNumericFormula control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtFormula As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents txtNumericFormula As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''ddlMasterFeedFieldNumericFormula control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddlMasterFeedFieldNumericFormula As Global.System.Web.UI.WebControls.DropDownList
+    
+    '''<summary>
+    '''btnAddFieldToNumericFormula control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnAddFieldToNumericFormula As Global.Telerik.Web.UI.RadButton
+    
+    '''<summary>
+    '''btnEvalNumericFormula control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnEvalNumericFormula As Global.Telerik.Web.UI.RadButton
+    
+    '''<summary>
+    '''pnlTextFormulaField control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlTextFormulaField As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
+    '''txtTextFormula control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtTextFormula As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''ddlMasterFeedFieldTextFormula control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddlMasterFeedFieldTextFormula As Global.System.Web.UI.WebControls.DropDownList
+    
+    '''<summary>
+    '''btnAddFieldToTextFormula control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnAddFieldToTextFormula As Global.Telerik.Web.UI.RadButton
     
     '''<summary>
     '''pnlTextBoxDataOptions control.

@@ -56,21 +56,18 @@ Public Class ModuleTab
 
             Me.LoadLists()
 
-            If Me.RecordId > 0 Then
+            If Me.RecordId > 0 Or Me.CustAcctNum <> "" Then
                 Me.LoadData()
                 Me.txtUserEmail.Text = App.CurrentUser.Email
                 'Me.txtAcctNumber.Text = Me.CustAcctNum
-            ElseIf Me.CustAcctNum <> "" Then
-                Me.txtUserEmail.Text = App.CurrentUser.Email
-                Me.LoadMasterFeed()
-                'Me.txtAcctNumber.Text = Me.CustAcctNum
-                'Me.txtLocationNum.Text = Me.LocationNum
             End If
 
             Me.LoadCustomerInfo()
 
             Me.SetupForm()
         End If
+
+        Me.SetSkin(Me.ModuleView1, System.Configuration.ConfigurationManager.AppSettings("Telerik_Skin_Desktop"))
     End Sub
 
     Private Sub SetupForm()
@@ -258,6 +255,9 @@ Public Class ModuleTab
 
             'If Me.txtLocationNum.Text = "" Then Me.txtLocationNum.Text = Me.LocationNum
 
+            ' load master feed values
+            Me.LoadMasterFeed()
+
         Catch ex As Exception
             ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
         Finally
@@ -272,18 +272,30 @@ Public Class ModuleTab
             Dim dt As New DataTable()
             Dim lstFields As New List(Of String)
 
-            Dim fields As String = ""
+            ' get a list of master fields to add
             For Each q As SystemQuestion In Me.ModuleView1.ModuleQuestions
                 If q.BindingType = Enums.SystemQuestionBindingType.MasterFeed Then
-                    If fields = "" Then
-                        fields = "[" & q.MasterFeedField & "]"
-                    Else fields &= ", [" & q.MasterFeedField & "]"
-                    End If
-                    If Not lstFields.Contains(q.MasterFeedField) Then
-                        lstFields.Add(q.MasterFeedField)
-                        dt.Columns.Add(q.MasterFeedField)
-                    End If
+                    If Not lstFields.Contains(q.MasterFeedField) Then lstFields.Add(q.MasterFeedField)
                 End If
+            Next
+
+            ' get a list of fields from the formula fields
+            For Each q As SystemQuestion In Me.ModuleView1.ModuleQuestions
+                If q.BindingType = Enums.SystemQuestionBindingType.Formula And q.Rule <> "" Then
+                    lstFields.AddRange(q.Rule.GetFieldNamesFromFormula(lstFields))
+                    dt.Columns.Add(q.DataFieldName)
+                End If
+            Next
+
+            ' fix the fields into a string
+            Dim fields As String = ""
+            For Each f As String In lstFields
+                If fields = "" Then
+                    fields = "[" & f & "]"
+                Else fields &= ", [" & f & "]"
+                End If
+
+                dt.Columns.Add(f)
             Next
 
             Dim cmd As New SqlClient.SqlCommand("procGetMasterFeedRecord", cn)
@@ -300,6 +312,12 @@ Public Class ModuleTab
                             r(q.MasterFeedField) = FormatDateTime(CDate(rs(q.MasterFeedField)), vbShortDate)
                         Else r(q.MasterFeedField) = rs(q.MasterFeedField)
                         End If
+                    ElseIf q.BindingType = Enums.SystemQuestionBindingType.Formula Then
+                        If q.Rule <> "" Then r(q.DataFieldName) = q.Rule
+                        Dim lstFormulaFields As List(Of String) = q.Rule.GetFieldNamesFromFormula
+                        For Each f As String In lstFormulaFields
+                            r(f) = rs(f)
+                        Next
                     End If
                 Next
                 dt.Rows.Add(r)
@@ -320,6 +338,30 @@ Public Class ModuleTab
             cn.Close()
         End Try
     End Sub
+
+    'Private Sub UpdateFormulaValues(ByVal data As DataTable, ByVal recordNum As Integer)
+    '    Dim row As DataRow = data.Rows(recordNum - 1)
+
+    '    For Each q As SystemQuestion In Me.ModuleView1.ModuleQuestions
+    '        If q.BindingType = Enums.SystemQuestionBindingType.Formula Then
+    '            If q.Type = Enums.SystemQuestionType.TextBox Or q.Type = Enums.SystemQuestionType.MemoField Then
+    '                ' text formulas 
+    '                ' replace all the instances of the field names with their actual values
+    '                If data.Rows.Count > 0 Then
+    '                    For Each dc As DataColumn In data.Columns
+    '                        Dim name As String = dc.ColumnName
+    '                        Dim value As String = ""
+    '                        If Not IsDBNull(row(name)) Then value = row(name).ToString
+
+
+    '                    Next
+    '                End If
+    '            ElseIf q.Type = Enums.SystemQuestionType.NumericTextBox Or q.Type = Enums.SystemQuestionType.CurrencyTextBox Then
+    '                ' numeric formulas process as math
+    '            End If
+    '        End If
+    '    Next
+    'End Sub
 
     Private Function SaveChanges() As Boolean
         Dim retVal As Boolean = True
@@ -639,6 +681,7 @@ Public Class ModuleTab
         Dim data As DataTable = CType(Session("ImportDataTable" & Me.ModId), DataTable)
         Me.txtRecordNum.Text = "1"
         Me.FromDataTable(data, Me.txtRecordNum.Text.ToInteger)
+        'Me.UpdateFormulaValues(data, Me.txtRecordNum.Text.ToInteger)
     End Sub
 
     Protected Sub lnkPreviousRecord_Click(sender As Object, e As EventArgs) Handles lnkPreviousRecord.Click
@@ -646,6 +689,7 @@ Public Class ModuleTab
             Dim data As DataTable = CType(Session("ImportDataTable" & Me.ModId), DataTable)
             Me.txtRecordNum.Text = (Me.txtRecordNum.Text.ToInteger - 1).ToString
             Me.FromDataTable(data, Me.txtRecordNum.Text.ToInteger)
+            'Me.UpdateFormulaValues(data, Me.txtRecordNum.Text.ToInteger)
         End If
     End Sub
 
@@ -654,6 +698,7 @@ Public Class ModuleTab
             Dim data As DataTable = CType(Session("ImportDataTable" & Me.ModId), DataTable)
             Me.txtRecordNum.Text = (Me.txtRecordNum.Text.ToInteger + 1).ToString
             Me.FromDataTable(data, Me.txtRecordNum.Text.ToInteger)
+            'Me.UpdateFormulaValues(data, Me.txtRecordNum.Text.ToInteger)
         End If
     End Sub
 
@@ -661,6 +706,7 @@ Public Class ModuleTab
         Dim data As DataTable = CType(Session("ImportDataTable" & Me.ModId), DataTable)
         Me.txtRecordNum.Text = Me.lblTotalRecords.Text
         Me.FromDataTable(data, Me.txtRecordNum.Text.ToInteger)
+        'Me.UpdateFormulaValues(data, Me.txtRecordNum.Text.ToInteger)
     End Sub
 
 

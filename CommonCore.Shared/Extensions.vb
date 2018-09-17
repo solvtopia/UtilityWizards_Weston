@@ -270,8 +270,55 @@ Public Module Extensions
     <Extension()> Public Function EvalFormula(ByVal formula As String) As Double
         Dim retVal As Double = 0
 
-        Dim dt As New DataTable
-        retVal = CDbl(dt.Compute(formula, ""))
+        Try
+            formula = formula.ToUpper().Replace("IIF(", "IF(").Replace("IF(", "IIF(")
+
+            Using dt As DataTable = New DataTable()
+                retVal = dt.Compute(formula, Nothing).ToString.ToDouble
+            End Using
+
+        Catch ex As Exception
+            retVal = 0
+        End Try
+
+        Return retVal
+    End Function
+
+    <Extension()> Public Function TestFormula(ByVal formula As String) As String
+        Dim retVal As String = "Success"
+
+        Try
+            formula = formula.ToUpper().Replace("IIF(", "IF(").Replace("IF(", "IIF(")
+
+            Using dt As DataTable = New DataTable()
+                dt.Compute(formula, Nothing)
+            End Using
+
+        Catch ex As Exception
+            retVal = ex.Message
+        End Try
+
+        Return retVal
+    End Function
+
+    <Extension()> Public Function GetFieldNamesFromFormula(ByVal formula As String) As List(Of String)
+        Return GetFieldNamesFromFormula(formula, New List(Of String))
+    End Function
+    <Extension()> Public Function GetFieldNamesFromFormula(ByVal formula As String, ByVal fieldList As List(Of String)) As List(Of String)
+        Dim retVal As New List(Of String)
+
+        Dim fieldName As String = ""
+        Dim fieldStarted As Boolean = False
+        For Each c As Char In formula
+            If c = "[" Then fieldStarted = True
+            If fieldStarted Then fieldName &= c
+            If c = "]" Then
+                Dim fieldToAdd As String = fieldName.Replace("[", "").Replace("]", "")
+                If Not retVal.Contains(fieldToAdd) And Not fieldList.Contains(fieldToAdd) Then retVal.Add(fieldToAdd)
+                fieldName = ""
+                fieldStarted = False
+            End If
+        Next
 
         Return retVal
     End Function

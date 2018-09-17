@@ -338,24 +338,69 @@
                         <asp:Panel runat="server" ID="pnlMasterFeedField">
                             <table class="wrap-table-wizard">
                                 <tr>
-                                    <td colspan="2" style="font-weight: bold;">NOTE: Fields bound to the Master Feed table are automatically flagged as Read-Only</td>
+                                    <td style="font-weight: bold;">NOTE: Fields bound to the Master Feed table are automatically flagged as Read-Only</td>
                                 </tr>
                                 <tr>
-                                    <td style="width: 100px;">Master Feed Field</td>
+                                    <td>Master Feed Field</td>
+                                </tr>
+                                <tr>
                                     <td>
                                         <asp:DropDownList runat="server" ID="ddlMasterFeedField" /></td>
                                 </tr>
                             </table>
                         </asp:Panel>
-                        <asp:Panel runat="server" ID="pnlFormulaField">
+                        <asp:Panel runat="server" ID="pnlNumericFormulaField">
                             <table class="wrap-table-wizard">
                                 <tr>
                                     <td colspan="2" style="font-weight: bold;">NOTE: Fields bound to Formulas are automatically flagged as Read-Only</td>
                                 </tr>
                                 <tr>
-                                    <td style="width: 100px; vertical-align: top;">Formula</td>
+                                    <td colspan="2">Formula</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <asp:TextBox runat="server" ID="txtNumericFormula" TextMode="MultiLine" Rows="5" Width="100%" /></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Master Feed Field</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <asp:DropDownList runat="server" ID="ddlMasterFeedFieldNumericFormula" /></td>
+                                </tr>
+                                <tr>
                                     <td>
-                                        <asp:TextBox runat="server" ID="txtFormula" TextMode="MultiLine" Rows="5" Width="100%" /></td>
+                                        <telerik:RadButton ID="btnAddFieldToNumericFormula" runat="server" ButtonType="LinkButton" CssClass="fixedWidth" Skin="Metro" Text="Add Field" Width="100%" />
+                                    </td>
+                                    <td>
+                                        <telerik:RadButton ID="btnEvalNumericFormula" runat="server" ButtonType="LinkButton" CssClass="fixedWidth" Skin="Metro" Text="Test Formula" Width="100%" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </asp:Panel>
+                        <asp:Panel runat="server" ID="pnlTextFormulaField">
+                            <table class="wrap-table-wizard">
+                                <tr>
+                                    <td style="font-weight: bold;">NOTE: Fields bound to Formulas are automatically flagged as Read-Only</td>
+                                </tr>
+                                <tr>
+                                    <td>String Concatenation</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <asp:TextBox runat="server" ID="txtTextFormula" TextMode="MultiLine" Rows="5" Width="100%" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Master Feed Field</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <asp:DropDownList runat="server" ID="ddlMasterFeedFieldTextFormula" /></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <telerik:RadButton ID="btnAddFieldToTextFormula" runat="server" ButtonType="LinkButton" CssClass="fixedWidth" Skin="Metro" Text="Add Field" Width="100%" />
+                                    </td>
                                 </tr>
                             </table>
                         </asp:Panel>

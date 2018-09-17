@@ -116,10 +116,45 @@ Public Class ModuleWizard
     End Sub
 
     Private Sub ShowOptions()
+        If Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.TextBox) Or
+                Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.MemoField) Or
+                Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.NumericTextBox) Or
+                Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.CurrencyTextBox) Then
+
+            ' if the formula binding type isn't in the list, add it
+            Dim formulaBindingTypeIndex As Integer = -1
+            For x As Integer = 0 To Me.ddlBindingType.Items.Count - 1
+                Dim itm As ListItem = Me.ddlBindingType.Items(x)
+                If itm.Value = CStr(Enums.SystemQuestionBindingType.Formula) Then
+                    formulaBindingTypeIndex = x
+                    Exit For
+                End If
+            Next
+
+            If formulaBindingTypeIndex = -1 Then
+                Me.ddlBindingType.Items.Add(New ListItem("Formula", CStr(Enums.SystemQuestionBindingType.Formula)))
+            End If
+        Else
+
+            ' if the formula binding type is in the list, remove it
+            Dim formulaBindingTypeIndex As Integer = -1
+            For x As Integer = 0 To Me.ddlBindingType.Items.Count - 1
+                Dim itm As ListItem = Me.ddlBindingType.Items(x)
+                If itm.Value = CStr(Enums.SystemQuestionBindingType.Formula) Then
+                    formulaBindingTypeIndex = x
+                    Exit For
+                End If
+            Next
+
+            If formulaBindingTypeIndex > -1 Then
+                Me.ddlBindingType.Items.RemoveAt(formulaBindingTypeIndex)
+            End If
+        End If
+
         ' appearance
-        Me.pnlTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.TextBox) _
-            Or Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.NumericTextBox) _
-            Or Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.CurrencyTextBox))
+        Me.pnlTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.TextBox) Or
+             Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.NumericTextBox) Or
+             Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.CurrencyTextBox))
         Me.pnlPlainTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.TextBox))
         Me.pnlMemoTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.MemoField))
         Me.pnlNumericTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.NumericTextBox))
@@ -127,7 +162,12 @@ Public Class ModuleWizard
 
         ' data
         Me.pnlMasterFeedField.Visible = (Me.ddlBindingType.SelectedValue = CStr(Enums.SystemQuestionBindingType.MasterFeed))
-        Me.pnlFormulaField.Visible = (Me.ddlBindingType.SelectedValue = CStr(Enums.SystemQuestionBindingType.Formula))
+        Me.pnlNumericFormulaField.Visible = (Me.ddlBindingType.SelectedValue = CStr(Enums.SystemQuestionBindingType.Formula) And
+            (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.NumericTextBox) Or
+            Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.CurrencyTextBox)))
+        Me.pnlTextFormulaField.Visible = (Me.ddlBindingType.SelectedValue = CStr(Enums.SystemQuestionBindingType.Formula) And
+            (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.TextBox) Or
+            Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.MemoField)))
         Me.pnlDropDownDataOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.DropDownList))
     End Sub
 
@@ -152,11 +192,20 @@ Public Class ModuleWizard
 
             Me.ddlMasterFeedField.Items.Clear()
             Me.ddlMasterFeedField.Items.Add(New ListItem(""))
-            cmd = New SqlClient.SqlCommand("select COLUMN_NAME from information_schema.columns where table_name like '_MasterFeed' ORDER BY COLUMN_NAME", cn)
+            Me.ddlMasterFeedFieldTextFormula.Items.Clear()
+            Me.ddlMasterFeedFieldTextFormula.Items.Add(New ListItem(""))
+            Me.ddlMasterFeedFieldNumericFormula.Items.Clear()
+            Me.ddlMasterFeedFieldNumericFormula.Items.Add(New ListItem(""))
+            cmd = New SqlClient.SqlCommand("select COLUMN_NAME, DATA_TYPE from information_schema.columns where table_name like '_MasterFeed' ORDER BY COLUMN_NAME", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             rs = cmd.ExecuteReader
             Do While rs.Read
                 Me.ddlMasterFeedField.Items.Add(New ListItem(rs("COLUMN_NAME").ToString))
+                Me.ddlMasterFeedFieldTextFormula.Items.Add(New ListItem(rs("COLUMN_NAME").ToString))
+                Select Case rs("DATA_TYPE").ToString.ToLower
+                    Case "float"
+                        Me.ddlMasterFeedFieldNumericFormula.Items.Add(New ListItem(rs("COLUMN_NAME").ToString))
+                End Select
             Loop
             rs.Close()
             cmd.Cancel()
@@ -301,7 +350,11 @@ Public Class ModuleWizard
             If q.BindingType = Enums.SystemQuestionBindingType.MasterFeed Then
                 q.MasterFeedField = Me.ddlMasterFeedField.SelectedValue
             ElseIf q.BindingType = Enums.SystemQuestionBindingType.Formula Then
-                q.Rule = Me.txtFormula.Text
+                If q.Type = Enums.SystemQuestionType.NumericTextBox Or q.Type = Enums.SystemQuestionType.CurrencyTextBox Then
+                    q.Rule = Me.txtNumericFormula.Text
+                ElseIf q.Type = Enums.SystemQuestionType.TextBox Or q.Type = Enums.SystemQuestionType.MemoField Then
+                    q.Rule = Me.txtTextFormula.Text
+                End If
             End If
 
             If q.Type = Enums.SystemQuestionType.DropDownList Then
@@ -385,10 +438,18 @@ Public Class ModuleWizard
         Me.txtNumbersAfterComma.Text = q.DecimalDigits.ToString
         Me.chkThousandsSeparator.Checked = q.ThousandsSeparator
 
+        Me.ShowOptions()
+
         ' data
         Me.ddlBindingType.SelectedValue = CStr(q.BindingType)
         Me.ddlMasterFeedField.SelectedValue = q.MasterFeedField
-        Me.txtFormula.Text = q.Rule
+        If q.BindingType = Enums.SystemQuestionBindingType.Formula Then
+            If q.Type = Enums.SystemQuestionType.NumericTextBox Or q.Type = Enums.SystemQuestionType.CurrencyTextBox Then
+                Me.txtNumericFormula.Text = q.Rule
+            ElseIf q.Type = Enums.SystemQuestionType.TextBox Or q.Type = Enums.SystemQuestionType.MemoField Then
+                Me.txtTextFormula.Text = q.Rule
+            End If
+        End If
         Me.lstValues.Items.Clear()
 
         ' miscellaneous
@@ -399,6 +460,7 @@ Public Class ModuleWizard
         For Each itm As RadPanelItem In Me.pbProperties.GetAllItems()
             itm.Expanded = True
         Next
+
         Me.ShowOptions()
     End Sub
 
@@ -417,5 +479,28 @@ Public Class ModuleWizard
         Dim btn As RadButton = CType(sender, RadButton)
         Me.ModuleView1.ModuleQuestions.RemoveAt(btn.CommandArgument.ToInteger)
         Me.ModuleView1.Refresh()
+    End Sub
+
+    Private Sub btnAddFieldToNumericFormula_Click(sender As Object, e As EventArgs) Handles btnAddFieldToNumericFormula.Click
+        If Me.txtNumericFormula.Text = "" Then
+            Me.txtNumericFormula.Text = "[" + Me.ddlMasterFeedFieldNumericFormula.SelectedValue & "]"
+        Else Me.txtNumericFormula.Text &= " + [" + Me.ddlMasterFeedFieldNumericFormula.SelectedValue & "]"
+        End If
+    End Sub
+
+    Private Sub btnAddFieldToTextFormula_Click(sender As Object, e As EventArgs) Handles btnAddFieldToTextFormula.Click
+        If Me.txtTextFormula.Text = "" Then
+            Me.txtTextFormula.Text = "[" + Me.ddlMasterFeedFieldTextFormula.SelectedValue & "]"
+        Else Me.txtTextFormula.Text &= "[" + Me.ddlMasterFeedFieldTextFormula.SelectedValue & "]"
+        End If
+    End Sub
+
+    Private Sub btnEvalNumericFormula_Click(sender As Object, e As EventArgs) Handles btnEvalNumericFormula.Click
+        Dim formula As String = Me.txtNumericFormula.Text
+        Dim lstFields As List(Of String) = formula.GetFieldNamesFromFormula
+        For Each f As String In lstFields
+            formula = formula.Replace("[" & f & "]", "1")
+        Next
+        MsgBox(formula.TestFormula)
     End Sub
 End Class

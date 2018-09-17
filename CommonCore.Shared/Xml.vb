@@ -903,9 +903,37 @@ Public Module Xml
 
             For Each dc As DataColumn In data.Columns
                 Dim name As String = dc.ColumnName
+
+                ' see if we are dealing with a formula field
+                If name.ToLower.StartsWith("formulafield_") Then
+                    Dim formula As String = row(name).ToString
+
+                    ' replace all the field names with their values
+                    Dim formulaFields As List(Of String) = formula.GetFieldNamesFromFormula()
+                    For Each f As String In formulaFields
+                        If name.ToLower.EndsWith("_n") Then
+                            Dim v As Double = 0
+                            If Not IsDBNull(row(f)) Then v = row(f).ToString.ToDouble
+                            formula = formula.Replace("[" & f & "]", v)
+                        ElseIf name.ToLower.EndsWith("_t") Then
+                            Dim v As String = ""
+                            If Not IsDBNull(row(f)) Then v = row(f).ToString
+                            formula = formula.Replace("[" & f & "]", v)
+                        End If
+                    Next
+
+                    ' run the formula
+                    If name.ToLower.EndsWith("_n") Then
+                        row(name) = formula.EvalFormula
+                    ElseIf name.ToLower.EndsWith("_t") Then
+                        row(name) = formula
+                    End If
+                End If
+
+                ' add the values to the table
                 If ht.ContainsKey(name) Then
-                    ht(name) = row(dc.ColumnName).ToString
-                Else ht.Add(name, row(dc.ColumnName).ToString)
+                    ht(name) = row(name).ToString
+                Else ht.Add(name, row(name).ToString)
                 End If
             Next
         End If
