@@ -11,7 +11,7 @@ Public Class Customers
     End Sub
 
     Private Sub RadCustomerGrid_New_NeedDataSource(sender As Object, e As GridNeedDataSourceEventArgs) Handles RadCustomerGrid.NeedDataSource
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim sql As String = ""
@@ -28,7 +28,7 @@ Public Class Customers
             Me.RadCustomerGrid.DataSource = rs
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             'cn.Close()
         End Try

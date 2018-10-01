@@ -73,8 +73,8 @@ Public Class ReportEditor
     End Sub
 
     Private Sub LoadData()
-        Dim rpt As New SystemReport(Me.EditId)
-        Dim m As New SystemModule(rpt.ModuleId)
+        Dim rpt As New SystemReport(Me.EditId, App.UseSandboxDb)
+        Dim m As New SystemModule(rpt.ModuleId, App.UseSandboxDb)
 
         Me.txtName.Text = rpt.Name
         Me.txtDescription.Text = rpt.Description
@@ -90,7 +90,7 @@ Public Class ReportEditor
     End Sub
 
     Private Sub LoadLists()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Me.ddlFolder.Items.Clear()
@@ -108,14 +108,14 @@ Public Class ReportEditor
             Me.LoadModules()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
     End Sub
 
     Private Sub LoadModules()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Me.ddlModule.Items.Clear()
@@ -131,7 +131,7 @@ Public Class ReportEditor
             Me.LoadQuestions()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -150,7 +150,7 @@ Public Class ReportEditor
     End Sub
 
     Private Sub LoadQuestions()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Me.ddlQuestion.Items.Clear()
@@ -171,7 +171,7 @@ Public Class ReportEditor
             Me.ddlQuestion.SelectedIndex = 0
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -214,7 +214,7 @@ Public Class ReportEditor
 
             End Select
         Else
-            Dim rpt As New SystemReport
+            Dim rpt As New SystemReport(App.UseSandboxDb)
             rpt.ID = Me.EditId
             rpt.Name = Me.txtName.Text
             rpt.Description = Me.txtDescription.Text
@@ -227,7 +227,7 @@ Public Class ReportEditor
 
             rpt.Save()
 
-            CommonCore.Shared.Common.LogHistory(Me.txtName.Text & " Report Updated", App.CurrentUser.ID)
+            LogHistory(Me.txtName.Text & " Report Updated", App.CurrentUser.ID, App.UseSandboxDb)
 
             Response.Redirect("~/admin/Reports.aspx", False)
         End If

@@ -31,7 +31,7 @@ Public Class RecentWorkOrders
         'Dim dataItem As GridItem = e.Item
         'Dim woId As Integer = dataItem.Cells(3).Text.ToInteger
 
-        App.ActiveModule = New SystemModule(e.Item.Cells(8).Text.ToInteger)
+        App.ActiveModule = New SystemModule(e.Item.Cells(8).Text.ToInteger, App.UseSandboxDb)
         App.ActiveFolderID = App.ActiveModule.FolderID
         'App.Mobile_SupervisorID = dataItem.Cells(7).Text.ToInteger
         'App.Mobile_TechnicianID = dataItem.Cells(8).Text.ToInteger
@@ -78,7 +78,7 @@ Public Class RecentWorkOrders
     Private Sub RadSearchGridMobile_SelectedIndexChanged(sender As Object, e As EventArgs) Handles RadSearchGridMobile.SelectedIndexChanged
         ' priority (3), id (4), moduleid (5), folderid (6), supervisorid (7), custacctnum (8)
         Dim dataItem As GridItem = RadSearchGridMobile.SelectedItems(0)
-        App.ActiveModule = New SystemModule(dataItem.Cells(5).Text.ToInteger)
+        App.ActiveModule = New SystemModule(dataItem.Cells(5).Text.ToInteger, App.UseSandboxDb)
         App.ActiveFolderID = App.ActiveModule.FolderID
         App.Mobile_SupervisorID = dataItem.Cells(7).Text.ToInteger
         App.Mobile_TechnicianID = dataItem.Cells(8).Text.ToInteger

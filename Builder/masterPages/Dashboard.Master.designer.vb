@@ -230,6 +230,15 @@ Partial Public Class Dashboard
     Protected WithEvents pageContent_OutsideAjax As Global.System.Web.UI.WebControls.ContentPlaceHolder
     
     '''<summary>
+    '''lblSandboxFooter control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblSandboxFooter As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
     '''lnkSolvtopia control.
     '''</summary>
     '''<remarks>

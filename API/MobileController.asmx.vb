@@ -16,8 +16,8 @@ Public Class MobileController
 #Region "Common Routines"
 
     <WebMethod()>
-    Public Function GetApiKey(ByVal userEmail As String, ByVal userPassword As String) As ApiKeyResult
-        Dim retVal As New ApiKeyResult(userEmail, userPassword)
+    Public Function GetApiKey(ByVal userEmail As String, ByVal userPassword As String, ByVal UseSandboxDb As Boolean) As ApiKeyResult
+        Dim retVal As New ApiKeyResult(userEmail, userPassword, UseSandboxDb)
 
         If retVal.ApiKey = "" Then
             retVal.responseCode = Enums.ApiResultCode.failed
@@ -33,11 +33,11 @@ Public Class MobileController
 
     <WebMethod()>
     Public Function MarkAsViewed(ByVal req As ApiRequest) As ApiResponse
-        Dim retVal As New ApiResponse
+        Dim retVal As New ApiResponse(req.UseSandboxDb)
 
         retVal.responseObject = True
 
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(ConnectionString(req.UseSandboxDb))
 
         Try
             Dim cmd As New SqlClient.SqlCommand("EXEC [procMarkAsViewed_M] @deviceId;", cn)
@@ -47,7 +47,7 @@ Public Class MobileController
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API, req.UseSandboxDb))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -63,10 +63,10 @@ Public Class MobileController
 #Region "Output Routines"
 
     <WebMethod()> <XmlInclude(GetType(MaintenanceInfo))>
-    Public Function CheckMaintenanceMode() As MaintenanceInfo
+    Public Function CheckMaintenanceMode(ByVal UseSandboxDb As Boolean) As MaintenanceInfo
         Dim retVal As New MaintenanceInfo
 
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(ConnectionString(UseSandboxDb))
 
         Try
             Dim cmd As New SqlClient.SqlCommand("SELECT [Web], [Android], [iOS], [Notes] FROM [Sys_MaintenanceMode] WHERE GETDATE() BETWEEN [dtStart] AND [dtEnd];", cn)
@@ -82,7 +82,7 @@ Public Class MobileController
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API, UseSandboxDb))
             retVal = New MaintenanceInfo
         Finally
             cn.Close()
@@ -92,13 +92,13 @@ Public Class MobileController
     End Function
 
     <WebMethod()>
-    Public Function CheckLogin(ByVal userEmail As String, ByVal userPassword As String, ByVal deviceID As String) As Integer
+    Public Function CheckLogin(ByVal userEmail As String, ByVal userPassword As String, ByVal deviceID As String, ByVal UseSandboxDb As Boolean) As Integer
         Dim retVal As Integer = 0
 
         Dim usr As SystemUser
         If userEmail = "" And userPassword = "" And deviceID <> "" Then
-            usr = New SystemUser(deviceID)
-        Else usr = New SystemUser(userEmail, userPassword, "")
+            usr = New SystemUser(deviceID, UseSandboxDb)
+        Else usr = New SystemUser(userEmail, userPassword, "", UseSandboxDb)
         End If
 
         retVal = usr.ID

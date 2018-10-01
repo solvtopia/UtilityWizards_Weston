@@ -116,21 +116,21 @@ Public Module Common
     Public Function LoadModuleQuestions(ByVal modId As Integer) As List(Of SystemQuestion)
         Dim retVal As New List(Of SystemQuestion)
 
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection([Shared].Common.ConnectionString(App.UseSandboxDb))
 
         Try
             Dim cmd As New SqlClient.SqlCommand("SELECT [ID], [xmlData] FROM [Questions] WHERE [xModuleID] = " & modId & " AND [Active] = 1", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
             Do While rs.Read
-                Dim q As New SystemQuestion(rs("xmlData").ToString)
+                Dim q As New SystemQuestion(rs("xmlData").ToString, App.UseSandboxDb)
                 retVal.Add(q)
             Loop
             rs.Close()
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCore))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCore, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -141,7 +141,7 @@ Public Module Common
     Public Function GetFolderName(ByVal folderId As Integer) As String
         Dim retVal As String = ""
 
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection([Shared].Common.ConnectionString(App.UseSandboxDb))
 
         Try
             Dim cmd As New SqlClient.SqlCommand("SELECT [xName] FROM [Modules] WHERE [ID] = " & folderId & " AND [Active] = 1", cn)
@@ -154,7 +154,7 @@ Public Module Common
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCore))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCore, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -174,7 +174,7 @@ Public Module Common
             Next
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCore))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCore, App.UseSandboxDb))
         End Try
 
         Return retVal

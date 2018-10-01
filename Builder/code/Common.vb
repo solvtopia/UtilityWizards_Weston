@@ -13,6 +13,10 @@ Public Class Common
         End If
     End Sub
 
+    Public Shared Function ConnectionString() As String
+        Return [Shared].Common.ConnectionString(App.UseSandboxDb)
+    End Function
+
 End Class
 
 Class ContentTemplate

@@ -32,17 +32,17 @@ Public Class Print
     End Property
     Private ReadOnly Property ActiveUser As SystemUser
         Get
-            Return New SystemUser(Me.UserId)
+            Return New SystemUser(Me.UserId, App.UseSandboxDb)
         End Get
     End Property
     Private ReadOnly Property ActiveClient As SystemClient
         Get
-            Return New SystemClient(Me.ActiveUser.ClientID)
+            Return New SystemClient(Me.ActiveUser.ClientID, App.UseSandboxDb)
         End Get
     End Property
     Private ReadOnly Property ActiveModule As SystemModule
         Get
-            Return New SystemModule(Me.ModId)
+            Return New SystemModule(Me.ModId, App.UseSandboxDb)
         End Get
     End Property
     Private ReadOnly Property RootFolderQuestions() As List(Of SystemQuestion)
@@ -105,7 +105,7 @@ Public Class Print
         ' build the list of names for the 811 tickets
         Me.tbl811SignOff.Rows.Clear()
         If Me.Is811Module Then
-            Dim cn As New SqlClient.SqlConnection(ConnectionString)
+            Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
             Try
                 Dim hr As New TableRow
@@ -128,7 +128,7 @@ Public Class Print
                 rs.Close()
 
                 For Each i As Integer In notifyIDs
-                    Dim usr As New SystemUser(i)
+                    Dim usr As New SystemUser(i, App.UseSandboxDb)
                     Dim tr1 As New TableRow
                     Dim tc1 As New TableCell
                     tc1.Text = usr.Name
@@ -149,7 +149,7 @@ Public Class Print
                 Next
 
             Catch ex As Exception
-                ex.WriteToErrorLog(New ErrorLogEntry(Me.ActiveUser.ID, Me.ActiveClient.ID, Enums.ProjectName.Builder))
+                ex.WriteToErrorLog(New ErrorLogEntry(Me.ActiveUser.ID, Me.ActiveClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
             Finally
                 cn.Close()
             End Try
@@ -242,7 +242,7 @@ Public Class Print
     End Sub
 
     Private Sub LoadData()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim cmd As New SqlClient.SqlCommand("Select [ID], [xmlData], [xUserEmail] FROM [vwModuleData] WHERE [ID] = " & Me.RecordId, cn)
@@ -257,7 +257,7 @@ Public Class Print
             'If Me.txtLocationNum.Text = "" Then Me.txtLocationNum.Text = Me.LocationNum
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Me.ActiveUser.ID, Me.ActiveClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(Me.ActiveUser.ID, Me.ActiveClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try

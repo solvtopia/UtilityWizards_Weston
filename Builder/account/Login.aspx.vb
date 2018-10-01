@@ -17,10 +17,10 @@ Public Class Login
     End Sub
 
     Protected Sub btnLogin_Click(sender As Object, e As EventArgs) Handles btnLogin.Click
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
-            Dim usr As New SystemUser(Me.txtEmail.Text, Me.txtPassword.Text, "")
+            Dim usr As New SystemUser(Me.txtEmail.Text, Me.txtPassword.Text, "", App.UseSandboxDb)
 
             ' get the device type
             If Me.UserPlatform <> Enums.UserPlatform.Desktop Then usr.MobileDeviceType = Me.UserPlatform
@@ -31,7 +31,7 @@ Public Class Login
             ' save any changes
             If usr.ID > 0 Then usr = usr.Save
 
-            Dim cl As New SystemClient(usr.ClientID)
+            Dim cl As New SystemClient(usr.ClientID, App.UseSandboxDb)
 
             App.CurrentUser = usr
             App.CurrentClient = cl
@@ -59,7 +59,7 @@ Public Class Login
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try

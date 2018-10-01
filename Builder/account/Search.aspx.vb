@@ -107,7 +107,7 @@ Public Class Search
 
         Dim modId As Integer = Me.ModId
         If modId = 0 Then modId = e.Item.Cells(8).Text.ToInteger
-        App.ActiveModule = New SystemModule(modId)
+        App.ActiveModule = New SystemModule(modId, App.UseSandboxDb)
         App.ActiveFolderID = App.ActiveModule.FolderID
 
         Response.Redirect("~/account/Module.aspx?modid=" & Me.ModId & "&id=" & e.Item.Cells(3).Text & "&custacctnum=" & e.Item.Cells(4).Text, False)
@@ -118,7 +118,7 @@ Public Class Search
     End Sub
 
     Private Sub RadSearchGrid_NeedDataSource(sender As Object, e As GridNeedDataSourceEventArgs) Handles RadSearchGrid.NeedDataSource
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Me.RadSearchGrid.Visible = True
@@ -138,7 +138,7 @@ Public Class Search
             Me.RadSearchGrid.DataSource = rs
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             'cn.Close()
         End Try
@@ -183,7 +183,7 @@ Public Class Search
     Private Sub RadSearchGridMobile_SelectedIndexChanged(sender As Object, e As EventArgs) Handles RadSearchGridMobile.SelectedIndexChanged
         Dim dataItem As GridItem = RadSearchGridMobile.SelectedItems(0)
         App.ActiveFolderID = dataItem.Cells(6).Text.ToInteger
-        App.ActiveModule = New SystemModule(dataItem.Cells(5).Text.ToInteger)
+        App.ActiveModule = New SystemModule(dataItem.Cells(5).Text.ToInteger, App.UseSandboxDb)
         App.Mobile_SupervisorID = dataItem.Cells(7).Text.ToInteger
         App.Mobile_TechnicianID = dataItem.Cells(8).Text.ToInteger
         Response.Redirect("~/account/Module.aspx?modid=" & Me.ModId & "&id=" & dataItem.Cells(4).Text & "&custacctnum=" & dataItem.Cells(9).Text & "&assignments=" & Me.Assignments, False)

@@ -144,13 +144,13 @@ Public Class Messaging
                     End If
 
                 Catch ex As WebException
-                    ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+                    ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
                     retVal = False
                 End Try
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
             retVal = False
         End Try
 

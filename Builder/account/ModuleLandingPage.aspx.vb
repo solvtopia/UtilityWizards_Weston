@@ -68,7 +68,7 @@ Public Class ModuleLandingPage
     End Sub
 
     Private Sub RadCustomerGrid_New_NeedDataSource(sender As Object, e As GridNeedDataSourceEventArgs) Handles RadCustomerGrid_New.NeedDataSource
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Me.RadCustomerGrid_New.Visible = True
@@ -99,7 +99,7 @@ Public Class ModuleLandingPage
             Me.RadCustomerGrid_New.DataSource = rs
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             'cn.Close()
         End Try
@@ -111,7 +111,7 @@ Public Class ModuleLandingPage
             Me.imgHelp_Customers_Existing.Visible = True
             Me.RadCustomerGrid_Existing.Rebind()
         Else
-            Dim cn As New SqlClient.SqlConnection(ConnectionString)
+            Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
             Try
                 Dim custNum As String = ""
@@ -127,7 +127,7 @@ Public Class ModuleLandingPage
                 Response.Redirect("~/account/Search.aspx?modid=" & Me.ModId & "&custacctnum=" & custNum & "&id=" & Me.txtSearch_Existing.Text, False)
 
             Catch ex As Exception
-                ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+                ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
             Finally
                 cn.Close()
             End Try
@@ -143,7 +143,7 @@ Public Class ModuleLandingPage
     End Sub
 
     Private Sub RadCustomerGrid_Existing_NeedDataSource(sender As Object, e As GridNeedDataSourceEventArgs) Handles RadCustomerGrid_Existing.NeedDataSource
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Me.RadCustomerGrid_Existing.Visible = True
@@ -170,7 +170,7 @@ Public Class ModuleLandingPage
             Me.RadCustomerGrid_Existing.DataSource = rs
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             'cn.Close()
         End Try

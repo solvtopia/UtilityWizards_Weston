@@ -16,7 +16,7 @@ Public Class LoginHelp
     End Sub
 
     Protected Sub btnLogin_Click(sender As Object, e As EventArgs) Handles btnLogin.Click
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim cmd As New SqlClient.SqlCommand("SELECT [xPassword] FROM [Users] WHERE [xEmail] LIKE @email or [xMobileNumber] LIKE @mobileNumber;", cn)
@@ -44,7 +44,7 @@ Public Class LoginHelp
             rs.Close()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try

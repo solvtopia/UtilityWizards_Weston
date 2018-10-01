@@ -17,7 +17,7 @@ Public Class ModuleView
 
     Public Property CurrentModule As SystemModule
         Get
-            If Session("PreviewModule") Is Nothing Then Session("PreviewModule") = New SystemModule
+            If Session("PreviewModule") Is Nothing Then Session("PreviewModule") = New SystemModule(App.UseSandboxDb)
             Return CType(Session("PreviewModule"), SystemModule)
         End Get
         Set(value As SystemModule)
@@ -285,7 +285,7 @@ Public Class ModuleView
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         End Try
     End Sub
 

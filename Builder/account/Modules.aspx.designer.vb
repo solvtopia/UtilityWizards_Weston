@@ -59,6 +59,15 @@ Partial Public Class Modules
     Protected WithEvents lnkSearch As Global.System.Web.UI.WebControls.LinkButton
     
     '''<summary>
+    '''lblSandbox control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblSandbox As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
     '''tabModules control.
     '''</summary>
     '''<remarks>

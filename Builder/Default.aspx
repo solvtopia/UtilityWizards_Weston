@@ -34,7 +34,7 @@
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="breadcrumbContent" runat="server">
     <h1>Dashboard
-        <small>Version 2.2</small>
+        <small>Version 2.2 <asp:Label runat="server" ID="lblSandbox" /></small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i>Home</a></li>
@@ -173,7 +173,7 @@
                                                                     </Columns>--%>
                                                                     </MasterTableView>
                                                                 </telerik:RadGrid>
-                                                                <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:UtilityWizardsConnectionString %>" SelectCommand="procSearchAccounts" SelectCommandType="StoredProcedure">
+                                                                <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="" SelectCommand="procSearchAccounts" SelectCommandType="StoredProcedure">
                                                                     <SelectParameters>
                                                                         <asp:ControlParameter ControlID="txtSearch" DefaultValue="" Name="search" PropertyName="Text" Type="String" />
                                                                         <asp:ControlParameter ControlID="ddlSearchField" Name="field" PropertyName="SelectedValue" Type="String" />

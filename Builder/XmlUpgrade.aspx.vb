@@ -14,7 +14,7 @@ Public Class XmlUpgrade
     End Sub
 
     Private Sub UpdateCustomerRecords()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim lst As New List(Of XmlDocument)
@@ -57,7 +57,7 @@ Public Class XmlUpgrade
     End Sub
 
     Private Sub UpdateClientRecords(ByVal startId As Integer)
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim ht As New Hashtable
@@ -69,7 +69,7 @@ Public Class XmlUpgrade
                 Dim xDoc As New XmlDocument
                 xDoc.LoadXml(rs("xmlData").ToString)
 
-                Dim obj As New SystemClient()
+                Dim obj As New SystemClient(App.UseSandboxDb)
                 obj.ID = rs("ID").ToString.ToInteger
                 If xDoc.Item("SystemClient").Item("Name") IsNot Nothing Then obj.Name = xDoc.Item("SystemClient").Item("Name").InnerText
                 If xDoc.Item("SystemClient").Item("Address1") IsNot Nothing Then obj.Address1 = xDoc.Item("SystemClient").Item("Address1").InnerText
@@ -114,7 +114,7 @@ Public Class XmlUpgrade
     End Sub
 
     Private Sub UpdateUserRecords(ByVal startId As Integer)
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim ht As New Hashtable
@@ -126,7 +126,7 @@ Public Class XmlUpgrade
                 Dim xDoc As New XmlDocument
                 xDoc.LoadXml(rs("xmlData").ToString)
 
-                Dim obj As New SystemUser()
+                Dim obj As New SystemUser(App.UseSandboxDb)
                 obj.ID = rs("ID").ToString.ToInteger
                 If xDoc.Item("Data").Item("Name") IsNot Nothing Then obj.Name = xDoc.Item("Data").Item("Name").InnerText
                 If xDoc.Item("Data").Item("Email") IsNot Nothing Then obj.Email = xDoc.Item("Data").Item("Email").InnerText
@@ -169,7 +169,7 @@ Public Class XmlUpgrade
     End Sub
 
     Private Sub UpdateModuleRecords(ByVal startId As Integer)
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim ht As New Hashtable
@@ -181,7 +181,7 @@ Public Class XmlUpgrade
                 Dim xDoc As New XmlDocument
                 xDoc.LoadXml(rs("xmlData").ToString)
 
-                Dim obj As New SystemModule()
+                Dim obj As New SystemModule(App.UseSandboxDb)
                 obj.ID = rs("ID").ToString.ToInteger
                 If xDoc.Item("Data").Item("ClientID") IsNot Nothing Then obj.ClientID = xDoc.Item("Data").Item("ClientID").InnerText.ToInteger
                 If xDoc.Item("Data").Item("FolderID") IsNot Nothing Then obj.FolderID = xDoc.Item("Data").Item("FolderID").InnerText.ToInteger
@@ -216,7 +216,7 @@ Public Class XmlUpgrade
     End Sub
 
     Private Sub UpdateQuestionRecords(ByVal startId As Integer)
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim ht As New Hashtable
@@ -228,7 +228,7 @@ Public Class XmlUpgrade
                 Dim xDoc As New XmlDocument
                 xDoc.LoadXml(rs("xmlData").ToString)
 
-                Dim obj As New SystemQuestion()
+                Dim obj As New SystemQuestion(App.UseSandboxDb)
                 obj.ID = rs("ID").ToString.ToInteger
                 If xDoc.Item("Data").Item("ModuleID") IsNot Nothing Then obj.ModuleID = xDoc.Item("Data").Item("ModuleID").InnerText.ToInteger
                 If xDoc.Item("Data").Item("Question") IsNot Nothing Then obj.Question = xDoc.Item("Data").Item("Question").InnerText
@@ -273,7 +273,7 @@ Public Class XmlUpgrade
     End Sub
 
     Private Sub UpdateReportRecords(ByVal startId As Integer)
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim ht As New Hashtable
@@ -285,7 +285,7 @@ Public Class XmlUpgrade
                 Dim xDoc As New XmlDocument
                 xDoc.LoadXml(rs("xmlData").ToString)
 
-                Dim obj As New SystemReport()
+                Dim obj As New SystemReport(App.UseSandboxDb)
                 obj.ID = rs("ID").ToString.ToInteger
                 If xDoc.Item("Data").Item("Name") IsNot Nothing Then obj.Name = xDoc.Item("Data").Item("Name").InnerText
                 If xDoc.Item("Data").Item("Description") IsNot Nothing Then obj.Description = xDoc.Item("Data").Item("Description").InnerText

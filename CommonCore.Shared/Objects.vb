@@ -8,34 +8,43 @@ Imports UtilityWizards.CommonCore.Shared.Extensions
 
 
 Public Structure ErrorLogEntry
-    Sub New(ByVal userId As Integer, ByVal clientId As Integer, ByVal project As Enums.ProjectName)
+    Sub New(ByVal userId As Integer, ByVal clientId As Integer, ByVal project As Enums.ProjectName, ByVal UseSandboxDb As Boolean)
         Me.userId = userId
         Me.clientId = clientId
         Me.project = project
+        Me.UseSandboxDb = UseSandboxDb
     End Sub
-    Sub New(ByVal project As Enums.ProjectName)
+    Sub New(ByVal project As Enums.ProjectName, ByVal UseSandboxDb As Boolean)
         Me.userId = 0
         Me.clientId = 0
         Me.project = project
+        Me.UseSandboxDb = UseSandboxDb
     End Sub
 
     Public userId As Integer
     Public clientId As Integer
     Public project As Enums.ProjectName
+    Public UseSandboxDb As Boolean
 End Structure
 
 
 Public Class SystemUser
     Public Sub New()
+        ' used for deserializing from xml only
+    End Sub
+    Public Sub New(ByVal UseSandboxDb As Boolean)
         Me.ID = 0
         Me.MobileDeviceIds = New List(Of String)
         Me.ApprovedModules = New List(Of Integer)
+        Me.UseSandboxDb = UseSandboxDb
     End Sub
-    Public Sub New(ByVal userEmail As String, ByVal userPassword As String, ByVal apiKey As String)
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+    Public Sub New(ByVal userEmail As String, ByVal userPassword As String, ByVal apiKey As String, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
+
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Try
-            Dim cl As New SystemClient
+            Dim cl As New SystemClient(Me.UseSandboxDb)
             Dim cmd As New SqlClient.SqlCommand()
             Dim rs As SqlClient.SqlDataReader
 
@@ -109,16 +118,18 @@ Public Class SystemUser
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Me.ID, Me.ClientID, Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Me.ID, Me.ClientID, Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
     End Sub
-    Public Sub New(ByVal deviceId As String)
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+    Public Sub New(ByVal deviceId As String, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
+
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Try
-            Dim cl As New SystemClient
+            Dim cl As New SystemClient(Me.UseSandboxDb)
 
             ' pull the last user that logged in with this device id
             Dim cmd As New SqlClient.SqlCommand("SELECT [ID], [UserXmlData], [ClientXmlData] FROM [vwUserInfo] WHERE [UserXmlData].exist('/SystemUser/MobileDeviceIds [contains(.,""" & deviceId & """)]') = 1 AND [ID] > 1 ORDER BY [dtUpdated] DESC;", cn)
@@ -153,16 +164,18 @@ Public Class SystemUser
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Me.ID, Me.ClientID, Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Me.ID, Me.ClientID, Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
     End Sub
-    Public Sub New(ByVal userId As Integer)
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+    Public Sub New(ByVal userId As Integer, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
+
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Try
-            Dim cl As New SystemClient
+            Dim cl As New SystemClient(Me.UseSandboxDb)
 
             Dim cmd As New SqlClient.SqlCommand("SELECT [ID], [UserXmlData], [ClientXmlData] FROM [vwUserInfo] WHERE [ID] = " & userId & " AND [xActive] = 1;", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
@@ -189,7 +202,7 @@ Public Class SystemUser
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Me.ID, Me.ClientID, Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Me.ID, Me.ClientID, Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -285,13 +298,17 @@ Public Class SystemUser
     Public APIResponseCode As ApiResultCode
     Public APIResponseMessage As String
 
+    Public UseSandboxDb As Boolean
+
 #Region "Workers"
 
     Public Sub Initialize(ByVal xmlData As String)
         Try
             Dim typeB As Type = Me.[GetType]()
 
-            Dim source As New SystemUser
+            Dim useSandbox As Boolean = Me.UseSandboxDb
+
+            Dim source As New SystemUser(Me.UseSandboxDb)
             source = CType(source.DeserializeFromXml(xmlData), SystemUser)
 
             ' handle the properties
@@ -314,6 +331,8 @@ Public Class SystemUser
                 End If
             Next
 
+            Me.UseSandboxDb = useSandbox
+
         Catch ex As Exception
             Dim s As String = ""
         End Try
@@ -323,9 +342,9 @@ Public Class SystemUser
         Return Me.Save("")
     End Function
     Public Function Save(ByVal xmlData As String) As SystemUser
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
-        Dim retVal As New SystemUser
+        Dim retVal As New SystemUser(Me.UseSandboxDb)
 
         Try
             If Me.ID = 0 Then
@@ -356,8 +375,8 @@ Public Class SystemUser
             retVal = Me
 
         Catch ex As Exception
-            retVal = New SystemUser
-            ex.WriteToErrorLog(New ErrorLogEntry(Me.ID, Me.ClientID, Enums.ProjectName.CommonCoreShared))
+            retVal = New SystemUser(Me.UseSandboxDb)
+            ex.WriteToErrorLog(New ErrorLogEntry(Me.ID, Me.ClientID, Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -366,7 +385,7 @@ Public Class SystemUser
     End Function
 
     Public Function Delete() As Boolean
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Dim retVal As Boolean = True
 
@@ -380,7 +399,7 @@ Public Class SystemUser
 
         Catch ex As Exception
             retVal = False
-            ex.WriteToErrorLog(New ErrorLogEntry(Me.ID, Me.ClientID, Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Me.ID, Me.ClientID, Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -394,11 +413,17 @@ End Class
 
 Public Class SystemClient
     Public Sub New()
+        ' used for deserializing from xml only
+    End Sub
+    Public Sub New(ByVal UseSandboxDb As Boolean)
         Me.ID = 0
         Me.IconSize = IconSize.Small
+        Me.UseSandboxDb = UseSandboxDb
     End Sub
-    Public Sub New(ByVal clientId As Integer)
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+    Public Sub New(ByVal clientId As Integer, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
+
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Try
             Dim cmd As New SqlClient.SqlCommand("SELECT [ID], [xmlData] FROM [Clients] WHERE [ID] = " & clientId, cn)
@@ -423,7 +448,7 @@ Public Class SystemClient
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ID, Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ID, Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -459,13 +484,17 @@ Public Class SystemClient
     Public APIResponseCode As ApiResultCode
     Public APIResponseMessage As String
 
+    Public UseSandboxDb As Boolean
+
 #Region "Workers"
 
     Public Sub Initialize(ByVal xmlData As String)
         Try
             Dim typeB As Type = Me.[GetType]()
 
-            Dim source As New SystemClient
+            Dim useSandbox As Boolean = Me.UseSandboxDb
+
+            Dim source As New SystemClient(Me.UseSandboxDb)
             source = CType(source.DeserializeFromXml(xmlData), SystemClient)
 
             ' handle the properties
@@ -488,6 +517,8 @@ Public Class SystemClient
                 End If
             Next
 
+            Me.UseSandboxDb = useSandbox
+
         Catch ex As Exception
             Dim s As String = ""
         End Try
@@ -497,9 +528,9 @@ Public Class SystemClient
         Return Me.Save("")
     End Function
     Public Function Save(ByVal xmlData As String) As SystemClient
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
-        Dim retVal As New SystemClient
+        Dim retVal As New SystemClient(Me.UseSandboxDb)
 
         Try
             If Me.ID = 0 Then
@@ -530,8 +561,8 @@ Public Class SystemClient
             retVal = Me
 
         Catch ex As Exception
-            retVal = New SystemClient
-            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ID, Enums.ProjectName.CommonCoreShared))
+            retVal = New SystemClient(Me.UseSandboxDb)
+            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ID, Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -540,7 +571,7 @@ Public Class SystemClient
     End Function
 
     Public Function Delete() As Boolean
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Dim retVal As Boolean = True
 
@@ -554,7 +585,7 @@ Public Class SystemClient
 
         Catch ex As Exception
             retVal = False
-            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ID, Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ID, Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -565,7 +596,7 @@ Public Class SystemClient
     Private Function LoadModules() As List(Of SystemModule)
         Dim retVal As New List(Of SystemModule)
 
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Try
             Dim cmd As New SqlClient.SqlCommand("SELECT [xModules] FROM [Clients] WHERE ID = " & Me.ID & ";", cn)
@@ -580,7 +611,7 @@ Public Class SystemClient
             retVal.Sort(Function(p1, p2) p1.Type.CompareTo(p2.Type))
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ID, Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ID, Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -594,7 +625,7 @@ Public Class SystemClient
         xMods.LoadXml("<Data>" & xModules & "</Data>")
 
         For Each xMod As XmlNode In xMods.GetElementsByTagName("SystemModule")
-            Dim m As New SystemModule("<SystemModule>" & xMod.InnerXml & "</SystemModule>")
+            Dim m As New SystemModule("<SystemModule>" & xMod.InnerXml & "</SystemModule>", Me.UseSandboxDb)
             retVal.Add(m)
         Next
 
@@ -607,10 +638,16 @@ End Class
 
 Public Class SystemModule
     Public Sub New()
-        Me.ID = 0
+        ' used for deserializing from xml only
     End Sub
-    Public Sub New(ByVal id As Integer)
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+    Public Sub New(ByVal UseSandboxDb As Boolean)
+        Me.ID = 0
+        Me.UseSandboxDb = UseSandboxDb
+    End Sub
+    Public Sub New(ByVal id As Integer, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
+
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Try
             Dim cmd As New SqlClient.SqlCommand("SELECT [ID], [xmlData] FROM [Modules] WHERE [ID] = " & id & " AND [Active] = 1", cn)
@@ -625,12 +662,13 @@ Public Class SystemModule
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ClientID, Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ClientID, Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
     End Sub
-    Public Sub New(ByVal xData As String)
+    Public Sub New(ByVal xData As String, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
         Me.Initialize(xData)
         Me.LoadSpecial()
     End Sub
@@ -654,13 +692,17 @@ Public Class SystemModule
     Public APIResponseCode As ApiResultCode
     Public APIResponseMessage As String
 
+    Public UseSandboxDb As Boolean
+
 #Region "Workers"
 
     Public Sub Initialize(ByVal xmlData As String)
         Try
             Dim typeB As Type = Me.[GetType]()
 
-            Dim source As New SystemModule
+            Dim useSandbox As Boolean = Me.UseSandboxDb
+
+            Dim source As New SystemModule(Me.UseSandboxDb)
             source = CType(source.DeserializeFromXml(xmlData), SystemModule)
 
             ' handle the properties
@@ -683,6 +725,8 @@ Public Class SystemModule
                 End If
             Next
 
+            Me.UseSandboxDb = useSandbox
+
         Catch ex As Exception
             Dim s As String = ""
         End Try
@@ -692,9 +736,9 @@ Public Class SystemModule
         Return Me.Save("")
     End Function
     Public Function Save(ByVal xmlData As String) As SystemModule
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
-        Dim retVal As New SystemModule
+        Dim retVal As New SystemModule(Me.UseSandboxDb)
 
         Try
             If Me.ID = 0 Then
@@ -723,8 +767,8 @@ Public Class SystemModule
             retVal = Me
 
         Catch ex As Exception
-            retVal = New SystemModule
-            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ClientID, Enums.ProjectName.CommonCoreShared))
+            retVal = New SystemModule(Me.UseSandboxDb)
+            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ClientID, Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -733,7 +777,7 @@ Public Class SystemModule
     End Function
 
     Public Function Delete() As Boolean
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Dim retVal As Boolean = True
 
@@ -750,7 +794,7 @@ Public Class SystemModule
 
         Catch ex As Exception
             retVal = False
-            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ClientID, Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ClientID, Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -759,7 +803,7 @@ Public Class SystemModule
     End Function
 
     Public Function Hide() As Boolean
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Dim retVal As Boolean = True
 
@@ -771,7 +815,7 @@ Public Class SystemModule
 
         Catch ex As Exception
             retVal = False
-            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ClientID, Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ClientID, Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -780,7 +824,7 @@ Public Class SystemModule
     End Function
 
     Public Function Move(ByVal newFolderId As Integer) As Boolean
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Dim retVal As Boolean = True
 
@@ -792,7 +836,7 @@ Public Class SystemModule
 
         Catch ex As Exception
             retVal = False
-            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ClientID, Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(0, Me.ClientID, Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -830,7 +874,10 @@ Public Class SystemModule
 End Class
 
 Public Class SystemQuestion
-    Sub New()
+    Public Sub New()
+        ' used for deserializing from xml only
+    End Sub
+    Sub New(ByVal UseSandboxDb As Boolean)
         Me.Type = SystemQuestionType.TextBox
         Me.Location = SystemQuestionLocation.FullPage
         Me.BindingType = SystemQuestionBindingType.UserInput
@@ -842,9 +889,12 @@ Public Class SystemQuestion
         Me.Visible = True
         Me.ThousandsSeparator = True
         Me.DisplayAsDate = False
+        Me.UseSandboxDb = UseSandboxDb
     End Sub
-    Public Sub New(ByVal id As Integer)
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+    Public Sub New(ByVal id As Integer, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
+
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Try
             Dim cmd As New SqlClient.SqlCommand("SELECT [ID], [xmlData] FROM [Questions] WHERE [ID] = " & id & " AND [Active] = 1", cn)
@@ -858,12 +908,13 @@ Public Class SystemQuestion
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
     End Sub
-    Public Sub New(ByVal xData As String)
+    Public Sub New(ByVal xData As String, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
         Me.Initialize(xData)
     End Sub
 
@@ -949,13 +1000,17 @@ Public Class SystemQuestion
     Public ReportField As Boolean
     Public ExportField As Boolean
 
+    Public UseSandboxDb As Boolean
+
 #Region "Workers"
 
     Public Sub Initialize(ByVal xmlData As String)
         Try
             Dim typeB As Type = Me.[GetType]()
 
-            Dim source As New SystemQuestion
+            Dim useSandbox As Boolean = Me.UseSandboxDb
+
+            Dim source As New SystemQuestion(Me.UseSandboxDb)
             source = CType(source.DeserializeFromXml(xmlData), SystemQuestion)
 
             ' handle the properties
@@ -978,6 +1033,8 @@ Public Class SystemQuestion
                 End If
             Next
 
+            Me.UseSandboxDb = useSandbox
+
         Catch ex As Exception
             Dim s As String = ""
         End Try
@@ -987,9 +1044,9 @@ Public Class SystemQuestion
         Return Me.Save("")
     End Function
     Public Function Save(ByVal xmlData As String) As SystemQuestion
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
-        Dim retVal As New SystemQuestion
+        Dim retVal As New SystemQuestion(Me.UseSandboxDb)
 
         Try
             If Me.ID = 0 Then
@@ -1018,8 +1075,8 @@ Public Class SystemQuestion
             retVal = Me
 
         Catch ex As Exception
-            retVal = New SystemQuestion
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            retVal = New SystemQuestion(Me.UseSandboxDb)
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -1028,7 +1085,7 @@ Public Class SystemQuestion
     End Function
 
     Public Function Delete() As Boolean
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Dim retVal As Boolean = True
 
@@ -1040,7 +1097,7 @@ Public Class SystemQuestion
 
         Catch ex As Exception
             retVal = False
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -1054,14 +1111,20 @@ End Class
 
 Public Class SystemReport
     Public Sub New()
+        ' used for deserializing from xml only
+    End Sub
+    Public Sub New(ByVal UseSandboxDb As Boolean)
         Me.ID = 0
         Me.Fields = New List(Of String)
+        Me.UseSandboxDb = UseSandboxDb
     End Sub
-    Public Sub New(ByVal reportId As Integer)
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+    Public Sub New(ByVal reportId As Integer, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
+
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Try
-            Dim cl As New SystemClient
+            Dim cl As New SystemClient(Me.UseSandboxDb)
 
             Dim cmd As New SqlClient.SqlCommand("SELECT [ID], [xmlData] FROM [Reports] WHERE [ID] = " & reportId & " AND [Active] = 1;", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
@@ -1074,7 +1137,7 @@ Public Class SystemReport
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -1088,6 +1151,7 @@ Public Class SystemReport
     Public Fields As List(Of String)
     Public ModuleId As Integer
     Public Url As String
+    Public UseSandboxDb As Boolean
 
 #Region "Workers"
 
@@ -1095,7 +1159,9 @@ Public Class SystemReport
         Try
             Dim typeB As Type = Me.[GetType]()
 
-            Dim source As New SystemReport
+            Dim useSandbox As Boolean = Me.UseSandboxDb
+
+            Dim source As New SystemReport(Me.UseSandboxDb)
             source = CType(source.DeserializeFromXml(xmlData), SystemReport)
 
             ' handle the properties
@@ -1118,6 +1184,8 @@ Public Class SystemReport
                 End If
             Next
 
+            Me.UseSandboxDb = useSandbox
+
         Catch ex As Exception
             Dim s As String = ""
         End Try
@@ -1127,9 +1195,9 @@ Public Class SystemReport
         Return Me.Save("")
     End Function
     Public Function Save(ByVal xmlData As String) As SystemReport
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
-        Dim retVal As New SystemReport
+        Dim retVal As New SystemReport(Me.UseSandboxDb)
 
         Try
             If Me.ID = 0 Then
@@ -1157,8 +1225,8 @@ Public Class SystemReport
             retVal = Me
 
         Catch ex As Exception
-            retVal = New SystemReport
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            retVal = New SystemReport(Me.UseSandboxDb)
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -1167,7 +1235,7 @@ Public Class SystemReport
     End Function
 
     Public Function Delete() As Boolean
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Dim retVal As Boolean = True
 
@@ -1181,7 +1249,7 @@ Public Class SystemReport
 
         Catch ex As Exception
             retVal = False
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -1194,10 +1262,13 @@ Public Class SystemReport
 End Class
 
 Public Class ApiKeyResult
-    Sub New()
+    Sub New(ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
     End Sub
-    Sub New(ByVal userEmail As String, ByVal userPassword As String)
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+    Sub New(ByVal userEmail As String, ByVal userPassword As String, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
+
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Try
             Me.UserEmail = userEmail
@@ -1222,7 +1293,7 @@ Public Class ApiKeyResult
             rs.Close()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -1235,47 +1306,58 @@ Public Class ApiKeyResult
 
     Public responseCode As Enums.ApiResultCode
     Public responseMessage As String
+
+    Public UseSandboxDb As Boolean
 End Class
 
 Public Class ApiResponse
-    Sub New()
+    Sub New(ByVal UseSandboxDb As Boolean)
         Me.responseCode = ApiResultCode.success
         Me.responseMessage = ""
+        Me.UseSandboxDb = UseSandboxDb
     End Sub
 
     Public responseCode As ApiResultCode
     Public responseMessage As String
     Public responseObject As Object
+    Public UseSandboxDb As Boolean
 End Class
 
 Public Class ApiRequest
-    Sub New()
+    Sub New(ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
     End Sub
-    Sub New(ByVal apiKey As String, ByVal clientID As Integer, ByVal deviceId As String, ByVal deviceType As UserPlatform)
+    Sub New(ByVal apiKey As String, ByVal clientID As Integer, ByVal deviceId As String, ByVal deviceType As UserPlatform, ByVal UseSandboxDb As Boolean)
         Me.apiKey = apiKey
         Me.deviceId = deviceId
         Me.deviceType = deviceType
+        Me.UseSandboxDb = UseSandboxDb
     End Sub
 
     Public apiKey As String
     Public clientId As Integer
     Public deviceId As String
     Public deviceType As UserPlatform
+    Public UseSandboxDb As Boolean
 End Class
 
 Public Class CustomerRecord
-    Sub New()
+    Sub New(ByVal UseSandboxDb As Boolean)
         Me.ID = 0
         Me.RecordData = New List(Of NameValuePair)
+        Me.UseSandboxDb = UseSandboxDb
         'Me.RecordData.Add(New NameValuePair("ClientID", App.CurrentClient.ID.ToString))
     End Sub
-    Sub New(ByVal req As ApiRequest)
+    Sub New(ByVal req As ApiRequest, ByVal UseSandboxDb As Boolean)
         Me.ID = 0
         Me.RecordData = New List(Of NameValuePair)
         Me.RecordData.Add(New NameValuePair("ClientID", req.clientId.ToString))
+        Me.UseSandboxDb = UseSandboxDb
     End Sub
-    Sub New(ByVal id As Integer)
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+    Sub New(ByVal id As Integer, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
+
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Try
             Dim cmd As New SqlClient.SqlCommand("SELECT [ID], [ClientID], [AccountNum] AS [Account], [FullName] FROM [Customers_new] WHERE [ID] = " & id & ";", cn)
@@ -1307,13 +1389,15 @@ Public Class CustomerRecord
             rs.Close()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
     End Sub
-    Sub New(ByVal locationId As String)
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+    Sub New(ByVal locationId As String, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
+
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Try
             Dim cmd As New SqlClient.SqlCommand("Select [CustomerID] AS [ID], [ClientID], [Account], [FullName] FROM [vwCustomerSearch_new] WHERE [LocationNum] LIKE '" & locationId & "';", cn)
@@ -1345,13 +1429,15 @@ Public Class CustomerRecord
             rs.Close()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
     End Sub
-    Sub New(ByVal custAcctNum As String, ByVal serviceAddress As String)
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+    Sub New(ByVal custAcctNum As String, ByVal serviceAddress As String, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
+
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Try
             Dim cmd As New SqlClient.SqlCommand
@@ -1411,7 +1497,7 @@ Public Class CustomerRecord
             rs.Close()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -1464,11 +1550,14 @@ Public Class CustomerRecord
         End Set
     End Property
     Public RecordData As List(Of NameValuePair)
+    Public UseSandboxDb As Boolean
 
 #Region "Workers"
 
     Public Sub Initialize(ByVal xmlData As String)
         Try
+            Dim useSandbox As Boolean = Me.UseSandboxDb
+
             Me.RecordData = New List(Of NameValuePair)
 
             Dim xDoc As New XmlDocument
@@ -1483,15 +1572,17 @@ Public Class CustomerRecord
                 End If
             Next
 
+            Me.UseSandboxDb = useSandbox
+
         Catch ex As Exception
             Dim s As String = ""
         End Try
     End Sub
 
     Public Function Save() As CustomerRecord
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
-        Dim retVal As New CustomerRecord
+        Dim retVal As New CustomerRecord(Me.UseSandboxDb)
 
         Try
             ' save the locations first
@@ -1546,8 +1637,8 @@ Public Class CustomerRecord
             retVal = Me
 
         Catch ex As Exception
-            retVal = New CustomerRecord
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            retVal = New CustomerRecord(Me.UseSandboxDb)
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -1556,7 +1647,7 @@ Public Class CustomerRecord
     End Function
 
     Public Function Delete() As Boolean
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Dim retVal As Boolean = True
 
@@ -1568,7 +1659,7 @@ Public Class CustomerRecord
 
         Catch ex As Exception
             retVal = False
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -1581,13 +1672,16 @@ Public Class CustomerRecord
 End Class
 
 Public Class CustomerLocation
-    Sub New()
+    Sub New(ByVal UseSandboxDb As Boolean)
         Me.ID = 0
         Me.RecordData = New List(Of NameValuePair)
+        Me.UseSandboxDb = UseSandboxDb
         'Me.RecordData.Add(New NameValuePair("ClientID", App.CurrentClient.ID.ToString))
     End Sub
-    Sub New(ByVal id As Integer)
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+    Sub New(ByVal id As Integer, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
+
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Try
             Dim cmd As New SqlClient.SqlCommand("SELECT * FROM [Locations_new] WHERE [ID] = " & id & ";", cn)
@@ -1609,13 +1703,15 @@ Public Class CustomerLocation
             rs.Close()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
     End Sub
-    Sub New(ByVal locationId As String)
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+    Sub New(ByVal locationId As String, ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
+
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Try
             Dim cmd As New SqlClient.SqlCommand("Select * FROM [Locations_new] WHERE [LocationNum] LIKE '" & locationId & "';", cn)
@@ -1637,7 +1733,7 @@ Public Class CustomerLocation
             rs.Close()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -1760,11 +1856,14 @@ Public Class CustomerLocation
         End Get
     End Property
     Public RecordData As List(Of NameValuePair)
+    Public UseSandboxDb As Boolean
 
 #Region "Workers"
 
     Public Sub Initialize(ByVal xmlData As String)
         Try
+            Dim useSandbox As Boolean = Me.UseSandboxDb
+
             Me.RecordData = New List(Of NameValuePair)
 
             Dim xDoc As New XmlDocument
@@ -1777,15 +1876,17 @@ Public Class CustomerLocation
                 Me.RecordData.Add(New NameValuePair(n, v))
             Next
 
+            Me.UseSandboxDb = useSandbox
+
         Catch ex As Exception
             Dim s As String = ""
         End Try
     End Sub
 
     Public Function Save() As CustomerLocation
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
-        Dim retVal As New CustomerLocation
+        Dim retVal As New CustomerLocation(Me.UseSandboxDb)
 
         Try
             Dim addNew As Boolean = True
@@ -1832,8 +1933,8 @@ Public Class CustomerLocation
             retVal = Me
 
         Catch ex As Exception
-            retVal = New CustomerLocation
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            retVal = New CustomerLocation(Me.UseSandboxDb)
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -1842,7 +1943,7 @@ Public Class CustomerLocation
     End Function
 
     Public Function Delete() As Boolean
-        Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString(Me.UseSandboxDb))
 
         Dim retVal As Boolean = True
 
@@ -1854,7 +1955,7 @@ Public Class CustomerLocation
 
         Catch ex As Exception
             retVal = False
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, Me.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -1877,12 +1978,17 @@ Public Structure NameValuePair
 End Structure
 
 Public Structure AuditLogEntry
+    Sub New(ByVal UseSandboxDb As Boolean)
+        Me.UseSandboxDb = UseSandboxDb
+    End Sub
+
     Public ActionType As String
     Public Description As String
     Public UserID As Integer
     Public ClientID As Integer
     Public IpAddress As String
     Public Project As String
+    Public UseSandboxDb As Boolean
 End Structure
 
 Public Structure MaintenanceInfo

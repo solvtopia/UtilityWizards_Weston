@@ -115,7 +115,7 @@ Public Class _Module
     End Sub
 
     Private Sub LoadLists()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Me.ddlSupervisor.Items.Clear()
@@ -132,7 +132,7 @@ Public Class _Module
             If App.ActiveModule.SupervisorID > 0 Then
                 Me.ddlSupervisor.SelectedValue = App.ActiveModule.SupervisorID.ToString
             Else
-                Dim fldr As New SystemModule(App.ActiveFolderID)
+                Dim fldr As New SystemModule(App.ActiveFolderID, App.UseSandboxDb)
                 If fldr.SupervisorID > 0 Then
                     Me.ddlSupervisor.SelectedValue = fldr.SupervisorID.ToString
                 End If
@@ -153,14 +153,14 @@ Public Class _Module
             Next
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
     End Sub
 
     Private Sub LoadTechnicians()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim sql As String = ""
@@ -178,14 +178,14 @@ Public Class _Module
             Me.ddlTechnician.SelectedIndex = 0
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
     End Sub
 
     Private Sub LoadCustomerInfo()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim sql As String = ""
@@ -264,7 +264,7 @@ Public Class _Module
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -282,7 +282,7 @@ Public Class _Module
         ' build the list of names for the 811 tickets
         Me.tbl811SignOff.Rows.Clear()
         If Me.Is811Module Then
-            Dim cn As New SqlClient.SqlConnection(ConnectionString)
+            Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
             Try
                 Dim hr As New TableRow
@@ -305,7 +305,7 @@ Public Class _Module
                 rs.Close()
 
                 For Each i As Integer In notifyIDs
-                    Dim usr As New SystemUser(i)
+                    Dim usr As New SystemUser(i, App.UseSandboxDb)
                     Dim tr1 As New TableRow
                     Dim tc1 As New TableCell
                     tc1.Text = usr.Name
@@ -326,7 +326,7 @@ Public Class _Module
                 Next
 
             Catch ex As Exception
-                ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+                ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
             Finally
                 cn.Close()
             End Try
@@ -429,7 +429,7 @@ Public Class _Module
     End Sub
 
     Private Sub LoadData()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim sql As String = ""
@@ -445,7 +445,7 @@ Public Class _Module
             If Me.txtLocationNum.Text = "" Then Me.txtLocationNum.Text = Me.LocationNum
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -454,7 +454,7 @@ Public Class _Module
     Private Function SaveChanges() As Boolean
         Dim retVal As Boolean = True
 
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             ' validate the form
@@ -540,7 +540,7 @@ Public Class _Module
             If newRecord Then
                 technicianUpdated = True
 
-                CommonCore.Shared.Common.LogHistory("New Work Order #" & Me.RecordId & " Created", App.CurrentUser.ID)
+                LogHistory("New Work Order #" & Me.RecordId & " Created", App.CurrentUser.ID, App.UseSandboxDb)
 
                 Dim assigned As String = "with no technician "
                 Dim txt As String = ""
@@ -548,17 +548,17 @@ Public Class _Module
                 ' text the technician only if it has been assigned
                 If technicianUpdated And Me.ddlTechnician.SelectedValue.ToInteger > 0 Then
                     txt = App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been created and assigned to you as the technician."
-                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlTechnician.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
+                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlTechnician.SelectedValue.ToInteger, App.UseSandboxDb), Enums.NotificationType.Custom, txt, Me.RecordId)
                     assigned = ""
                 End If
 
                 ' text the supervisor that a work order has been created
                 If CType(Me.ddlPriority.SelectedValue, Global.UtilityWizards.CommonCore.Shared.Enums.SystemModulePriority) = Enums.SystemModulePriority.Normal Then
                     txt = App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been created " & assigned & "and assigned to you as the supervisor."
-                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlSupervisor.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
+                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlSupervisor.SelectedValue.ToInteger, App.UseSandboxDb), Enums.NotificationType.Custom, txt, Me.RecordId)
                 ElseIf CType(Me.ddlPriority.SelectedValue, Global.UtilityWizards.CommonCore.Shared.Enums.SystemModulePriority) = Enums.SystemModulePriority.Emergency Then
                     txt = assigned & "EMERGENCY " & App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been created " & assigned & "and assigned to you as the supervisor."
-                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlSupervisor.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
+                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlSupervisor.SelectedValue.ToInteger, App.UseSandboxDb), Enums.NotificationType.Custom, txt, Me.RecordId)
                 End If
 
                 ' email administrators if the notify box is checked
@@ -598,10 +598,10 @@ Public Class _Module
             Else
                 ' text the supervisor if the status has been changed
                 If statusUpdated Then
-                    CommonCore.Shared.Common.LogHistory("Work Order #" & Me.RecordId & " Status Updated To " & Me.ddlStatus.SelectedItem.Text, App.CurrentUser.ID)
+                    LogHistory("Work Order #" & Me.RecordId & " Status Updated To " & Me.ddlStatus.SelectedItem.Text, App.CurrentUser.ID, App.UseSandboxDb)
 
                     Dim txt As String = "The status for " & App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been updated to " & Me.ddlStatus.SelectedItem.Text & "."
-                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlSupervisor.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
+                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlSupervisor.SelectedValue.ToInteger, App.UseSandboxDb), Enums.NotificationType.Custom, txt, Me.RecordId)
 
                     ' email administrators if the notify box is checked
                     If Me.chkNotifyAdmins.Checked Then
@@ -637,10 +637,10 @@ Public Class _Module
 
                 ' text the technician if it has been assigned
                 If technicianUpdated And Me.ddlTechnician.SelectedValue.ToInteger > 0 Then
-                    CommonCore.Shared.Common.LogHistory("Work Order #" & Me.RecordId & " Assigned To " & Me.ddlTechnician.SelectedItem.Text, App.CurrentUser.ID)
+                    LogHistory("Work Order #" & Me.RecordId & " Assigned To " & Me.ddlTechnician.SelectedItem.Text, App.CurrentUser.ID, App.UseSandboxDb)
 
                     Dim txt As String = App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been assigned to you."
-                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlTechnician.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
+                    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlTechnician.SelectedValue.ToInteger, App.UseSandboxDb), Enums.NotificationType.Custom, txt, Me.RecordId)
                 End If
             End If
 
@@ -655,7 +655,7 @@ Public Class _Module
             'End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
             retVal = False
         Finally
             cn.Close()

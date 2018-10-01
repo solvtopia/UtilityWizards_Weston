@@ -12,7 +12,16 @@ Option Explicit On
 
 
 Partial Public Class Login
-
+    
+    '''<summary>
+    '''lblSandbox control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblSandbox As Global.System.Web.UI.WebControls.Label
+    
     '''<summary>
     '''pnlForm control.
     '''</summary>
@@ -21,7 +30,7 @@ Partial Public Class Login
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents pnlForm As Global.System.Web.UI.WebControls.Panel
-
+    
     '''<summary>
     '''imgLogo control.
     '''</summary>
@@ -30,7 +39,7 @@ Partial Public Class Login
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents imgLogo As Global.System.Web.UI.WebControls.Image
-
+    
     '''<summary>
     '''txtEmail control.
     '''</summary>
@@ -39,7 +48,7 @@ Partial Public Class Login
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents txtEmail As Global.Telerik.Web.UI.RadTextBox
-
+    
     '''<summary>
     '''txtPassword control.
     '''</summary>
@@ -48,7 +57,7 @@ Partial Public Class Login
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents txtPassword As Global.Telerik.Web.UI.RadTextBox
-
+    
     '''<summary>
     '''chkRememberMe control.
     '''</summary>
@@ -57,7 +66,7 @@ Partial Public Class Login
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents chkRememberMe As Global.UtilityWizards.CommonCore.[Shared].Controls.CheckBoxes.CheckBox
-
+    
     '''<summary>
     '''btnLogin control.
     '''</summary>
@@ -66,7 +75,7 @@ Partial Public Class Login
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnLogin As Global.Telerik.Web.UI.RadButton
-
+    
     '''<summary>
     '''lblMessage control.
     '''</summary>
@@ -75,7 +84,7 @@ Partial Public Class Login
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents lblMessage As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''Master property.
     '''</summary>
@@ -84,7 +93,7 @@ Partial Public Class Login
     '''</remarks>
     Public Shadows ReadOnly Property Master() As UtilityWizards.Builder.ContentPage
         Get
-            Return CType(MyBase.Master, UtilityWizards.Builder.ContentPage)
+            Return CType(MyBase.Master,UtilityWizards.Builder.ContentPage)
         End Get
     End Property
 End Class

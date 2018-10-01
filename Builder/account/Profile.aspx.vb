@@ -26,10 +26,10 @@ Public Class Profile
     End Sub
 
     Private Sub LoadData()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
-            Dim usr As New SystemUser(Me.EditId)
+            Dim usr As New SystemUser(Me.EditId, App.UseSandboxDb)
 
             If Me.EditId = 0 Then
                 Me.ddlClient.SelectedValue = App.CurrentClient.ID.ToString
@@ -86,14 +86,14 @@ Public Class Profile
             rs.Close()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
     End Sub
 
     Private Sub LoadLists()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim sWhere As String = ""
@@ -162,7 +162,7 @@ Public Class Profile
             rs.Close()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -211,10 +211,10 @@ Public Class Profile
     Private Function SaveChanges() As Boolean
         Dim retVal As Boolean = True
 
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
-            Dim usr As New SystemUser
+            Dim usr As New SystemUser(App.UseSandboxDb)
             usr.ID = Me.EditId
             usr.Name = Me.txtName.Text
             usr.Email = Me.txtEmail.Text
@@ -273,10 +273,10 @@ Public Class Profile
                 cmd.Cancel()
             End If
 
-            CommonCore.Shared.Common.LogHistory("User Information Updated for " & Me.txtName.Text, App.CurrentUser.ID)
+            LogHistory("User Information Updated for " & Me.txtName.Text, App.CurrentUser.ID, App.UseSandboxDb)
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
             retVal = False
         Finally
             cn.Close()

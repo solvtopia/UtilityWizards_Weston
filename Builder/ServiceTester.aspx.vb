@@ -17,8 +17,8 @@ Public Class ServiceTester
     Private Sub FixCustomers(ByVal tbl As String)
         Dim fld As String = If(tbl.ToLower = "customers_new", "AccountNum", "LocationNum")
 
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
-        Dim cn1 As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
+        Dim cn1 As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim sql As String = ""

@@ -184,7 +184,7 @@ Public Module Extensions
     End Function
 
     <Extension()> Public Function GetByID(ByVal mods As List(Of SystemModule), ByVal id As Integer) As SystemModule
-        Dim retVal As New SystemModule
+        Dim retVal As SystemModule = Nothing
 
         Dim modFound As Boolean = False
         For Each m As SystemModule In mods

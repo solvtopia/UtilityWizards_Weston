@@ -245,6 +245,12 @@ Public Class builderPage
 
 
     Private Sub builderPage_Load(sender As Object, e As EventArgs) Handles Me.Load
+
+        Dim lblSandbox As WebControls.Label = CType(Me.FindInControl("lblSandbox"), WebControls.Label)
+        If lblSandbox IsNot Nothing Then
+            If Me.Page.UseSandboxDb Then lblSandbox.Text = "Sandbox" Else lblSandbox.Text = ""
+        End If
+
         If Not IsPostBack Then
 tryAgain:
             Dim signoutInt As Integer = If(Me.SignOut, 1, 0)
@@ -252,7 +258,7 @@ tryAgain:
                 If App.CurrentUser.ID = 0 And (Me.DeviceId <> "" Or Me.UserId > 0) And Not Me.SignOut Then
                     If Me.DeviceId <> "" Then
                         ' device id passed from the app
-                        Dim usr As New SystemUser(Me.DeviceId)
+                        Dim usr As New SystemUser(Me.DeviceId, App.UseSandboxDb)
                         If usr.ID > 0 Then
                             ' only save if we have a device id
                             usr.MobileDeviceType = Me.UserPlatform
@@ -260,9 +266,9 @@ tryAgain:
                         End If
                     Else
                         ' no device id so try the user id from the web
-                        App.CurrentUser = New SystemUser(Me.UserId)
+                        App.CurrentUser = New SystemUser(Me.UserId, App.UseSandboxDb)
                     End If
-                    App.CurrentClient = New SystemClient(App.CurrentUser.ClientID)
+                    App.CurrentClient = New SystemClient(App.CurrentUser.ClientID, App.UseSandboxDb)
 
                     If App.CurrentUser.ID > 0 Then
                         GoTo tryAgain
@@ -283,7 +289,7 @@ tryAgain:
 
         If Me.FindInControl("lblSSL") IsNot Nothing Then
             Dim lbl As WebControls.Label = CType(Me.FindInControl("lblSSL"), WebControls.Label)
-            lbl.Text = CommonCore.Shared.Common.GetApplicationAssembly(Me.Context).GetName.Version.ToString & If(Me.OnPhone, "M", If(Me.OnTablet, "T", "D")) & If(Request.Url.Scheme.ToLower = "https", "s", "u")
+            lbl.Text = [Shared].Common.GetApplicationAssembly(Me.Context).GetName.Version.ToString & If(Me.OnPhone, "M", If(Me.OnTablet, "T", "D")) & If(Request.Url.Scheme.ToLower = "https", "s", "u")
         End If
 
         If Me.OnMobile Then
@@ -297,6 +303,9 @@ Public Class builderMasterPage
     Inherits System.Web.UI.MasterPage
 
     Private Sub builderMasterPage_Load(sender As Object, e As EventArgs) Handles Me.Load
-
+        Dim lblSandbox As WebControls.Label = CType(Me.FindInControl("lblSandboxFooter"), WebControls.Label)
+        If lblSandbox IsNot Nothing Then
+            If Me.Page.UseSandboxDb Then lblSandbox.Text = "Sandbox" Else lblSandbox.Text = ""
+        End If
     End Sub
 End Class

@@ -29,11 +29,11 @@ Public Class Register
     End Sub
 
     Protected Sub btnRegister_Click(sender As Object, e As EventArgs) Handles btnRegister.Click
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             ' save the client record
-            Dim cl As New SystemClient
+            Dim cl As New SystemClient(App.UseSandboxDb)
             cl.ID = 0
             cl.Name = Me.txtClientName.Text
             cl.Address1 = Me.txtClientAddress1.Text
@@ -54,7 +54,7 @@ Public Class Register
             Dim permissions As Enums.SystemUserPermissions = Enums.SystemUserPermissions.SystemAdministrator
             If Me.txtAdminEmail.Text.ToLower.Contains("@nk5.co") Or Me.txtAdminEmail.Text.ToLower.Contains("@solvtopia.com") Then permissions = Enums.SystemUserPermissions.Solvtopia
 
-            Dim usr As New SystemUser
+            Dim usr As New SystemUser(App.UseSandboxDb)
             usr.ID = 0
             usr.ClientID = cl.ID
             usr.Name = Me.txtAdminName.Text
@@ -101,7 +101,7 @@ Public Class Register
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try

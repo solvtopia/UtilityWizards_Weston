@@ -12,7 +12,7 @@ Public Class ReportPreview
     End Property
     Private ReadOnly Property Report As SystemReport
         Get
-            Return New SystemReport(Me.EditId)
+            Return New SystemReport(Me.EditId, App.UseSandboxDb)
         End Get
     End Property
 

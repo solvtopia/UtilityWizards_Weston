@@ -20,7 +20,7 @@
 </asp:Content>
 <asp:Content ID="Content6" ContentPlaceHolderID="breadcrumbContent" runat="server">
     <h1>Dashboard
-        <small>Version 2.2</small>
+        <small>Version 2.2 <asp:Label runat="server" ID="lblSandbox" /></small>
     </h1>
     <ol class="breadcrumb">
         <li class="active">System Login</li>

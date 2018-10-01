@@ -351,7 +351,7 @@ Public Module Xml
             Return xDoc
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
             Return New XmlDocument
         End Try
     End Function
@@ -366,7 +366,7 @@ Public Module Xml
             Return xDoc
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
             Return Nothing
         End Try
     End Function
@@ -399,7 +399,7 @@ Public Module Xml
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
         End Try
 
         Return htNew.ToXml
@@ -430,7 +430,7 @@ Public Module Xml
             Return sw.ToString()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
             Return ""
         End Try
     End Function
@@ -475,7 +475,7 @@ Public Module Xml
             Return ht
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
             Return New Hashtable
         End Try
     End Function
@@ -820,7 +820,7 @@ Public Module Xml
             Return ctrls
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
             Return ctrls
         End Try
     End Function
@@ -841,7 +841,7 @@ Public Module Xml
             FromXml(ctrl, xDoc)
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
             Exit Sub
         End Try
     End Sub
@@ -852,7 +852,7 @@ Public Module Xml
             FromHashtable(ctrl, htTemp)
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
             Exit Sub
         End Try
     End Sub
@@ -892,7 +892,7 @@ Public Module Xml
             Return xElem
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
             Return Nothing
         End Try
     End Function
@@ -1283,7 +1283,7 @@ Public Module Xml
             Next
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
             Exit Sub
         End Try
     End Sub
@@ -1347,7 +1347,7 @@ Public Module Xml
             Return node
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
             Return Nothing
         End Try
     End Function
@@ -1431,7 +1431,7 @@ Public Module Xml
             Return htReturn
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
             Return New Hashtable
         End Try
     End Function
@@ -1465,7 +1465,7 @@ Public Module Xml
             Return grid
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
             Return New Hashtable
         End Try
     End Function

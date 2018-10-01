@@ -140,8 +140,8 @@ Public Class Dashboard
         myCookie.Expires = DateTime.Now.AddYears(1)
         Response.Cookies.Add(myCookie)
 
-        App.CurrentUser = New SystemUser
-        App.CurrentClient = New SystemClient
+        App.CurrentUser = New SystemUser(App.UseSandboxDb)
+        App.CurrentClient = New SystemClient(App.UseSandboxDb)
         Dim usrString As String = If(Me.DeviceId <> "", "deviceid=", "uid=0")
         Response.Redirect("~/Default.aspx?" & usrString & "&signout=1", False)
     End Sub

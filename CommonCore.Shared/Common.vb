@@ -36,8 +36,14 @@ Public Class Common
         Return type.Assembly
     End Function
 
-    Public Shared Function ConnectionString() As String
-        Return ConnectionString(Enums.DBName.UtilityWizards)
+    'Public Shared Function ConnectionString() As String
+    '    Return ConnectionString(False)
+    'End Function
+    Public Shared Function ConnectionString(ByVal UseSandbox As Boolean) As String
+        If Not UseSandbox Then
+            Return ConnectionString(Enums.DBName.UtilityWizards)
+        Else Return ConnectionString(Enums.DBName.UtilityWizards_Sandbox)
+        End If
     End Function
     Public Shared Function ConnectionString(ByVal DbName As Enums.DBName) As String
         Dim retVal As String = ""
@@ -45,7 +51,11 @@ Public Class Common
         Dim db As String = ""
 
         Select Case DbName
-            Case Enums.DBName.UtilityWizards : db = "UtilityWizards"
+            Case Enums.DBName.UtilityWizards
+                db = "UtilityWizards"
+
+            Case Enums.DBName.UtilityWizards_Sandbox
+                db = "UtilityWizards_Sandbox"
 
             Case Else
                 'If System.Configuration.ConfigurationManager.ConnectionStrings(DbName) IsNot Nothing Then
@@ -88,7 +98,7 @@ Public Class Common
             End Select
 
         Catch ex As System.Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, False))
         End Try
 
         Return retVal
@@ -139,8 +149,8 @@ Public Class Common
         Return retVal
     End Function
 
-    Public Shared Sub LogHistory(ByVal itemText As String, ByVal userId As Integer)
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+    Public Shared Sub LogHistory(ByVal itemText As String, ByVal userId As Integer, ByVal UseSandboxDb As Boolean)
+        Dim cn As New SqlClient.SqlConnection(ConnectionString(UseSandboxDb))
 
         Try
             Dim cmd As New SqlClient.SqlCommand("INSERT INTO [Sys_History] ([itemText], [dtInserted], [insertedBy]) VALUES ('" & itemText & "', '" & Now.ToString & "', '" & userId & "');SELECT @@Identity AS SCOPEIDENTITY;", cn)
@@ -149,7 +159,7 @@ Public Class Common
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(userId, 0, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(userId, 0, Enums.ProjectName.Builder, UseSandboxDb))
         Finally
             cn.Close()
         End Try

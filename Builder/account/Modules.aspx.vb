@@ -94,7 +94,7 @@ Public Class Modules
         tab.Selected = True
 
         ' load the content page
-        App.ActiveModule = New SystemModule(id)
+        App.ActiveModule = New SystemModule(id, App.UseSandboxDb)
         Me.pvModules.ContentUrl = "~/account/ModuleTab.aspx?modid=" & id & "&custacctnum=" & App.CurrentAccountNumber
     End Sub
 
@@ -103,7 +103,7 @@ Public Class Modules
     End Sub
 
     Private Sub lnkSearch_Click(sender As Object, e As EventArgs) Handles lnkSearch.Click
-        App.ActiveModule = New SystemModule
+        App.ActiveModule = New SystemModule(App.UseSandboxDb)
         App.CurrentAccountNumber = ""
 
         Response.Redirect("~/Default.aspx", False)

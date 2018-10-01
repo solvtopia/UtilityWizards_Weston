@@ -7,7 +7,7 @@ Public Module Logs
     ' writes a new entry to the audit log
     <Extension()> Public Sub WriteToAuditLog(ByVal entry As AuditLogEntry)
         If entry.ActionType <> Enums.LogEntry.QueryRecord.ToString Then
-            Dim cn As New SqlClient.SqlConnection(ConnectionString)
+            Dim cn As New SqlClient.SqlConnection(ConnectionString(entry.UseSandboxDb))
 
             Try
                 ' add the user's ip address to the entry object before saving
@@ -26,7 +26,7 @@ Public Module Logs
                 cmd.Cancel()
 
             Catch ex As Exception
-                ex.WriteToErrorLog(New ErrorLogEntry(entry.UserID, entry.ClientID, entry.Project))
+                ex.WriteToErrorLog(New ErrorLogEntry(entry.UserID, entry.ClientID, entry.Project, entry.UseSandboxDb))
             Finally
                 cn.Close()
             End Try
@@ -35,7 +35,7 @@ Public Module Logs
 
     ' writes a new entry to the error log
     <Extension()> Public Sub WriteToErrorLog(ByVal exp As Exception, ByVal entry As ErrorLogEntry)
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(ConnectionString(entry.UseSandboxDb))
 
         Try
             If exp IsNot Nothing Then

@@ -1,9 +1,10 @@
 ﻿Imports System.Web
 
 Public Class App
+
     Public Shared Property CurrentUser As SystemUser
         Get
-            Dim retVal As New SystemUser
+            Dim retVal As New SystemUser(UseSandboxDb)
             If HttpContext.Current.Session IsNot Nothing AndAlso HttpContext.Current.Session("CurrentUser") IsNot Nothing Then retVal = CType(HttpContext.Current.Session("CurrentUser"), SystemUser)
             Return retVal
         End Get
@@ -12,9 +13,20 @@ Public Class App
         End Set
     End Property
 
+    Public Shared Property UseSandboxDb As Boolean
+        Get
+            Dim retVal As Boolean = False
+            If HttpContext.Current.Session IsNot Nothing AndAlso HttpContext.Current.Session("UseSandboxDb") IsNot Nothing Then retVal = CBool(HttpContext.Current.Session("UseSandboxDb"))
+            Return retVal
+        End Get
+        Set(value As Boolean)
+            HttpContext.Current.Session("UseSandboxDb") = value
+        End Set
+    End Property
+
     Public Shared Property CurrentClient As SystemClient
         Get
-            Dim retVal As New SystemClient
+            Dim retVal As New SystemClient(UseSandboxDb)
             If HttpContext.Current.Session IsNot Nothing AndAlso HttpContext.Current.Session("CurrentClient") IsNot Nothing Then retVal = CType(HttpContext.Current.Session("CurrentClient"), SystemClient)
             Return retVal
         End Get
@@ -36,7 +48,7 @@ Public Class App
 
     Public Shared Property ActiveModule As SystemModule
         Get
-            Dim retVal As New SystemModule
+            Dim retVal As New SystemModule(UseSandboxDb)
             If HttpContext.Current.Session IsNot Nothing AndAlso HttpContext.Current.Session("ActiveModule") IsNot Nothing Then retVal = CType(HttpContext.Current.Session("ActiveModule"), SystemModule)
             Return retVal
         End Get
@@ -125,7 +137,7 @@ Public Class App
             If HttpContext.Current.Session("FieldInfoLookup") Is Nothing Then
                 Dim ht As New Hashtable
 
-                Dim cn As New SqlClient.SqlConnection(CommonCore.Shared.Common.ConnectionString)
+                Dim cn As New SqlClient.SqlConnection([Shared].Common.ConnectionString(App.UseSandboxDb))
 
                 Dim retVal As Boolean = True
 
@@ -147,7 +159,7 @@ Public Class App
 
                 Catch ex As Exception
                     retVal = False
-                    ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared))
+                    ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, UseSandboxDb))
                 Finally
                     cn.Close()
                 End Try

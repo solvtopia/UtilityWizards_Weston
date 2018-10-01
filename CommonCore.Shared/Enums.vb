@@ -21,6 +21,7 @@
     Public Enum DBName
         ' common databases
         UtilityWizards
+        UtilityWizards_Sandbox
 
         ' project specific databases
     End Enum

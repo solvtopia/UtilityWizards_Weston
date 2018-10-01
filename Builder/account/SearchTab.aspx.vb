@@ -17,14 +17,14 @@ Public Class SearchTab
     End Sub
 
     Protected Sub btnSearch_Click(sender As Object, e As EventArgs) Handles btnSearch.Click
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Me.RadSearchGrid.Visible = True
             Me.RadSearchGrid.DataBind()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             'cn.Close()
         End Try
@@ -51,7 +51,7 @@ Public Class SearchTab
     End Sub
 
     'Private Sub RadSearchGrid_NeedDataSource(sender As Object, e As GridNeedDataSourceEventArgs) Handles RadSearchGrid.NeedDataSource
-    '    Dim cn As New SqlClient.SqlConnection(ConnectionString)
+    '    Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
     '    Try
     '        Me.RadSearchGrid.Visible = True
@@ -66,7 +66,7 @@ Public Class SearchTab
     '        Me.RadSearchGrid.DataSource = rs
 
     '    Catch ex As Exception
-    '        ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+    '        ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder,App.UseSandboxDb))
     '    Finally
     '        'cn.Close()
     '    End Try

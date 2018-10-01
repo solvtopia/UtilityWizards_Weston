@@ -32,6 +32,7 @@ Partial Class fMain
         Me.rbAllDupllicates = New System.Windows.Forms.RadioButton()
         Me.rbSelectedDuplicates = New System.Windows.Forms.RadioButton()
         Me.tmrTimer = New System.Windows.Forms.Timer(Me.components)
+        Me.chkUseSandboxDb = New System.Windows.Forms.CheckBox()
         Me.SuspendLayout()
         '
         'btnProcess
@@ -119,11 +120,22 @@ Partial Class fMain
         Me.tmrTimer.Enabled = True
         Me.tmrTimer.Interval = 60000
         '
+        'chkUseSandboxDb
+        '
+        Me.chkUseSandboxDb.AutoSize = True
+        Me.chkUseSandboxDb.Location = New System.Drawing.Point(484, 52)
+        Me.chkUseSandboxDb.Name = "chkUseSandboxDb"
+        Me.chkUseSandboxDb.Size = New System.Drawing.Size(90, 17)
+        Me.chkUseSandboxDb.TabIndex = 8
+        Me.chkUseSandboxDb.Text = "Use Sandbox"
+        Me.chkUseSandboxDb.UseVisualStyleBackColor = True
+        '
         'fMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(596, 255)
+        Me.Controls.Add(Me.chkUseSandboxDb)
         Me.Controls.Add(Me.rbSelectedDuplicates)
         Me.Controls.Add(Me.rbAllDupllicates)
         Me.Controls.Add(Me.chkLocations)
@@ -151,4 +163,5 @@ Partial Class fMain
     Friend WithEvents rbAllDupllicates As RadioButton
     Friend WithEvents rbSelectedDuplicates As RadioButton
     Friend WithEvents tmrTimer As Timer
+    Friend WithEvents chkUseSandboxDb As CheckBox
 End Class

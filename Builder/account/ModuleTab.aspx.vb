@@ -99,7 +99,7 @@ Public Class ModuleTab
     End Sub
 
     Private Sub LoadLists()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             'Me.ddlSupervisor.Items.Clear()
@@ -137,14 +137,14 @@ Public Class ModuleTab
             'Next
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
     End Sub
 
     Private Sub LoadTechnicians()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             'Dim sql As String = ""
@@ -162,14 +162,14 @@ Public Class ModuleTab
             'Me.ddlTechnician.SelectedIndex = 0
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
     End Sub
 
     Private Sub LoadCustomerInfo()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim sql As String = ""
@@ -211,7 +211,7 @@ Public Class ModuleTab
             cmd.Cancel()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -234,7 +234,7 @@ Public Class ModuleTab
     'End Sub
 
     Private Sub LoadData()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim cmd As New SqlClient.SqlCommand()
@@ -246,9 +246,9 @@ Public Class ModuleTab
             Me.pnlDataNav.Visible = False
             If rs.Read Then
                 Me.FromXml(rs("xmlData").ToString)
-                Me.litNoData.Text = ""
-            Else
-                Me.litNoData.Text = "No Data available for this customer.<br/>"
+                '    Me.litNoData.Text = ""
+                'Else
+                '    Me.litNoData.Text = "No Data available for this customer.<br/>"
             End If
             rs.Close()
             cmd.Cancel()
@@ -259,14 +259,14 @@ Public Class ModuleTab
             Me.LoadMasterFeed()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
     End Sub
 
     Private Sub LoadMasterFeed()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim dt As New DataTable()
@@ -325,15 +325,19 @@ Public Class ModuleTab
             rs.Close()
             cmd.Cancel()
 
-            Me.lblTotalRecords.Text = dt.Rows.Count.ToString
-            Me.pnlDataNav.Visible = (dt.Rows.Count > 1)
+            If dt.Rows.Count > 0 Then
+                Me.lblTotalRecords.Text = dt.Rows.Count.ToString
+                Me.pnlDataNav.Visible = (dt.Rows.Count > 1)
 
-            Session("ImportDataTable" & Me.ModId) = dt
+                Session("ImportDataTable" & Me.ModId) = dt
 
-            lnkFirstRecord_Click(Nothing, New EventArgs)
+                lnkFirstRecord_Click(Nothing, New EventArgs)
+            Else
+                'Me.litNoData.Text = "No Master Feed Data available for this customer.<br/>"
+            End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -366,7 +370,7 @@ Public Class ModuleTab
     Private Function SaveChanges() As Boolean
         Dim retVal As Boolean = True
 
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             ' validate the form
@@ -452,7 +456,7 @@ Public Class ModuleTab
             If newRecord Then
                 technicianUpdated = True
 
-                CommonCore.Shared.Common.LogHistory("New Work Order #" & Me.RecordId & " Created", App.CurrentUser.ID)
+                LogHistory("New Work Order #" & Me.RecordId & " Created", App.CurrentUser.ID, App.UseSandboxDb)
 
                 Dim assigned As String = "with no technician "
                 Dim txt As String = ""
@@ -510,7 +514,7 @@ Public Class ModuleTab
             Else
                 ' text the supervisor if the status has been changed
                 If statusUpdated Then
-                    'CommonCore.Shared.Common.LogHistory("Work Order #" & Me.RecordId & " Status Updated To " & Me.ddlStatus.SelectedItem.Text, App.CurrentUser.ID)
+                    'LogHistory("Work Order #" & Me.RecordId & " Status Updated To " & Me.ddlStatus.SelectedItem.Text, App.CurrentUser.ID)
 
                     'Dim txt As String = "The status for " & App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been updated to " & Me.ddlStatus.SelectedItem.Text & "."
                     'CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlSupervisor.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
@@ -549,7 +553,7 @@ Public Class ModuleTab
 
                 ' text the technician if it has been assigned
                 'If technicianUpdated And Me.ddlTechnician.SelectedValue.ToInteger > 0 Then
-                '    CommonCore.Shared.Common.LogHistory("Work Order #" & Me.RecordId & " Assigned To " & Me.ddlTechnician.SelectedItem.Text, App.CurrentUser.ID)
+                '    LogHistory("Work Order #" & Me.RecordId & " Assigned To " & Me.ddlTechnician.SelectedItem.Text, App.CurrentUser.ID)
 
                 '    Dim txt As String = App.ActiveModule.Name & " Work Order #" & Me.RecordId & " has been assigned to you."
                 '    CommonCore.Shared.Messaging.SendTwilioNotification(New SystemUser(Me.ddlTechnician.SelectedValue.ToInteger), Enums.NotificationType.Custom, txt, Me.RecordId)
@@ -567,7 +571,7 @@ Public Class ModuleTab
             'End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
             retVal = False
         Finally
             cn.Close()

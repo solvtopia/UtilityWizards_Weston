@@ -40,7 +40,7 @@ Public Class fMain
     End Sub
 
     Private Sub ProcessSouthernImport()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(ConnectionString(Me.chkUseSandboxDb.Checked))
 
         Try
             Dim files_tmp As String = "C:\inetpub\weston.utilitywizards.com\wwwroot\import\"
@@ -138,7 +138,7 @@ Public Class fMain
             My.Application.DoEvents()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.FileProcessor))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.FileProcessor, Me.chkUseSandboxDb.Checked))
         Finally
             cn.Close()
         End Try
@@ -146,7 +146,7 @@ Public Class fMain
 
     Private Function ProcessFileToTable(ByVal fPath As String, ByVal tblName As String) As DataTable
         Dim retVal As New DataTable
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(ConnectionString(Me.chkUseSandboxDb.Checked))
 
         Try
             ' build a table to store the records in
@@ -221,7 +221,7 @@ Public Class fMain
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.FileProcessor))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.FileProcessor, Me.chkUseSandboxDb.Checked))
         Finally
             cn.Close()
         End Try
@@ -232,8 +232,8 @@ Public Class fMain
     Private Sub FixDuplicates(ByVal tbl As String)
         Dim fld As String = If(tbl.ToLower = "customers_new", "AccountNum", "LocationNum")
 
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
-        Dim cn1 As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(ConnectionString(Me.chkUseSandboxDb.Checked))
+        Dim cn1 As New SqlClient.SqlConnection(ConnectionString(Me.chkUseSandboxDb.Checked))
 
         Try
             Dim sql As String = ""

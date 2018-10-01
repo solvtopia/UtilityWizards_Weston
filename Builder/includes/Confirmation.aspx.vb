@@ -101,40 +101,40 @@ Public Class Confirmation
     End Sub
 
     Protected Sub btnYes_Click(sender As Object, e As EventArgs) Handles btnYes.Click
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             If Me.Type = Enums.InformationPopupType.DeleteFolder Then
-                Dim m As New SystemModule(Me.EditId)
+                Dim m As New SystemModule(Me.EditId, App.UseSandboxDb)
                 m.Delete()
-                CommonCore.Shared.Common.LogHistory(m.Name & " Folder Deleted", App.CurrentUser.ID)
+                LogHistory(m.Name & " Folder Deleted", App.CurrentUser.ID, App.UseSandboxDb)
 
                 App.ActiveFolderID = 0
 
             ElseIf Me.Type = Enums.InformationPopupType.DeleteModule Then
-                Dim m As New SystemModule(Me.EditId)
+                Dim m As New SystemModule(Me.EditId, App.UseSandboxDb)
                 m.Delete()
-                CommonCore.Shared.Common.LogHistory(m.Name & " Module Deleted", App.CurrentUser.ID)
+                LogHistory(m.Name & " Module Deleted", App.CurrentUser.ID, App.UseSandboxDb)
 
             ElseIf Me.Type = Enums.InformationPopupType.DeleteUser Then
-                Dim usr As New SystemUser(Me.EditId)
+                Dim usr As New SystemUser(Me.EditId, App.UseSandboxDb)
                 usr.Delete()
-                CommonCore.Shared.Common.LogHistory(usr.Name & " User Deleted", App.CurrentUser.ID)
+                LogHistory(usr.Name & " User Deleted", App.CurrentUser.ID, App.UseSandboxDb)
 
             ElseIf Me.Type = Enums.InformationPopupType.DeleteReport Then
-                Dim rpt As New SystemReport(Me.EditId)
+                Dim rpt As New SystemReport(Me.EditId, App.UseSandboxDb)
                 rpt.Delete()
-                CommonCore.Shared.Common.LogHistory(rpt.Name & " Report Deleted", App.CurrentUser.ID)
+                LogHistory(rpt.Name & " Report Deleted", App.CurrentUser.ID, App.UseSandboxDb)
 
             ElseIf Me.Type = Enums.InformationPopupType.MoveModule Then
-                Dim m As New SystemModule(Me.EditId)
+                Dim m As New SystemModule(Me.EditId, App.UseSandboxDb)
                 m.Move(Me.ddlFolder.SelectedValue.ToInteger)
-                CommonCore.Shared.Common.LogHistory(m.Name & " Module Moved", App.CurrentUser.ID)
+                LogHistory(m.Name & " Module Moved", App.CurrentUser.ID, App.UseSandboxDb)
 
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try

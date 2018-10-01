@@ -14,7 +14,7 @@ Public Class _Default4
         If Not IsPostBack Then
             ' handles the work order id passed from text messages
             If Me.WoId > 0 Then
-                Dim cn As New SqlClient.SqlConnection(ConnectionString)
+                Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
                 Try
                     Dim custNum As String = ""
@@ -30,7 +30,7 @@ Public Class _Default4
                     rs.Close()
 
                     If mId > 0 And custNum <> "" Then
-                        App.ActiveModule = New SystemModule(mId)
+                        App.ActiveModule = New SystemModule(mId, App.UseSandboxDb)
                         App.ActiveFolderID = App.ActiveModule.FolderID
 
                         Dim url As String = "~/account/Module.aspx?modid=" & mId & "&id=" & Me.WoId & "&custacctnum=" & custNum
@@ -39,7 +39,7 @@ Public Class _Default4
                     End If
 
                 Catch ex As Exception
-                    ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+                    ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
                 Finally
                     cn.Close()
                 End Try
@@ -92,7 +92,7 @@ Public Class _Default4
 
         Me.Master.MenuAjaxPanel.RaisePostBackEvent("")
 
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             'Me.lblOpenWorkOrders.Text = "0"
@@ -117,7 +117,7 @@ Public Class _Default4
             'rs.Close()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -309,7 +309,7 @@ Public Class _Default4
                 App.ActiveFolderID = modId
                 'Me.LoadModules()
             Else
-                App.ActiveModule = New SystemModule(modId)
+                App.ActiveModule = New SystemModule(modId, App.UseSandboxDb)
                 Response.Redirect("~/account/Modules.aspx?fid=" & App.ActiveFolderID & "&custacctnum=" & App.CurrentAccountNumber, False)
                 'Me.RadPageView2.ContentUrl = "~/account/ModuleTab.aspx?modid=" & modId & "&custacctnum=" & App.CurrentAccountNumber
             End If
@@ -319,15 +319,17 @@ Public Class _Default4
     End Sub
 
     Protected Sub btnSearch_Click(sender As Object, e As EventArgs) Handles btnSearch.Click
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
+            Me.SqlDataSource1.ConnectionString = ConnectionString(App.UseSandboxDb)
+
             Me.RadSearchGrid.Visible = True
             Me.RadSearchGrid.DataBind()
             Me.hfSearchDone.Value = True.ToString
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             'cn.Close()
         End Try
@@ -370,7 +372,7 @@ Public Class _Default4
         'Me.txtSearch.Text = ""
         'Me.RadSearchGrid.Visible = False
         'Me.txtSearch.Focus()
-        App.ActiveModule = New SystemModule
+        App.ActiveModule = New SystemModule(App.UseSandboxDb)
         App.CurrentAccountNumber = ""
 
         Response.Redirect("~/Default.aspx", False)

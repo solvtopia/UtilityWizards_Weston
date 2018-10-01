@@ -24,7 +24,7 @@ Public Class DebrisTally
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         If App.ActiveModule.ID <> Me.ModId Then
-            App.ActiveModule = New SystemModule(Me.ModId)
+            App.ActiveModule = New SystemModule(Me.ModId, App.UseSandboxDb)
             App.ActiveFolderID = App.ActiveModule.FolderID
         End If
 
@@ -294,7 +294,7 @@ Public Class DebrisTally
             Response.Redirect("~/Default.aspx", False)
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         End Try
     End Sub
 End Class

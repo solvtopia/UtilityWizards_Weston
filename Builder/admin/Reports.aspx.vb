@@ -29,7 +29,7 @@ Public Class Reports
     End Sub
 
     Private Sub LoadReports()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim lst As New List(Of SystemReport)
@@ -44,7 +44,7 @@ Public Class Reports
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
             Do While rs.Read
-                lst.Add(New SystemReport(rs("ID").ToString.ToInteger))
+                lst.Add(New SystemReport(rs("ID").ToString.ToInteger, App.UseSandboxDb))
             Loop
             rs.Close()
             cmd.Cancel()
@@ -104,7 +104,7 @@ Public Class Reports
             Next
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try

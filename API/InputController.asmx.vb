@@ -15,8 +15,8 @@ Public Class InputController
 #Region "Common Routines"
 
     <WebMethod()>
-    Public Function GetApiKey(ByVal userEmail As String, ByVal userPassword As String) As ApiKeyResult
-        Dim retVal As New ApiKeyResult(userEmail, userPassword)
+    Public Function GetApiKey(ByVal userEmail As String, ByVal userPassword As String, ByVal UseSandboxDb As Boolean) As ApiKeyResult
+        Dim retVal As New ApiKeyResult(userEmail, userPassword, UseSandboxDb)
 
         If retVal.ApiKey = "" Then
             retVal.responseCode = Enums.ApiResultCode.failed
@@ -30,13 +30,13 @@ Public Class InputController
 
     <WebMethod()>
     Public Function UpdateCustomerRecord(ByVal req As ApiRequest, ByVal custRecord As CustomerRecord) As ApiResponse
-        Dim retVal As New ApiResponse
+        Dim retVal As New ApiResponse(req.UseSandboxDb)
 
         retVal.responseObject = True
 
         Try
             If req.apiKey <> "" Then
-                Dim apiUsr As New SystemUser("", "", req.apiKey)
+                Dim apiUsr As New SystemUser("", "", req.apiKey, req.UseSandboxDb)
 
                 ' fix the record data (all uppercase for standardization)
                 For Each nvp As NameValuePair In custRecord.RecordData
@@ -51,7 +51,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API, req.UseSandboxDb))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -62,13 +62,13 @@ Public Class InputController
 
     <WebMethod()>
     Public Function CreateCustomerRecord(ByVal req As ApiRequest, ByVal custRecord As CustomerRecord) As ApiResponse
-        Dim retVal As New ApiResponse
+        Dim retVal As New ApiResponse(req.UseSandboxDb)
 
         retVal.responseObject = True
 
         Try
             If req.apiKey <> "" Then
-                Dim apiUsr As New SystemUser("", "", req.apiKey)
+                Dim apiUsr As New SystemUser("", "", req.apiKey, req.UseSandboxDb)
 
                 ' make sure we have a client id for the customer and location
                 If custRecord.RecordData.FindItem("ClientID").Name <> "" Then
@@ -112,7 +112,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API, req.UseSandboxDb))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -123,13 +123,13 @@ Public Class InputController
 
     <WebMethod()>
     Public Function DeleteCustomerRecord(ByVal req As ApiRequest, ByVal custRecord As CustomerRecord) As ApiResponse
-        Dim retVal As New ApiResponse
+        Dim retVal As New ApiResponse(req.UseSandboxDb)
 
         retVal.responseObject = True
 
         Try
             If req.apiKey <> "" Then
-                Dim apiUsr As New SystemUser("", "", req.apiKey)
+                Dim apiUsr As New SystemUser("", "", req.apiKey, req.UseSandboxDb)
 
                 retVal.responseObject = custRecord.Delete
                 If Not retVal.responseObject.ToString.ToBoolean Then
@@ -144,7 +144,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API, req.UseSandboxDb))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -155,13 +155,13 @@ Public Class InputController
 
     <WebMethod()>
     Public Function UploadCustomerRecords(ByVal req As ApiRequest, ByVal fData As Byte()) As ApiResponse
-        Dim retVal As New ApiResponse
+        Dim retVal As New ApiResponse(req.UseSandboxDb)
 
         retVal.responseObject = True
 
         Try
             If req.apiKey <> "" Then
-                Dim apiUsr As New SystemUser("", "", req.apiKey)
+                Dim apiUsr As New SystemUser("", "", req.apiKey, req.UseSandboxDb)
 
                 ' save fData to file and import the records to Xml
             Else
@@ -171,7 +171,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API, req.UseSandboxDb))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -182,13 +182,13 @@ Public Class InputController
 
     <WebMethod()>
     Public Function UpdateUserRecord(ByVal req As ApiRequest, ByVal usr As SystemUser) As ApiResponse
-        Dim retVal As New ApiResponse
+        Dim retVal As New ApiResponse(req.UseSandboxDb)
 
         retVal.responseObject = True
 
         Try
             If req.apiKey <> "" Then
-                Dim apiUsr As New SystemUser("", "", req.apiKey)
+                Dim apiUsr As New SystemUser("", "", req.apiKey, req.UseSandboxDb)
 
                 retVal.responseObject = usr.Save
             Else
@@ -198,7 +198,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API, req.UseSandboxDb))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -209,13 +209,13 @@ Public Class InputController
 
     <WebMethod()>
     Public Function CreateUserRecord(ByVal req As ApiRequest, ByVal usr As SystemUser) As ApiResponse
-        Dim retVal As New ApiResponse
+        Dim retVal As New ApiResponse(req.UseSandboxDb)
 
         retVal.responseObject = True
 
         Try
             If req.apiKey <> "" Then
-                Dim apiUsr As New SystemUser("", "", req.apiKey)
+                Dim apiUsr As New SystemUser("", "", req.apiKey, req.UseSandboxDb)
 
                 Dim obj As SystemUser = usr.Save
                 If obj.ID > 0 Then
@@ -232,7 +232,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API, req.UseSandboxDb))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -243,13 +243,13 @@ Public Class InputController
 
     <WebMethod()>
     Public Function DeleteUserRecord(ByVal req As ApiRequest, ByVal usr As SystemUser) As ApiResponse
-        Dim retVal As New ApiResponse
+        Dim retVal As New ApiResponse(req.UseSandboxDb)
 
         retVal.responseObject = True
 
         Try
             If req.apiKey <> "" Then
-                Dim apiUsr As New SystemUser("", "", req.apiKey)
+                Dim apiUsr As New SystemUser("", "", req.apiKey, req.UseSandboxDb)
 
                 retVal.responseObject = usr.Delete
                 If Not retVal.responseObject.ToString.ToBoolean Then
@@ -264,7 +264,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API, req.UseSandboxDb))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -275,13 +275,13 @@ Public Class InputController
 
     <WebMethod()>
     Public Function UpdateCustomerLocation(ByVal req As ApiRequest, ByVal loc As CustomerLocation) As ApiResponse
-        Dim retVal As New ApiResponse
+        Dim retVal As New ApiResponse(req.UseSandboxDb)
 
         retVal.responseObject = True
 
         Try
             If req.apiKey <> "" Then
-                Dim apiUsr As New SystemUser("", "", req.apiKey)
+                Dim apiUsr As New SystemUser("", "", req.apiKey, req.UseSandboxDb)
 
                 retVal.responseObject = loc.Save
             Else
@@ -291,7 +291,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API, req.UseSandboxDb))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -302,13 +302,13 @@ Public Class InputController
 
     <WebMethod()>
     Public Function CreateCustomerLocation(ByVal req As ApiRequest, ByVal loc As CustomerLocation) As ApiResponse
-        Dim retVal As New ApiResponse
+        Dim retVal As New ApiResponse(req.UseSandboxDb)
 
         retVal.responseObject = True
 
         Try
             If req.apiKey <> "" Then
-                Dim apiUsr As New SystemUser("", "", req.apiKey)
+                Dim apiUsr As New SystemUser("", "", req.apiKey, req.UseSandboxDb)
 
                 Dim obj As CustomerLocation = loc.Save
                 If obj.ID > 0 Then
@@ -325,7 +325,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API, req.UseSandboxDb))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False
@@ -336,13 +336,13 @@ Public Class InputController
 
     <WebMethod()>
     Public Function DeleteCustomerLocation(ByVal req As ApiRequest, ByVal loc As CustomerLocation) As ApiResponse
-        Dim retVal As New ApiResponse
+        Dim retVal As New ApiResponse(req.UseSandboxDb)
 
         retVal.responseObject = True
 
         Try
             If req.apiKey <> "" Then
-                Dim apiUsr As New SystemUser("", "", req.apiKey)
+                Dim apiUsr As New SystemUser("", "", req.apiKey, req.UseSandboxDb)
 
                 retVal.responseObject = loc.Delete
                 If Not retVal.responseObject.ToString.ToBoolean Then
@@ -357,7 +357,7 @@ Public Class InputController
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.API, req.UseSandboxDb))
             retVal.responseCode = Enums.ApiResultCode.failed
             retVal.responseMessage = ex.Message
             retVal.responseObject = False

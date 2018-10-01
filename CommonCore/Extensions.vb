@@ -33,12 +33,25 @@ Public Module Extensions
         Return retVal
     End Function
 
+    <Extension()> Public Function OnSandbox(ByVal pg As System.Web.UI.Page) As Boolean
+        Dim retVal As Boolean
+
+        retVal = HttpContext.Current.Request.Url.ToString.ToLower.Contains("sandbox")
+
+        Return retVal
+    End Function
+
     <Extension()> Public Function OnLocal(ByVal pg As System.Web.UI.Page) As Boolean
         Dim retVal As Boolean
 
         retVal = HttpContext.Current.Request.Url.ToString.ToLower.Contains("localhost")
 
         Return retVal
+    End Function
+
+    <Extension()> Public Function UseSandboxDb(ByVal pg As System.Web.UI.Page) As Boolean
+        App.UseSandboxDb = (pg.OnLocal Or pg.OnSandbox)
+        Return App.UseSandboxDb
     End Function
 
     <Extension()> Public Function OnMobile(ByVal pg As System.Web.UI.Page) As Boolean
@@ -106,7 +119,7 @@ Public Module Extensions
             ScriptManager.RegisterStartupScript(pg, pg.GetType(), "MsgBoxScript", myScript, True)
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCore))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCore, pg.UseSandboxDb))
             Exit Sub
         End Try
     End Sub
@@ -130,7 +143,7 @@ Public Module Extensions
             ScriptManager.RegisterStartupScript(pg, pg.GetType(), "MyScript", myScript, True)
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCore))
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCore, pg.UseSandboxDb))
             Exit Sub
         End Try
     End Sub

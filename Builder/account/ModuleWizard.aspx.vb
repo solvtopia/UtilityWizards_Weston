@@ -69,13 +69,13 @@ Public Class ModuleWizard
             Me.txtName.Focus()
 
             If Me.EditId > 0 Then
-                Me.CurrentModule = New SystemModule(Me.EditId)
+                Me.CurrentModule = New SystemModule(Me.EditId, App.UseSandboxDb)
                 Me.txtName.Text = Me.CurrentModule.Name
                 Me.txtDescription.Text = Me.CurrentModule.Description
                 If Me.CurrentModule.SupervisorID > 0 Then
                     Me.ddlSupervisor.SelectedValue = Me.CurrentModule.SupervisorID.ToString
                 Else
-                    Dim fldr As New SystemModule(Me.CurrentModule.FolderID)
+                    Dim fldr As New SystemModule(Me.CurrentModule.FolderID, App.UseSandboxDb)
                     If fldr.SupervisorID > 0 Then
                         Me.ddlSupervisor.SelectedValue = fldr.SupervisorID.ToString
                     End If
@@ -93,7 +93,7 @@ Public Class ModuleWizard
                 Me.ModuleView1.BottomMiddleTitle = Me.CurrentModule.BottomMiddleTitle
                 Me.ModuleView1.BottomRightTitle = Me.CurrentModule.BottomRightTitle
             Else
-                Me.CurrentModule = New SystemModule()
+                Me.CurrentModule = New SystemModule(App.UseSandboxDb)
             End If
         End If
 
@@ -172,7 +172,7 @@ Public Class ModuleWizard
     End Sub
 
     Private Sub LoadLists()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim iconFolder As String = "modules"
@@ -227,7 +227,7 @@ Public Class ModuleWizard
             Me.ddlIcon.SelectedIndex = 0
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -238,7 +238,7 @@ Public Class ModuleWizard
     End Sub
 
     Protected Sub btnNext_Click(sender As Object, e As EventArgs) Handles btnNext.Click
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             If Me.WizardStep < Me.wizardMaxSteps Then
@@ -249,7 +249,7 @@ Public Class ModuleWizard
                         Me.txtQuestion.Focus()
                 End Select
             Else
-                If Me.EditId > 0 Then Me.CurrentModule = New SystemModule(Me.EditId) Else Me.CurrentModule = New SystemModule()
+                If Me.EditId > 0 Then Me.CurrentModule = New SystemModule(Me.EditId, App.UseSandboxDb) Else Me.CurrentModule = New SystemModule(App.UseSandboxDb)
 
                 ' save the module
                 Me.CurrentModule.ID = Me.EditId
@@ -291,8 +291,8 @@ Public Class ModuleWizard
                 cmd.ExecuteNonQuery()
 
                 If Me.Type = Enums.SystemModuleType.Folder Then
-                    CommonCore.Shared.Common.LogHistory(Me.txtName.Text & " Folder Updated", App.CurrentUser.ID)
-                Else CommonCore.Shared.Common.LogHistory(Me.txtName.Text & " Tab Updated", App.CurrentUser.ID)
+                    LogHistory(Me.txtName.Text & " Folder Updated", App.CurrentUser.ID, App.UseSandboxDb)
+                Else LogHistory(Me.txtName.Text & " Tab Updated", App.CurrentUser.ID, App.UseSandboxDb)
                 End If
 
                 Response.Redirect("~/Default.aspx", False)
@@ -300,7 +300,7 @@ Public Class ModuleWizard
             End If
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try
@@ -314,7 +314,7 @@ Public Class ModuleWizard
     Protected Sub btnAdd_Click(sender As Object, e As EventArgs) Handles btnAdd.Click
         Try
             Dim btn As RadButton = CType(sender, RadButton)
-            Dim q As New SystemQuestion
+            Dim q As New SystemQuestion(App.UseSandboxDb)
 
             ' definition
             q.ID = 0
@@ -380,7 +380,7 @@ Public Class ModuleWizard
             Me.ModuleView1.Refresh()
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         End Try
     End Sub
 
@@ -408,7 +408,7 @@ Public Class ModuleWizard
         ' set the wizard step to 2 so we see the editor
         Me.WizardStep = 2
 
-        Me.FillEditor(New SystemQuestion)
+        Me.FillEditor(New SystemQuestion(App.UseSandboxDb))
 
         Me.txtQuestion.Focus()
         pnlQuestionEditor.Visible = True

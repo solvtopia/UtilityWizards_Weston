@@ -29,7 +29,7 @@ Public Class AdminUsers
     End Sub
 
     Private Sub LoadUsers()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString)
+        Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
             Dim lst As New List(Of SystemUser)
@@ -44,7 +44,7 @@ Public Class AdminUsers
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
             Do While rs.Read
-                lst.Add(New SystemUser(rs("ID").ToString.ToInteger))
+                lst.Add(New SystemUser(rs("ID").ToString.ToInteger, App.UseSandboxDb))
             Loop
             rs.Close()
             cmd.Cancel()
@@ -120,7 +120,7 @@ Public Class AdminUsers
             Me.tblSolvtopia.Rows.Add(trSolvtopia)
 
         Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder))
+            ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))
         Finally
             cn.Close()
         End Try

@@ -164,6 +164,7 @@
             <footer class="main-footer">
                 <div class="pull-right hidden-xs">
                     <b>Version</b> 2.2.0
+                    <asp:Label runat="server" ID="lblSandboxFooter" />
                 </div>
                 <strong>Copyright &copy; 2014-2017
                     <asp:HyperLink runat="server" ID="lnkSolvtopia" NavigateUrl="http://www.solvtopia.com" Text="Solvtopia, LLC." /></strong> All rights
