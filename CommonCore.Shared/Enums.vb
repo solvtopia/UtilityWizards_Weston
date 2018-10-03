@@ -50,12 +50,13 @@
     End Enum
 
     Public Enum SystemQuestionType
-        CheckBox
-        DropDownList
-        TextBox
-        MemoField
-        NumericTextBox
-        CurrencyTextBox
+        CheckBox = 0
+        DropDownList = 1
+        TextBox = 2
+        MemoField = 3
+        NumericTextBox = 4
+        CurrencyTextBox = 5
+        DataGrid = 6
     End Enum
 
     Public Enum SystemQuestionTextBoxSize

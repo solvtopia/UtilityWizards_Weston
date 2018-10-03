@@ -410,6 +410,15 @@ Partial Public Class ModuleWizard
     Protected WithEvents txtMemoRows As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
+    '''txtMemoWidth control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtMemoWidth As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
     '''pnlDropDownAppearanceOptions control.
     '''</summary>
     '''<remarks>
@@ -426,6 +435,15 @@ Partial Public Class ModuleWizard
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents ddlDropDownSize As Global.System.Web.UI.WebControls.DropDownList
+    
+    '''<summary>
+    '''pnlDataGridAppearanceOptions control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlDataGridAppearanceOptions As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
     '''ddlBindingType control.
@@ -597,6 +615,24 @@ Partial Public Class ModuleWizard
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnRemoveValue As Global.Telerik.Web.UI.RadButton
+    
+    '''<summary>
+    '''pnlDataGridDataOptions control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents pnlDataGridDataOptions As Global.System.Web.UI.WebControls.Panel
+    
+    '''<summary>
+    '''cblDataGridFields control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents cblDataGridFields As Global.System.Web.UI.WebControls.CheckBoxList
     
     '''<summary>
     '''chkRequired control.

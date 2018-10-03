@@ -231,4 +231,18 @@ Public Module Extensions
 
         Return If(control Is Nothing, Nothing, control)
     End Function
+
+    <Extension()> Public Function FindFieldExtras(ByVal lst As List(Of FieldExtras), ByVal fieldName As String) As FieldExtras
+        Dim retVal As New FieldExtras
+
+        For Each fe As FieldExtras In lst
+            If fe.FieldName.ToLower = fieldName.ToLower Then
+                retVal = fe
+                Exit For
+            End If
+        Next
+
+        Return retVal
+    End Function
+
 End Module

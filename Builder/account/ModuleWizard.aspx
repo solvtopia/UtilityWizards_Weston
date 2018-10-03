@@ -39,7 +39,8 @@
 </asp:Content>
 <asp:Content ID="Content6" ContentPlaceHolderID="wizardBreadcrumbContent" runat="server">
     <h1>Dashboard
-        <small>Version 2.2 <asp:Label runat="server" ID="lblSandbox" /></small>
+        <small>Version 2.2
+            <asp:Label runat="server" ID="lblSandbox" /></small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="..Default.aspx"><i class="fa fa-dashboard"></i>Home</a></li>
@@ -204,7 +205,7 @@
                     <ContentTemplate>
                         <table class="wrap-table-wizard">
                             <tr>
-                                <td style="width: 100px;">Display Text</td>
+                                <td style="width: 100px;">Label Text</td>
                                 <td>
                                     <telerik:RadTextBox ID="txtQuestion" runat="server" Width="90%" Skin="Metro" />
                                     <asp:Label ID="lblDataField" runat="server"></asp:Label></td>
@@ -219,6 +220,7 @@
                                         <asp:ListItem Text="Memo Field" Value="3" />
                                         <asp:ListItem Text="Numeric Text Field" Value="4" />
                                         <asp:ListItem Text="Currency Text Field" Value="5" />
+                                        <asp:ListItem Text="Data Grid" Value="6" />
                                     </asp:DropDownList></td>
                             </tr>
                         </table>
@@ -251,7 +253,7 @@
                                     </asp:DropDownList></td>
                             </tr>
                             <tr>
-                                <td style="width: 100px;">Sort Order</td>
+                                <td style="width: 100px;">Display Order</td>
                                 <td>
                                     <telerik:RadTextBox runat="server" ID="txtSort" /></td>
                             </tr>
@@ -300,6 +302,11 @@
                                     <td>
                                         <asp:TextBox runat="server" ID="txtMemoRows" Width="50px" /></td>
                                 </tr>
+                                <tr>
+                                    <td style="width: 100px;">Width (pixels)</td>
+                                    <td>
+                                        <asp:TextBox runat="server" ID="txtMemoWidth" Width="50px" /></td>
+                                </tr>
                             </table>
                         </asp:Panel>
                         <asp:Panel runat="server" ID="pnlDropDownAppearanceOptions">
@@ -313,6 +320,14 @@
                                             <asp:ListItem Text="Medium" Value="200" />
                                             <asp:ListItem Text="Large" Value="300" />
                                         </asp:DropDownList></td>
+                                </tr>
+                            </table>
+                        </asp:Panel>
+                        <asp:Panel runat="server" ID="pnlDataGridAppearanceOptions">
+                            <table class="wrap-table-wizard">
+                                <tr>
+                                    <td style="width: 100px;"></td>
+                                    <td></td>
                                 </tr>
                             </table>
                         </asp:Panel>
@@ -446,6 +461,23 @@
                                                 </td>
                                             </tr>
                                         </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </asp:Panel>
+                        <asp:Panel runat="server" ID="pnlDataGridDataOptions">
+                            <table class="wrap-table-wizard">
+                                <tr>
+                                    <td style="font-weight: bold;">NOTE: All records matching the Account Number will be displayed in the grid</td>
+                                </tr>
+                                <tr>
+                                    <td>Master Feed Fields</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="height: 100px; overflow-x: hidden; overflow-y: scroll; font-weight:normal;">
+                                            <asp:CheckBoxList runat="server" ID="cblDataGridFields" Height="100px" Font-Bold="false" />
+                                        </div>
                                     </td>
                                 </tr>
                             </table>

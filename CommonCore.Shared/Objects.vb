@@ -885,11 +885,13 @@ Public Class SystemQuestion
         Me.DropDownSize = SystemQuestionDropDownSize.Auto
         Me.DropDownValues = New List(Of String)
         Me.Rows = 3
+        Me.Width = 250
         Me.DecimalDigits = 0
         Me.Visible = True
         Me.ThousandsSeparator = True
         Me.DisplayAsDate = False
         Me.UseSandboxDb = UseSandboxDb
+        Me.DataGridFields = New List(Of String)
     End Sub
     Public Sub New(ByVal id As Integer, ByVal UseSandboxDb As Boolean)
         Me.UseSandboxDb = UseSandboxDb
@@ -985,6 +987,7 @@ Public Class SystemQuestion
     Public DropDownSize As SystemQuestionDropDownSize
     ' memos
     Public Rows As Integer
+    Public Width As Integer
     ' numeric text boxes
     Public DecimalDigits As Integer
     Public ThousandsSeparator As Boolean
@@ -994,6 +997,7 @@ Public Class SystemQuestion
     Public MasterFeedField As String
     Public Rule As String
     Public DropDownValues As List(Of String)
+    Public DataGridFields As List(Of String)
 
     ' miscellaneous
     Public Required As Boolean

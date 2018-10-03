@@ -274,7 +274,7 @@ Public Class ModuleTab
 
             ' get a list of master fields to add
             For Each q As SystemQuestion In Me.ModuleView1.ModuleQuestions
-                If q.BindingType = Enums.SystemQuestionBindingType.MasterFeed Then
+                If q.BindingType = Enums.SystemQuestionBindingType.MasterFeed And q.Type <> Enums.SystemQuestionType.DataGrid Then
                     If Not lstFields.Contains(q.MasterFeedField) Then lstFields.Add(q.MasterFeedField)
                 End If
             Next
@@ -287,54 +287,84 @@ Public Class ModuleTab
                 End If
             Next
 
-            ' fix the fields into a string
-            Dim fields As String = ""
-            For Each f As String In lstFields
-                If fields = "" Then
-                    fields = "[" & f & "]"
-                Else fields &= ", [" & f & "]"
-                End If
+            ' these fields are for the boxes
+            If lstFields.Count > 0 Then
+                ' fix the fields into a string
+                Dim fields As String = ""
+                For Each f As String In lstFields
+                    If fields = "" Then
+                        fields = "[" & f & "]"
+                    Else fields &= ", [" & f & "]"
+                    End If
 
-                dt.Columns.Add(f)
+                    dt.Columns.Add(f)
+                Next
+
+                Dim cmd As New SqlClient.SqlCommand("procGetMasterFeedRecord", cn)
+                If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+                cmd.CommandType = CommandType.StoredProcedure
+                cmd.Parameters.AddWithValue("@CustAcctNum", Me.CustAcctNum)
+                cmd.Parameters.AddWithValue("@Fields", fields)
+                Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+                Do While rs.Read
+                    Dim r As DataRow = dt.NewRow
+                    For Each q As SystemQuestion In Me.ModuleView1.ModuleQuestions
+                        If q.BindingType = Enums.SystemQuestionBindingType.MasterFeed Then
+                            If q.DisplayAsDate And IsDate(rs(q.MasterFeedField)) Then
+                                r(q.MasterFeedField) = FormatDateTime(CDate(rs(q.MasterFeedField)), vbShortDate)
+                            Else r(q.MasterFeedField) = rs(q.MasterFeedField)
+                            End If
+                        ElseIf q.BindingType = Enums.SystemQuestionBindingType.Formula Then
+                            If q.Rule <> "" Then r(q.DataFieldName) = q.Rule
+                            Dim lstFormulaFields As List(Of String) = q.Rule.GetFieldNamesFromFormula
+                            For Each f As String In lstFormulaFields
+                                r(f) = rs(f)
+                            Next
+                        End If
+                    Next
+                    dt.Rows.Add(r)
+                Loop
+                rs.Close()
+                cmd.Cancel()
+
+                If dt.Rows.Count > 0 Then
+                    Me.lblTotalRecords.Text = dt.Rows.Count.ToString
+                    Me.pnlDataNav.Visible = (dt.Rows.Count > 1)
+
+                    Session("ImportDataTable" & Me.ModId) = dt
+
+                    lnkFirstRecord_Click(Nothing, New EventArgs)
+                Else
+                    'Me.litNoData.Text = "No Master Feed Data available for this customer.<br/>"
+                End If
+            End If
+
+            ' grids get bound to the grid binding stored procedure
+            For Each q As SystemQuestion In Me.ModuleView1.ModuleQuestions
+                If q.Type = Enums.SystemQuestionType.DataGrid Then
+                    ' build a list of fields for the stored procedure
+                    Dim gridFields As String = ""
+                    For Each s As String In q.DataGridFields
+                        If gridFields = "" Then gridFields = "[" & s & "]" Else gridFields &= ", [" & s & "]"
+                    Next
+
+                    Dim cmd As New SqlClient.SqlCommand("procDataGridBinding", cn)
+                    If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+                    cmd.CommandType = CommandType.StoredProcedure
+                    cmd.Parameters.AddWithValue("@AcctNum", Me.CustAcctNum)
+                    cmd.Parameters.AddWithValue("@Fields", gridFields)
+                    Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+                    Dim grd As RadGrid = CType(Me.FindInControl("grd_" & q.ID), RadGrid)
+                    Dim dtGridData As New DataTable
+                    dtGridData.Load(rs)
+                    rs.Close()
+                    cmd.Cancel()
+                    Session("grd_" & q.ID & "_data") = dtGridData
+                    grd.DataSource = Session("grd_" & q.ID & "_data")
+                    grd.DataBind()
+                End If
             Next
 
-            Dim cmd As New SqlClient.SqlCommand("procGetMasterFeedRecord", cn)
-            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-            cmd.CommandType = CommandType.StoredProcedure
-            cmd.Parameters.AddWithValue("@CustAcctNum", Me.CustAcctNum)
-            cmd.Parameters.AddWithValue("@Fields", fields)
-            Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
-            Do While rs.Read
-                Dim r As DataRow = dt.NewRow
-                For Each q As SystemQuestion In Me.ModuleView1.ModuleQuestions
-                    If q.BindingType = Enums.SystemQuestionBindingType.MasterFeed Then
-                        If q.DisplayAsDate And IsDate(rs(q.MasterFeedField)) Then
-                            r(q.MasterFeedField) = FormatDateTime(CDate(rs(q.MasterFeedField)), vbShortDate)
-                        Else r(q.MasterFeedField) = rs(q.MasterFeedField)
-                        End If
-                    ElseIf q.BindingType = Enums.SystemQuestionBindingType.Formula Then
-                        If q.Rule <> "" Then r(q.DataFieldName) = q.Rule
-                        Dim lstFormulaFields As List(Of String) = q.Rule.GetFieldNamesFromFormula
-                        For Each f As String In lstFormulaFields
-                            r(f) = rs(f)
-                        Next
-                    End If
-                Next
-                dt.Rows.Add(r)
-            Loop
-            rs.Close()
-            cmd.Cancel()
-
-            If dt.Rows.Count > 0 Then
-                Me.lblTotalRecords.Text = dt.Rows.Count.ToString
-                Me.pnlDataNav.Visible = (dt.Rows.Count > 1)
-
-                Session("ImportDataTable" & Me.ModId) = dt
-
-                lnkFirstRecord_Click(Nothing, New EventArgs)
-            Else
-                'Me.litNoData.Text = "No Master Feed Data available for this customer.<br/>"
-            End If
 
         Catch ex As Exception
             ex.WriteToErrorLog(New ErrorLogEntry(App.CurrentUser.ID, App.CurrentClient.ID, Enums.ProjectName.Builder, App.UseSandboxDb))

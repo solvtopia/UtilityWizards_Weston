@@ -132,42 +132,41 @@ Public Class App
         End Set
     End Property
 
-    Public Shared ReadOnly Property FieldInfoLookup As Hashtable
+    Public Shared ReadOnly Property FieldExtras As List(Of FieldExtras)
         Get
             If HttpContext.Current.Session("FieldInfoLookup") Is Nothing Then
-                Dim ht As New Hashtable
+                Dim lst As New List(Of FieldExtras)
 
                 Dim cn As New SqlClient.SqlConnection([Shared].Common.ConnectionString(App.UseSandboxDb))
 
-                Dim retVal As Boolean = True
-
                 Try
-                    Dim cmd As New SqlClient.SqlCommand("SELECT [Table], [Key], [Value], [Description] FROM [FieldInfoLookup] ORDER BY [Table], [Key]", cn)
+                    Dim cmd As New SqlClient.SqlCommand("select fe.FieldName, fe.DisplayText, c.Data_Type as DataType from _MasterFeedFieldExtras fe inner join information_schema.columns c on c.COLUMN_NAME = fe.FieldName ORDER BY fe.FieldName", cn)
                     If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
                     Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
                     Do While rs.Read
-                        Dim key As String = rs("Table").ToString & "|" & rs("Key").ToString
-                        Dim value As String = ""
-                        If Not IsDBNull(rs("Value")) Then value = rs("Value").ToString
-                        If Not IsDBNull(rs("Description")) Then value &= "|" & rs("Description").ToString Else value &= "|"
-                        If Not ht.ContainsKey(key) Then
-                            ht.Add(key, value)
+                        Dim fe As New FieldExtras
+                        fe.FieldName = rs("FieldName").ToString
+                        If Not IsDBNull(rs("DisplayText")) Then
+                            fe.DisplayText = rs("DisplayText").ToString
+                        Else fe.DisplayText = rs("FieldName").ToString
                         End If
+                        fe.DataType = rs("DataType").ToString
+
+                        lst.Add(fe)
                     Loop
                     cmd.Cancel()
                     rs.Close()
 
                 Catch ex As Exception
-                    retVal = False
                     ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, UseSandboxDb))
                 Finally
                     cn.Close()
                 End Try
 
-                HttpContext.Current.Session("FieldInfoLookup") = ht
+                HttpContext.Current.Session("FieldInfoLookup") = lst
             End If
 
-            Return CType(HttpContext.Current.Session("FieldInfoLookup"), Hashtable)
+            Return CType(HttpContext.Current.Session("FieldInfoLookup"), List(Of FieldExtras))
         End Get
     End Property
 End Class

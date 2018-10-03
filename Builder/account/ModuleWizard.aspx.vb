@@ -116,62 +116,61 @@ Public Class ModuleWizard
     End Sub
 
     Private Sub ShowOptions()
+        Dim selectedBindingType As String = Me.ddlBindingType.SelectedValue
+        Me.ddlBindingType.Items.Clear()
+
         If Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.TextBox) Or
                 Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.MemoField) Or
                 Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.NumericTextBox) Or
                 Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.CurrencyTextBox) Then
 
-            ' if the formula binding type isn't in the list, add it
-            Dim formulaBindingTypeIndex As Integer = -1
-            For x As Integer = 0 To Me.ddlBindingType.Items.Count - 1
-                Dim itm As ListItem = Me.ddlBindingType.Items(x)
-                If itm.Value = CStr(Enums.SystemQuestionBindingType.Formula) Then
-                    formulaBindingTypeIndex = x
-                    Exit For
-                End If
-            Next
-
-            If formulaBindingTypeIndex = -1 Then
-                Me.ddlBindingType.Items.Add(New ListItem("Formula", CStr(Enums.SystemQuestionBindingType.Formula)))
-            End If
+            ' text boxes can be bound to anything
+            Me.ddlBindingType.Items.Add(New ListItem("User Input", CStr(Enums.SystemQuestionBindingType.UserInput)))
+            Me.ddlBindingType.Items.Add(New ListItem("Master Feed", CStr(Enums.SystemQuestionBindingType.MasterFeed)))
+            Me.ddlBindingType.Items.Add(New ListItem("Formula", CStr(Enums.SystemQuestionBindingType.Formula)))
+        ElseIf Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.DataGrid) Then
+            ' data grid has to be bound to master feed fields
+            Me.ddlBindingType.Items.Add(New ListItem("Master Feed", CStr(Enums.SystemQuestionBindingType.MasterFeed)))
         Else
-
+            ' everything else gets user input or master feed
             ' if the formula binding type is in the list, remove it
-            Dim formulaBindingTypeIndex As Integer = -1
-            For x As Integer = 0 To Me.ddlBindingType.Items.Count - 1
-                Dim itm As ListItem = Me.ddlBindingType.Items(x)
-                If itm.Value = CStr(Enums.SystemQuestionBindingType.Formula) Then
-                    formulaBindingTypeIndex = x
-                    Exit For
-                End If
-            Next
-
-            If formulaBindingTypeIndex > -1 Then
-                Me.ddlBindingType.Items.RemoveAt(formulaBindingTypeIndex)
-            End If
+            Me.ddlBindingType.Items.Add(New ListItem("User Input", CStr(Enums.SystemQuestionBindingType.UserInput)))
+            Me.ddlBindingType.Items.Add(New ListItem("Master Feed", CStr(Enums.SystemQuestionBindingType.MasterFeed)))
         End If
+
+        Try
+            Me.ddlBindingType.SelectedValue = selectedBindingType
+        Catch ex As Exception
+            Me.ddlBindingType.SelectedIndex = 0
+        End Try
 
         ' appearance
         Me.pnlTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.TextBox) Or
-             Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.NumericTextBox) Or
-             Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.CurrencyTextBox))
+                                                 Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.NumericTextBox) Or
+                                                 Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.CurrencyTextBox))
         Me.pnlPlainTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.TextBox))
         Me.pnlMemoTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.MemoField))
         Me.pnlNumericTextBoxAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.NumericTextBox))
         Me.pnlDropDownAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.DropDownList))
+        Me.pnlDataGridAppearanceOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.DataGrid))
 
         ' data
-        Me.pnlMasterFeedField.Visible = (Me.ddlBindingType.SelectedValue = CStr(Enums.SystemQuestionBindingType.MasterFeed))
+        Me.pnlMasterFeedField.Visible = (Me.ddlBindingType.SelectedValue = CStr(Enums.SystemQuestionBindingType.MasterFeed) And
+                                         Me.ddlQuestionType.SelectedValue <> CStr(Enums.SystemQuestionType.DataGrid))
         Me.pnlNumericFormulaField.Visible = (Me.ddlBindingType.SelectedValue = CStr(Enums.SystemQuestionBindingType.Formula) And
-            (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.NumericTextBox) Or
-            Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.CurrencyTextBox)))
+                                            (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.NumericTextBox) Or
+                                            Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.CurrencyTextBox)))
         Me.pnlTextFormulaField.Visible = (Me.ddlBindingType.SelectedValue = CStr(Enums.SystemQuestionBindingType.Formula) And
-            (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.TextBox) Or
-            Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.MemoField)))
+                                         (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.TextBox) Or
+                                         Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.MemoField)))
         Me.pnlDropDownDataOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.DropDownList))
+        Me.pnlDataGridDataOptions.Visible = (Me.ddlQuestionType.SelectedValue = CStr(Enums.SystemQuestionType.DataGrid))
     End Sub
 
     Private Sub LoadLists()
+        Dim lstExtras As List(Of FieldExtras) = App.FieldExtras
+        lstExtras = lstExtras.OrderBy(Function(q) q.DisplayText).ToList
+
         Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
         Try
@@ -196,19 +195,18 @@ Public Class ModuleWizard
             Me.ddlMasterFeedFieldTextFormula.Items.Add(New ListItem(""))
             Me.ddlMasterFeedFieldNumericFormula.Items.Clear()
             Me.ddlMasterFeedFieldNumericFormula.Items.Add(New ListItem(""))
-            cmd = New SqlClient.SqlCommand("select COLUMN_NAME, DATA_TYPE from information_schema.columns where table_name like '_MasterFeed' ORDER BY COLUMN_NAME", cn)
-            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-            rs = cmd.ExecuteReader
-            Do While rs.Read
-                Me.ddlMasterFeedField.Items.Add(New ListItem(rs("COLUMN_NAME").ToString))
-                Me.ddlMasterFeedFieldTextFormula.Items.Add(New ListItem(rs("COLUMN_NAME").ToString))
-                Select Case rs("DATA_TYPE").ToString.ToLower
+            Me.cblDataGridFields.Items.Clear()
+            For Each fe As FieldExtras In lstExtras
+                If fe.FieldName.ToLower = "filedate" Then Continue For
+
+                Me.ddlMasterFeedField.Items.Add(New ListItem(fe.DisplayText, fe.FieldName))
+                Me.ddlMasterFeedFieldTextFormula.Items.Add(New ListItem(fe.DisplayText, fe.FieldName))
+                Me.cblDataGridFields.Items.Add(New ListItem(fe.DisplayText, fe.FieldName))
+                Select Case fe.DataType.ToLower
                     Case "float"
-                        Me.ddlMasterFeedFieldNumericFormula.Items.Add(New ListItem(rs("COLUMN_NAME").ToString))
+                        Me.ddlMasterFeedFieldNumericFormula.Items.Add(New ListItem(fe.DisplayText, fe.FieldName))
                 End Select
-            Loop
-            rs.Close()
-            cmd.Cancel()
+            Next
 
             Me.ddlIcon.Items.Clear()
             Dim files As List(Of String) = My.Computer.FileSystem.GetFiles(Server.MapPath("~/images/gallery/" & iconFolder & "/")).ToList
@@ -338,28 +336,38 @@ Public Class ModuleWizard
             ' memos
             If q.Type = Enums.SystemQuestionType.MemoField Then
                 q.Rows = Me.txtMemoRows.Text.ToInteger
+                q.Width = Me.txtMemoWidth.Text.ToInteger
             End If
             ' numeric text boxes
             If q.Type = Enums.SystemQuestionType.NumericTextBox Then
                 q.DecimalDigits = Me.txtNumbersAfterComma.Text.ToInteger
                 q.ThousandsSeparator = Me.chkThousandsSeparator.Checked
             End If
+            ' data grids
 
             ' data
             q.BindingType = CType(Me.ddlBindingType.SelectedValue, Enums.SystemQuestionBindingType)
-            If q.BindingType = Enums.SystemQuestionBindingType.MasterFeed Then
-                q.MasterFeedField = Me.ddlMasterFeedField.SelectedValue
-            ElseIf q.BindingType = Enums.SystemQuestionBindingType.Formula Then
-                If q.Type = Enums.SystemQuestionType.NumericTextBox Or q.Type = Enums.SystemQuestionType.CurrencyTextBox Then
-                    q.Rule = Me.txtNumericFormula.Text
-                ElseIf q.Type = Enums.SystemQuestionType.TextBox Or q.Type = Enums.SystemQuestionType.MemoField Then
-                    q.Rule = Me.txtTextFormula.Text
+            If q.Type <> Enums.SystemQuestionType.DataGrid Then
+                If q.BindingType = Enums.SystemQuestionBindingType.MasterFeed Then
+                    q.MasterFeedField = Me.ddlMasterFeedField.SelectedValue
+                ElseIf q.BindingType = Enums.SystemQuestionBindingType.Formula Then
+                    If q.Type = Enums.SystemQuestionType.NumericTextBox Or q.Type = Enums.SystemQuestionType.CurrencyTextBox Then
+                        q.Rule = Me.txtNumericFormula.Text
+                    ElseIf q.Type = Enums.SystemQuestionType.TextBox Or q.Type = Enums.SystemQuestionType.MemoField Then
+                        q.Rule = Me.txtTextFormula.Text
+                    End If
                 End If
             End If
 
             If q.Type = Enums.SystemQuestionType.DropDownList Then
                 For Each itm As ListItem In Me.lstValues.Items
                     If itm.Text.Trim <> "" Then q.DropDownValues.Add(itm.Text.Trim)
+                Next
+            End If
+
+            If q.Type = Enums.SystemQuestionType.DataGrid Then
+                For Each itm As ListItem In Me.cblDataGridFields.Items
+                    If itm.Selected Then q.DataGridFields.Add(itm.Value)
                 Next
             End If
 
@@ -434,9 +442,11 @@ Public Class ModuleWizard
         Me.ddlDropDownSize.SelectedValue = CStr(q.DropDownSize)
         ' memos
         Me.txtMemoRows.Text = q.Rows.ToString
+        Me.txtMemoWidth.Text = q.Width.ToString
         ' numeric text boxes
         Me.txtNumbersAfterComma.Text = q.DecimalDigits.ToString
         Me.chkThousandsSeparator.Checked = q.ThousandsSeparator
+        ' data grids
 
         Me.ShowOptions()
 
@@ -450,7 +460,15 @@ Public Class ModuleWizard
                 Me.txtTextFormula.Text = q.Rule
             End If
         End If
+
         Me.lstValues.Items.Clear()
+        For Each s As String In q.DropDownValues
+            Me.lstValues.Items.Add(New ListItem(s))
+        Next
+
+        For Each itm As ListItem In Me.cblDataGridFields.Items
+            itm.Selected = (q.DataGridFields.Contains(itm.Text))
+        Next
 
         ' miscellaneous
         Me.chkRequired.Checked = q.Required

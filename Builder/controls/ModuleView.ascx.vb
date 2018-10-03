@@ -157,19 +157,25 @@ Public Class ModuleView
 
                 Dim tc3 As New TableCell
                 tc3.Wrap = False
-                If Me.Mode = ControlMode.View Then
-                    tc3.Text = q.Question
-                ElseIf Me.Mode = ControlMode.Edit Then
-                    Dim displayText As String = q.Question
-                    If displayText = "" Then displayText = "(No Label)"
-                    Dim lnk As New LinkButton
-                    lnk.ID = "lnk_" & x
-                    lnk.Text = displayText
-                    tc3.Controls.Add(lnk)
-                    AddHandler lnk.Click, AddressOf lnkEdit_Click
+                If q.Type = Enums.SystemQuestionType.DataGrid Then
+                    ' grids in edit mode get a caption not a label
+                    tc3.Text = ""
+                Else
+                    ' everything else gets a label
+                    If Me.Mode = ControlMode.View Then
+                        tc3.Text = q.Question
+                    ElseIf Me.Mode = ControlMode.Edit Then
+                        Dim displayText As String = q.Question
+                        If displayText = "" Then displayText = "(No Label)"
+                        Dim lnk As New LinkButton
+                        lnk.ID = "lnk_" & If(Me.Mode = ControlMode.View, q.ID, x)
+                        lnk.Text = displayText
+                        tc3.Controls.Add(lnk)
+                        AddHandler lnk.Click, AddressOf lnkEdit_Click
+                    End If
+                    If Not q.Visible Then tc3.Font.Strikeout = True
+                    If q.Type = Enums.SystemQuestionType.MemoField Then tc3.VerticalAlign = VerticalAlign.Top
                 End If
-                If Not q.Visible Then tc3.Font.Strikeout = True
-                If q.Type = Enums.SystemQuestionType.MemoField Then tc3.VerticalAlign = VerticalAlign.Top
 
                 'Dim tr2 As New TableRow
                 Dim tc4 As New TableCell
@@ -177,14 +183,14 @@ Public Class ModuleView
                 Select Case q.Type
                     Case Enums.SystemQuestionType.CheckBox
                         Dim chk As New Controls.CheckBoxes.CheckBox
-                        chk.ID = "chk_" & x
+                        chk.ID = "chk_" & If(Me.Mode = ControlMode.View, q.ID, x)
                         chk.DataFieldName = q.DataFieldName
                         chk.ReadOnly = (q.BindingType <> Enums.SystemQuestionBindingType.UserInput)
                         tc4.Controls.Add(chk)
 
                     Case Enums.SystemQuestionType.DropDownList
                         Dim ddl As New Controls.DropDownLists.DropDownList
-                        ddl.ID = "ddl_" & x
+                        ddl.ID = "ddl_" & If(Me.Mode = ControlMode.View, q.ID, x)
                         If q.DropDownSize <> Enums.SystemQuestionDropDownSize.Auto Then
                             ddl.Width = New Unit(CStr(q.DropDownSize).ToInteger, UnitType.Pixel)
                         End If
@@ -199,9 +205,10 @@ Public Class ModuleView
                         tc4.Controls.Add(ddl)
 
                     Case Enums.SystemQuestionType.MemoField
+                        If q.Width = 0 Then q.Width = 250
                         Dim txt As New Controls.TextBoxes.TextBox
-                        txt.ID = "txt_" & x
-                        txt.Width = New Unit(250, UnitType.Pixel)
+                        txt.ID = "txt_" & If(Me.Mode = ControlMode.View, q.ID, x)
+                        txt.Width = New Unit(q.Width, UnitType.Pixel)
                         txt.Rows = q.Rows
                         txt.TextMode = InputMode.MultiLine
                         txt.DataFieldName = q.DataFieldName
@@ -210,7 +217,7 @@ Public Class ModuleView
 
                     Case Enums.SystemQuestionType.TextBox
                         Dim txt As New Controls.TextBoxes.TextBox
-                        txt.ID = "txt_" & x
+                        txt.ID = "txt_" & If(Me.Mode = ControlMode.View, q.ID, x)
                         txt.Width = New Unit(CStr(q.TextBoxSize).ToInteger, UnitType.Pixel)
                         txt.MaxLength = 255
                         txt.DataFieldName = q.DataFieldName
@@ -219,7 +226,7 @@ Public Class ModuleView
 
                     Case Enums.SystemQuestionType.NumericTextBox
                         Dim txt As New Controls.TextBoxes.NumericTextBox
-                        txt.ID = "txt_" & x
+                        txt.ID = "txt_" & If(Me.Mode = ControlMode.View, q.ID, x)
                         txt.Width = New Unit(100, UnitType.Pixel)
                         txt.NumberFormat.DecimalDigits = q.DecimalDigits
                         If Not q.ThousandsSeparator Then txt.NumberFormat.GroupSeparator = ""
@@ -229,18 +236,65 @@ Public Class ModuleView
 
                     Case Enums.SystemQuestionType.CurrencyTextBox
                         Dim txt As New Controls.TextBoxes.NumericTextBox
-                        txt.ID = "txt_" & x
+                        txt.ID = "txt_" & If(Me.Mode = ControlMode.View, q.ID, x)
                         txt.Width = New Unit(100, UnitType.Pixel)
                         txt.NumberFormat.DecimalDigits = 2
                         txt.Type = NumericType.Currency
                         txt.DataFieldName = q.DataFieldName
                         txt.ReadOnly = (q.BindingType <> Enums.SystemQuestionBindingType.UserInput)
                         tc4.Controls.Add(txt)
+
+                    Case Enums.SystemQuestionType.DataGrid
+                        Dim dt As New DataTable
+                        Dim dtValues(q.DataGridFields.Count - 1) As Object
+                        Dim grd As New RadGrid
+                        grd.ID = "grd_" & If(Me.Mode = ControlMode.View, q.ID, x)
+                        grd.Width = New Unit(100, UnitType.Percentage)
+                        grd.AllowPaging = True
+                        grd.AllowSorting = True
+                        grd.AutoGenerateColumns = False
+                        grd.MasterTableView.Caption = "<table width='100%'><tr><td style='text-align: center;'>" & q.Question & "</td></tr></table>"
+                        If Me.Mode = ControlMode.Edit Then
+                            ' add a link to edit with
+                            Dim displayText As String = q.Question
+                            If displayText = "" Then displayText = "(No Title)"
+                            Dim lnk As New LinkButton
+                            lnk.ID = "lnk_" & If(Me.Mode = ControlMode.View, q.ID, x)
+                            lnk.Text = displayText
+                            tc4.Controls.Add(lnk)
+                            AddHandler lnk.Click, AddressOf lnkEdit_Click
+                            tc4.Controls.Add(New Literal With {.ID = "lit_" & If(Me.Mode = ControlMode.View, q.ID, x), .Text = "<br/>"})
+                        End If
+                        grd.MasterTableView.NoMasterRecordsText = "No records to display in this view"
+                        grd.MasterTableView.ShowHeadersWhenNoRecords = True
+                        grd.Columns.Clear()
+                        AddHandler grd.NeedDataSource, AddressOf grd_NeedDataSource
+                        Dim y As Integer = 0
+                        For Each s As String In q.DataGridFields
+                            Dim fe As FieldExtras = App.FieldExtras.FindFieldExtras(s)
+
+                            Dim col As New GridBoundColumn()
+                            grd.Columns.Add(col)
+                            col.DataField = fe.FieldName
+                            col.HeaderText = fe.DisplayText
+
+                            dt.Columns.Add(fe.FieldName)
+                            dtValues(y) = "&nbsp;"
+                        Next
+                        dt.Rows.Add(dtValues)
+                        If Me.Mode = ControlMode.Edit Then
+                            Session("grd_" & If(Me.Mode = ControlMode.View, q.ID, x) & "_data") = dt
+                            grd.DataSource = Session("grd_" & If(Me.Mode = ControlMode.View, q.ID, x) & "_data")
+                            grd.DataBind()
+                        End If
+                        tc4.Controls.Add(grd)
                 End Select
                 tc4.VerticalAlign = VerticalAlign.Top
 
                 If (Me.Mode = ControlMode.View And q.Visible) Or (Me.Mode = ControlMode.Edit) Then
+                    'If q.Type <> Enums.SystemQuestionType.DataGrid Then
                     tr1.Cells.Add(tc3)
+                    'End If
                     tr1.Cells.Add(tc4)
                 End If
 
@@ -324,5 +378,10 @@ Public Class ModuleView
         Dim qId As Integer = lnk.ID.Split("_"c)(1).ToInteger
 
         RaiseEvent EditQuestion(Me.ModuleQuestions.Item(qId), qId)
+    End Sub
+
+    Private Sub grd_NeedDataSource(sender As Object, e As EventArgs)
+        Dim grd As RadGrid = CType(sender, RadGrid)
+        grd.DataSource = Session(grd.ID & "_data")
     End Sub
 End Class
