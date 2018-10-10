@@ -2046,3 +2046,12 @@ Public Structure CommonQuestions
                                                                                                   Enums.SystemQuestionType.MemoField,
                                                                                                   Enums.SystemQuestionType.DropDownList})
 End Structure
+
+Public Structure FieldExtras
+    Public MasterFeedFieldName As String
+    Public DisplayText As String
+    Public ImportTableName As String
+    Public ImportFieldName As String
+    Public Description As String
+    Public DataType As String
+End Structure

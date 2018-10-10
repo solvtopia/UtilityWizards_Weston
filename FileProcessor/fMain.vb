@@ -5,13 +5,20 @@ Imports System.Collections.ObjectModel
 Public Class fMain
 
     Private Sub fMain_Load(sender As Object, e As EventArgs) Handles Me.Load
+        Me.txtLog.Text = ""
         Me.lblProgress.Text = ""
         Me.lblStatus.Text = ""
+        Me.lblStatus2.Text = ""
         Me.tmrTimer.Enabled = True
     End Sub
 
     Private Sub btnProcess_Click(sender As Object, e As EventArgs) Handles btnProcess.Click
         Me.tmrTimer.Enabled = False
+
+        Me.txtLog.Text = ""
+        Me.lblProgress.Text = ""
+        Me.lblStatus.Text = ""
+        Me.lblStatus2.Text = ""
 
         Me.ProcessS3Files()
 
@@ -21,127 +28,117 @@ Public Class fMain
     Private Sub ProcessS3Files()
         Dim aws As New AWSHelper
 
+        Me.lblStatus.Text = "Downloading Files ..."
+        Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus.Text & vbCrLf)
+        My.Application.DoEvents()
+
         ' make sure the temp folder exists
-        Dim tmpS3Path As String = My.Computer.FileSystem.CombinePath(My.Application.Info.DirectoryPath, "S3Temp")
-        If Not My.Computer.FileSystem.DirectoryExists(tmpS3Path) Then My.Computer.FileSystem.CreateDirectory(tmpS3Path)
+        Dim tmpS3Path As String = "C:\Users\James\Google Drive\Projects\UtilityWizards_Weston\FileProcessor\S3Temp"
+        'Dim tmpS3Path As String = My.Computer.FileSystem.CombinePath(My.Application.Info.DirectoryPath, "S3Temp")
+        'If Not My.Computer.FileSystem.DirectoryExists(tmpS3Path) Then My.Computer.FileSystem.CreateDirectory(tmpS3Path)
 
         ' delete any files in the folder
-        For Each deleteFile In Directory.GetFiles(tmpS3Path, "*.*", SearchOption.TopDirectoryOnly)
-            File.Delete(deleteFile)
-        Next
+        'For Each deleteFile In Directory.GetFiles(tmpS3Path, "*.txt", SearchOption.TopDirectoryOnly)
+        '    File.Delete(deleteFile)
+        'Next
 
         ' download the files from the S3 bucket to the temp folder
-        Dim lstS3Files As ObservableCollection(Of String) = aws.ListingFiles()
-        For Each f As String In lstS3Files
-            aws.DownloadFile("", f, tmpS3Path)
+        'Dim lstS3Files As ObservableCollection(Of String) = aws.ListingFiles()
+        'For Each f As String In lstS3Files
+        '    aws.DownloadFile("", f, tmpS3Path)
+        'Next
+
+        Dim dir As List(Of FileInfo) = SearchDir(tmpS3Path, "*.txt", Enums.FileSort.Name)
+
+        Me.lblStatus.Text = "Found " & dir.Count & " Files To Process ..."
+        Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus.Text & vbCrLf & vbCrLf)
+        My.Application.DoEvents()
+
+        For Each f As FileInfo In dir
+            Dim tblName As String = ""
+
+            ' these tables are in the master feed view
+            Select Case True
+                Case f.Name.ToLower.Contains("_bkrdaily_") : tblName = "_import_BKRDaily"
+                Case f.Name.ToLower.Contains("_crwdaily_") : tblName = "_import_CRWDaily"
+                Case f.Name.ToLower.Contains("_diligence_") : tblName = "_import_Diligence"
+                Case f.Name.ToLower.Contains("_fcldaily_") : tblName = "_import_FCLDaily"
+                Case f.Name.ToLower.Contains("_holddata_") : tblName = "_import_HoldData"
+                Case f.Name.ToLower.Contains("_lmmdaily_") : tblName = "_import_LMMDaily"
+                Case f.Name.ToLower.Contains("_lps_") : tblName = "_import_LPS"
+                Case f.Name.ToLower.Contains("_propinsp_") : tblName = "_import_PropInsp"
+                Case f.Name.ToLower.Contains("_protection_") : tblName = "_import_Protection"
+                Case f.Name.ToLower.Contains("_reodaily_") : tblName = "_import_REODaily"
+                Case f.Name.ToLower.Contains("_payplans_") : tblName = "_import_PayPlans"
+                Case f.Name.ToLower.Contains("_standard_") : tblName = "_import_Standard"
+                Case f.Name.ToLower.Contains("_contacts_") : tblName = "_import_Contacts"
+                Case f.Name.ToLower.Contains("_wffeed_") : tblName = "_import_WF_Feed"
+            End Select
+
+            ' these tables are additional data received
+            Select Case True
+                Case f.Name.ToLower.Contains("_bpodaily_") : tblName = "_import_BPODaily"
+                Case f.Name.ToLower.Contains("_cashxxxx_") : tblName = "_import_Cashxxxx"
+                Case f.Name.ToLower.Contains("_ccaraddl_") : tblName = "_import_CCARAddl"
+                Case f.Name.ToLower.Contains("_comments_") : tblName = "_import_Comments"
+                Case f.Name.ToLower.Contains("_escrowxx_") : tblName = "_import_Escrowxx"
+                Case f.Name.ToLower.Contains("_hampdata_") : tblName = "_import_HampData"
+                Case f.Name.ToLower.Contains("_liqdaily_") : tblName = "_import_LiqDaily"
+                Case f.Name.ToLower.Contains("_moddaily_") : tblName = "_import_ModDaily"
+                Case f.Name.ToLower.Contains("_transact_") : tblName = "_import_Transact"
+            End Select
+
+            If tblName <> "" Then
+                Dim hasBeenProcessed As Boolean = False
+
+                Me.lblStatus.Text = "Processing " & f.Name & " into [" & tblName & "] " & If(Me.chkUseSandboxDb.Checked, "on the Sandbox", "") & " ..."
+                Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus.Text & vbCrLf)
+                My.Application.DoEvents()
+
+                ' get the file as a datatable
+                Dim tbl As DataTable = Me.ProcessFileToTable(f.FullName, tblName)
+                Threading.Thread.Sleep(1000)
+                hasBeenProcessed = Me.ImportTable(tbl, tblName)
+
+                If tblName.ToLower = "_import_standard" And hasBeenProcessed Then
+                    Me.lblStatus.Text = "Processing Board Records From [" & tblName & "] Table ..."
+                    Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus.Text & vbCrLf)
+                    My.Application.DoEvents()
+
+                    ' if this is the standard table we need to include board records
+                    Threading.Thread.Sleep(1000)
+                    hasBeenProcessed = Me.ImportTable(tbl, "_import_Board")
+                End If
+
+                If hasBeenProcessed Then
+                    ' rename the file as processed so we don't import the same file again
+                    My.Computer.FileSystem.RenameFile(f.FullName, f.Name & ".processed")
+                    Me.txtLog.AppendText(Now.ToString & ": " & "Finished Processing " & f.Name & vbCrLf & vbCrLf)
+                    My.Application.DoEvents()
+
+                    Me.txtLog.AppendText(Now.ToString & ": " & "Waiting 10 Seconds ..." & vbCrLf & vbCrLf)
+                    My.Application.DoEvents()
+
+                    Threading.Thread.Sleep(10000)
+                End If
+            End If
         Next
 
+        Me.lblStatus.Text = "Finished Processing Files."
+        Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus.Text & vbCrLf)
+        Me.lblStatus2.Text = ""
+        Me.lblProgress.Text = ""
 
-    End Sub
 
-    Private Sub ProcessSouthernImport()
-        Dim cn As New SqlClient.SqlConnection(ConnectionString(Me.chkUseSandboxDb.Checked))
+        Dim strFile As String = "Processor_" & Now.Date.ToString("MM/dd/yyyy").Replace("/", "") & ".log"
+        'Dim fileExists As Boolean = File.Exists(My.Computer.FileSystem.CombinePath(tmpS3Path, strFile))
+        'Using sw As New StreamWriter(File.Open(My.Computer.FileSystem.CombinePath(tmpS3Path, strFile), FileMode.OpenOrCreate))
+        '    sw.WriteLine(Me.txtLog.Text)
+        'End Using
+        My.Computer.FileSystem.WriteAllText(My.Computer.FileSystem.CombinePath(tmpS3Path, strFile), Me.txtLog.Text, True)
 
-        Try
-            Dim files_tmp As String = "C:\inetpub\weston.utilitywizards.com\wwwroot\import\"
-            Dim fPath As String = My.Computer.FileSystem.CombinePath(files_tmp, "accountdata.txt")
+        My.Application.DoEvents()
 
-            'If My.Computer.FileSystem.FileExists(fPath) Then My.Computer.FileSystem.DeleteFile(fPath)
-            'My.Computer.Network.DownloadFile("https://weston.utilitywizards.com/import/accountdata.txt", fPath)
-
-            Dim cmd As New SqlClient.SqlCommand
-
-            ' turn the file into a table
-            Me.lblStatus.Text = "Processing File to Table ..."
-            My.Application.DoEvents()
-
-            Dim tbl As DataTable = Me.ProcessFileToTable(fPath, "Customers_New")
-
-            ' add the records to the database
-            If Me.chkCustomers.Checked Then
-                Me.lblStatus.Text = "Saving Customers to Database ..."
-                My.Application.DoEvents()
-
-                cmd = New SqlClient.SqlCommand("TRUNCATE TABLE [Customers_New]", cn)
-                If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-                cmd.ExecuteNonQuery()
-                cmd.Cancel()
-
-                Using bulkCopy As SqlClient.SqlBulkCopy = New SqlClient.SqlBulkCopy(cn)
-                    bulkCopy.BulkCopyTimeout = 2000
-                    bulkCopy.DestinationTableName = "Customers_New"
-                    Try
-                        ' Write from the source to the destination.
-                        bulkCopy.WriteToServer(tbl)
-
-                    Catch ex As Exception
-                        Console.WriteLine(ex.Message)
-                    End Try
-                End Using
-            End If
-
-            If Me.rbAllDupllicates.Checked Or (Me.chkCustomers.Checked And Me.rbSelectedDuplicates.Checked) Then
-                Me.lblStatus.Text = "Removing Duplicate Customer Records ..."
-                My.Application.DoEvents()
-                Me.FixDuplicates("customers_new")
-            End If
-
-            If Me.chkLocations.Checked Then
-                Me.lblStatus.Text = "Saving Locations to Database ..."
-                My.Application.DoEvents()
-
-                cmd = New SqlClient.SqlCommand("TRUNCATE TABLE [Locations_New]", cn)
-                If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-                cmd.ExecuteNonQuery()
-                cmd.Cancel()
-
-                ' remove the clientid field
-                For x As Integer = 0 To tbl.Columns.Count - 1
-                    If tbl.Columns(x).ColumnName.ToLower = "clientid" Then
-                        tbl.Columns.RemoveAt(x)
-                        Exit For
-                    End If
-                Next
-
-                Using bulkCopy As SqlClient.SqlBulkCopy = New SqlClient.SqlBulkCopy(cn)
-                    ' map the columns for this table from the file table
-                    For Each c As DataColumn In tbl.Columns
-                        bulkCopy.ColumnMappings.Add(c.ColumnName, c.ColumnName)
-                    Next
-
-                    bulkCopy.BulkCopyTimeout = 2000
-                    bulkCopy.DestinationTableName = "Locations_New"
-                    Try
-                        ' Write from the source to the destination.
-                        bulkCopy.WriteToServer(tbl)
-
-                    Catch ex As Exception
-                        Console.WriteLine(ex.Message)
-                    End Try
-                End Using
-            End If
-
-            If Me.rbAllDupllicates.Checked Or (Me.chkLocations.Checked And Me.rbSelectedDuplicates.Checked) Then
-                Me.lblStatus.Text = "Removing Duplicate Location Records ..."
-                My.Application.DoEvents()
-                Me.FixDuplicates("locations_new")
-            End If
-
-            ' finish everything up
-            Me.lblStatus.Text = "Cleaning Up ..."
-            My.Application.DoEvents()
-
-            My.Computer.FileSystem.RenameFile(fPath, "accountdata." & Now.ToString.Replace("/", "").Replace(":", "").Replace("AM", "").Replace("PM", "").Replace(" ", "") & ".txt.processed")
-
-            Me.lblStatus.Text = "Finished!"
-            Me.lblProgress.Text = ""
-            My.Application.DoEvents()
-
-        Catch ex As Exception
-            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.FileProcessor, Me.chkUseSandboxDb.Checked))
-        Finally
-            cn.Close()
-        End Try
     End Sub
 
     Private Function ProcessFileToTable(ByVal fPath As String, ByVal tblName As String) As DataTable
@@ -149,68 +146,142 @@ Public Class fMain
         Dim cn As New SqlClient.SqlConnection(ConnectionString(Me.chkUseSandboxDb.Checked))
 
         Try
+            Me.lblStatus2.Text = "Loading [" & tblName & "] Table Structure ..."
+            Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus2.Text & vbCrLf)
+            My.Application.DoEvents()
+
             ' build a table to store the records in
-            Dim cmd As New SqlClient.SqlCommand("SELECT * FROM [" & tblName & "]", cn)
+            Dim cmd As New SqlClient.SqlCommand("select COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH from information_schema.columns where TABLE_NAME like '" & tblName & "'", cn)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-            Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader(CommandBehavior.SchemaOnly)
-            For x As Integer = 0 To rs.FieldCount - 1
+            Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader()
+            Do While rs.Read
                 Dim col As New DataColumn
-                col.ColumnName = rs.GetName(x)
-                col.DataType = rs.GetProviderSpecificFieldType(x)
+                col.ColumnName = rs("COLUMN_NAME").ToString
+                Select Case rs("DATA_TYPE").ToString.ToLower
+                    Case "date"
+                        col.DataType = GetType(Date)
+                    Case "datetime"
+                        col.DataType = GetType(SqlTypes.SqlDateTime)
+                    Case "float"
+                        col.DataType = GetType(SqlTypes.SqlDouble)
+                    Case "int"
+                        col.DataType = GetType(SqlTypes.SqlInt32)
+                    Case "bigint"
+                        col.DataType = GetType(SqlTypes.SqlInt64)
+                    Case "bit"
+                        col.DataType = GetType(SqlTypes.SqlBoolean)
+                    Case Else
+                        col.DataType = GetType(SqlTypes.SqlString)
+                        Dim iMaxLength As Integer = 0
+                        If rs("CHARACTER_MAXIMUM_LENGTH").ToString.ToInteger < 0 Then
+                            iMaxLength = 50000
+                        Else iMaxLength = rs("CHARACTER_MAXIMUM_LENGTH").ToString.ToInteger
+                        End If
+                        col.MaxLength = iMaxLength
+                End Select
 
                 retVal.Columns.Add(col)
-            Next
+            Loop
             rs.Close()
             cmd.Cancel()
 
+            Me.lblStatus2.Text = "Processing Text Records ..."
+            Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus2.Text & vbCrLf)
+            My.Application.DoEvents()
+
             ' first open the file and read in all the records
-            Dim htFields As New Hashtable
             If My.Computer.FileSystem.FileExists(fPath) Then
+                Dim processTable As Boolean = False
+                Dim fInfo As New FileInfo(fPath)
+                Dim fNameParts As List(Of String) = fInfo.Name.Replace(".txt", "").Split("_"c).ToList
+                Dim filePart1 As String = fNameParts(0)
+                Dim fileDate As Date = Date.Parse(fNameParts(2).Substring(0, 4) & "-" & fNameParts(2).Substring(4, 2) & "-" & fNameParts(2).Substring(6))
+                Dim fileName As String = fInfo.Name
+
                 Dim lineCount As Integer = File.ReadAllLines(fPath).Length
                 Me.pbrProgress.Value = 0
                 Me.pbrProgress.Maximum = lineCount
 
+                Dim header As New List(Of String)
+                Dim lineDelimiter As String = vbTab
+                Dim acctNum As String = ""
+
                 Dim rdr As New System.IO.StreamReader(fPath)
                 Do While rdr.Peek() <> -1
                     Dim s As String = rdr.ReadLine
-                    Dim acctNum As String = ""
 
-                    If Not IsNumeric(s.Substring(0, 3)) Then
-                        ' this is the header line so read all the fields and create new items in the hashtable
-                        Dim z As Integer = 0
-                        For Each f As String In s.Split("|"c)
-                            htFields.Add(f, z)
-                            z += 1
-                            My.Application.DoEvents()
-                        Next
+                    If header.Count = 0 Then
+                        ' first row is the header
+                        ' try tab delimited first, then pipe, semicolon, comma
+                        header = s.Split(lineDelimiter).ToList
+                        If header.Count = 1 Then
+                            ' if tabs didn't work, try a pipe
+                            lineDelimiter = "|"
+                            header = s.Split(lineDelimiter).ToList
+                        End If
+                        If header.Count = 1 Then
+                            ' if pipe didn't work, try a comma
+                            lineDelimiter = ";"
+                            header = s.Split(lineDelimiter).ToList
+                        End If
+                        If header.Count = 1 Then
+                            ' if pipe didn't work, try a comma
+                            lineDelimiter = ","
+                            header = s.Split(lineDelimiter).ToList
+                        End If
+                        processTable = (header.Count > 1)
                     Else
-                        ' this is a data line so read all the values and assign them to their fields
-                        Dim rec As List(Of String) = s.Split("|"c).ToList
-                        Dim r As DataRow = retVal.NewRow
-                        For Each key As String In htFields.Keys
-                            Select Case True
-                                Case r(key).GetType Is GetType(SqlTypes.SqlInt32)
-                                    r(key) = rec(htFields(key)).ToInteger
-                                Case r(key).GetType Is GetType(SqlTypes.SqlDateTime)
-                                    r(key) = rec(htFields(key)).ToDate("1/1/1900")
-                                Case r(key).GetType Is GetType(SqlTypes.SqlBoolean)
-                                    r(key) = rec(htFields(key)).ToBoolean
-                                Case r(key).GetType Is GetType(SqlTypes.SqlDouble)
-                                    r(key) = rec(htFields(key)).ToDouble
-                                Case Else
-                                    r(key) = rec(htFields(key)).ToString
-                            End Select
-                            My.Application.DoEvents()
-                        Next
+                        If processTable Then
+                            ' this is a data line so read all the values and assign them to their fields
+                            Dim rec As List(Of String) = s.Split(lineDelimiter).ToList
+                            Dim r As DataRow = retVal.NewRow
+                            For x As Integer = 0 To header.Count - 1
+                                If header(x) <> "" Then
+                                    If r.Table.Columns.Contains(header(x)) Then
+                                        If rec(x) = "" Then
+                                            r(header(x)) = DBNull.Value
+                                        Else
+                                            Select Case True
+                                                Case r(header(x)).GetType Is GetType(Date)
+                                                    r(header(x)) = rec(x).ToDate("1/1/1900")
+                                                Case r(header(x)).GetType Is GetType(SqlTypes.SqlDateTime)
+                                                    r(header(x)) = rec(x).ToDate("1/1/1900")
+                                                Case r(header(x)).GetType Is GetType(SqlTypes.SqlDouble)
+                                                    r(header(x)) = rec(x).ToDouble
+                                                Case r(header(x)).GetType Is GetType(SqlTypes.SqlInt32)
+                                                    r(header(x)) = rec(x).ToInteger
+                                                Case r(header(x)).GetType Is GetType(SqlTypes.SqlInt64)
+                                                    r(header(x)) = rec(x).ToLongInteger
+                                                Case r(header(x)).GetType Is GetType(SqlTypes.SqlBoolean)
+                                                    r(header(x)) = rec(x).ToBoolean
+                                                Case Else
+                                                    Dim value As String = rec(x).ToString
+                                                    Dim maxLength As Integer = r.Table.Columns.Item(header(x)).MaxLength
+                                                    If maxLength <= 0 Then Dim z As String = ""
+                                                    If value.Length > maxLength Then
+                                                        Me.txtLog.AppendText(Now.ToString & ": " & "Value Truncated for Column [" & tblName & "].[" & header(x) & "] from " & value.Length & " Characters to " & maxLength & " Characters" & vbCrLf)
+                                                        My.Application.DoEvents()
+                                                        value = value.Substring(0, maxLength)
+                                                    End If
+                                                    r(header(x)) = value
+                                            End Select
+                                        End If
+                                    Else
+                                        If Not Me.txtLog.Text.Contains("Column [" & tblName & "].[" & header(x) & "] Does Not Exist!") Then
+                                            Me.txtLog.AppendText(Now.ToString & ": " & "Column [" & tblName & "].[" & header(x) & "] Does Not Exist!" & vbCrLf)
+                                        End If
+                                        My.Application.DoEvents()
+                                        End If
+                                    End If
+                            Next
 
-                        ' add the record to the "table" and reset the record hashtable
-                        r("ID") = Me.pbrProgress.Value
-                        If tblName.ToLower = "customers_new" Then r("ClientID") = 4
-                        r("dtInserted") = Now
-                        r("dtUpdated") = Now
-                        r("Active") = True
-                        retVal.Rows.Add(r)
-                        retVal.AcceptChanges()
+                            ' add the record to the table
+                            r("FILEPART1") = filePart1
+                            r("FILEDATE") = fileDate
+                            r("FILENAME") = fileName
+                            retVal.Rows.Add(r)
+                            retVal.AcceptChanges()
+                        End If
                     End If
 
                     Me.pbrProgress.Value += 1
@@ -229,165 +300,118 @@ Public Class fMain
         Return retVal
     End Function
 
-    Private Sub FixDuplicates(ByVal tbl As String)
-        Dim fld As String = If(tbl.ToLower = "customers_new", "AccountNum", "LocationNum")
+    Private Function ImportTable(ByVal tbl As DataTable, ByVal tblName As String) As Boolean
+        Dim retVal As Boolean = True
 
         Dim cn As New SqlClient.SqlConnection(ConnectionString(Me.chkUseSandboxDb.Checked))
-        Dim cn1 As New SqlClient.SqlConnection(ConnectionString(Me.chkUseSandboxDb.Checked))
 
         Try
-            Dim sql As String = ""
-            Dim fieldNames As String = ""
-            Dim firstRun As Boolean = True
+            If (Me.rbTruncate.Checked Or tblName.ToLower = "_import_standard") And tbl.Rows.Count > 0 Then
+                ' if we are set to truncate, or working with the standard table and we have rows in the import table 
+                If tblName.ToLower <> "_import_board" Then
+                    Me.lblStatus2.Text = "Truncating Table [" & tblName & "] ..."
+                    Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus2.Text & vbCrLf)
+                    My.Application.DoEvents()
 
-            ' setup the progress bar
-            Dim cmd1 As New SqlClient.SqlCommand("SELECT COUNT(DISTINCT [" & fld & "]) AS [TotalCount] FROM [" & tbl & "];", cn1)
-            If cmd1.Connection.State = ConnectionState.Closed Then cmd1.Connection.Open()
-            Dim rs1 As SqlClient.SqlDataReader = cmd1.ExecuteReader
-            If rs1.Read Then
-                Me.pbrProgress.Value = 0
-                Me.pbrProgress.Maximum = rs1("TotalCount").ToString.ToInteger
+                    ' never truncate the board table
+                    Dim cmd As New SqlClient.SqlCommand("TRUNCATE TABLE [" & tblName & "]", cn)
+                    If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+                    cmd.CommandTimeout = 0
+                    cmd.ExecuteNonQuery()
+                End If
             End If
 
-            cmd1 = New SqlClient.SqlCommand("SELECT DISTINCT [" & fld & "] FROM [" & tbl & "];", cn1)
-            If cmd1.Connection.State = ConnectionState.Closed Then cmd1.Connection.Open()
-            rs1 = cmd1.ExecuteReader
-            Do While rs1.Read
-                Dim cmd As SqlClient.SqlCommand
-                Dim rs As SqlClient.SqlDataReader
-                Dim fieldList As New Hashtable
-                sql = ""
+            If tblName.ToLower = "_import_board" Then
+                Me.lblStatus2.Text = "Searching For New Board Records ..."
+                Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus2.Text & vbCrLf)
+                My.Application.DoEvents()
 
-                ' make sure we only have 1 record for the customer
-                Dim recordIds As New List(Of Integer)
-                sql = "SELECT * FROM [" & tbl & "] WHERE [" & fld & "] LIKE '" & rs1(fld).ToString & "' ORDER BY [ID];"
-                cmd = New SqlClient.SqlCommand(sql, cn)
+                ' board table only gets new records for accounts that are in the standard but not already
+                ' in the board
+
+                Dim lstNewAccounts As New List(Of String)
+
+                ' get a list of accounts that exist in standard but not in board
+                Dim cmd As New SqlClient.SqlCommand("SELECT t1.[ACCOUNT_NUMBER] FROM [_import_Standard] t1 LEFT JOIN [_import_Board] t2 ON t2.[ACCOUNT_NUMBER] = t1.[ACCOUNT_NUMBER] WHERE t2.[ACCOUNT_NUMBER] IS NULL", cn)
                 If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-                rs = cmd.ExecuteReader
-
+                Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
                 Do While rs.Read
-                    If Not recordIds.Contains(rs("ID").ToString.ToInteger) Then recordIds.Add(rs("ID").ToString.ToInteger)
-
-                    ' get a list of all the fields in the customer table
-                    For x As Integer = 0 To rs.FieldCount - 1
-                        If Not fieldList.Contains(rs.GetName(x)) Then fieldList.Add(rs.GetName(x), Nothing)
-                        If firstRun Then
-                            If rs.GetName(x).ToLower <> "addlvalues" And rs.GetName(x).ToLower <> "id" And rs.GetName(x).ToLower <> "locationnum" And rs.GetName(x).ToLower <> "searchaddress" Then
-                                If fieldNames = "" Then fieldNames = "[" & rs.GetName(x) & "]" Else fieldNames &= ", [" & rs.GetName(x) & "]"
-                            End If
-                        End If
-
-                        My.Application.DoEvents()
-                    Next
-
+                    If Not lstNewAccounts.Contains(rs("ACCOUNT_NUMBER").ToString) Then lstNewAccounts.Add(rs("ACCOUNT_NUMBER").ToString)
                     My.Application.DoEvents()
                 Loop
                 cmd.Cancel()
                 rs.Close()
 
-                ' now combine the records into a single record if we have more than 1
-                If recordIds.Count > 1 Then
-                    cmd = New SqlClient.SqlCommand(sql, cn)
-                    If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-                    rs = cmd.ExecuteReader
-                    Do While rs.Read
-                        For x As Integer = 0 To fieldList.Keys.Count - 1
-                            Dim f As String = fieldList.Keys(x).ToString
+                ' remove all the rows from the table that aren't in the list of new accounts
+                Dim tblNew As DataTable = tbl.Copy
+                tblNew.Rows.Clear()
+                For Each r As DataRow In tbl.Rows
+                    If lstNewAccounts.Contains(r("ACCOUNT_NUMBER").ToString) Then
+                        tblNew.ImportRow(r)
+                    End If
+                    My.Application.DoEvents()
+                Next
 
-                            ' only update the record if the value isn't null
-                            If Not IsDBNull(rs(f)) Then
-                                ' make sure the fieldlist value is different
-                                If fieldList(f) Is Nothing OrElse fieldList(f).ToString.ToLower <> rs(f).ToString.ToLower Then
-                                    If rs(f).ToString.ToLower <> "null" Then
-                                        fieldList(f) = rs(f)
-                                    End If
-                                End If
-                            End If
+                tbl = tblNew.Copy
+            End If
 
-                            My.Application.DoEvents()
-                        Next
-
-                        My.Application.DoEvents()
-                    Loop
-                    cmd.Cancel()
-                    rs.Close()
-
-                    ' update the customers and locations table
-                    Dim fields As String = ""
-                    For x As Integer = 0 To fieldList.Keys.Count - 1
-                        Dim f As String = fieldList.Keys(x).ToString
-
-                        If f.ToLower <> "id" And f.ToLower <> "searchaddress" And f.ToLower <> "locationnum" Then
-                            If fieldList(f) Is Nothing Then
-                                ' null values
-                                If fields = "" Then fields = "[" & f & "] = NULL" Else fields &= ", [" & f & "] = NULL"
-
-                            ElseIf f.ToLower = "dtupdated" Then
-                                ' date updated
-                                If fields = "" Then fields = "[" & f & "] = '" & fieldList(f).ToString & "'" Else fields &= ", [" & f & "] = '" & fieldList(f).ToString & "'"
-
-                            ElseIf f.ToLower = "active" Then
-                                ' active flag
-                                If fields = "" Then fields = "[" & f & "] = 1" Else fields &= ", [" & f & "] = 1"
-
-                            ElseIf f.ToLower = "zipcode" Then
-                                ' zip codes are strings
-                                If fields = "" Then fields = "[" & f & "] = '" & fieldList(f).ToString.Trim & "'" Else fields &= ", [" & f & "] = '" & fieldList(f).ToString.Trim & "'"
-
-                            ElseIf f.ToLower.Contains("serial00") Then
-                                ' trash can serial numbers are strings
-                                If fields = "" Then fields = "[" & f & "] = '" & fieldList(f).ToString & "'" Else fields &= ", [" & f & "] = '" & fieldList(f).ToString & "'"
-
-                            ElseIf IsNumeric(fieldList(f)) Then
-                                ' numbers and bits
-                                If fields = "" Then fields = "[" & f & "] = " & fieldList(f).ToString Else fields &= ", [" & f & "] = " & fieldList(f).ToString
-
-                            ElseIf IsDate(fieldList(f)) Then
-                                ' dates
-                                If fields = "" Then fields = "[" & f & "] = '" & fieldList(f).ToString & "'" Else fields &= ", [" & f & "] = '" & fieldList(f).ToString & "'"
-
-                            End If
-                        End If
-
-                        My.Application.DoEvents()
-                    Next
-
-                    sql = "UPDATE [" & tbl & "] SET " & fields & " WHERE [" & fld & "] LIKE '" & rs1(fld).ToString & "';"
-                    cmd = New SqlClient.SqlCommand(sql, cn)
-                    If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-                    cmd.ExecuteNonQuery()
-                End If
-
-                firstRun = False
-
-                Me.lblProgress.Text = "Combining " & recordIds.Count & " Record(s) for " & fld & " " & rs1(fld) & " (" & FormatPercent(Me.pbrProgress.Value / Me.pbrProgress.Maximum, 1) & ")"
-                Me.pbrProgress.Value += 1
+            If tbl.Rows.Count > 0 Then
+                Me.lblStatus2.Text = "Copying " & FormatNumber(tbl.Rows.Count, 0) & " Records to SQL Server ..."
+                Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus2.Text & vbCrLf)
+                Me.pbrProgress.Value = 0
+                Me.pbrProgress.Maximum = tbl.Rows.Count
                 My.Application.DoEvents()
-            Loop
-            cmd1.Cancel()
-            rs1.Close()
 
-            ' delete duplicates
-            sql = "DELETE FROM [" & tbl & "] WHERE ID NOT IN (SELECT MIN(ID) FROM [" & tbl & "] GROUP BY " & fieldNames & ")"
-            cmd1 = New SqlClient.SqlCommand(sql, cn1)
-            If cmd1.Connection.State = ConnectionState.Closed Then cmd1.Connection.Open()
-            cmd1.ExecuteNonQuery()
+                ' use the bulk copy object to insert the records
+                Using bulkCopy As SqlClient.SqlBulkCopy = New SqlClient.SqlBulkCopy(cn)
+                    If cn.State = ConnectionState.Closed Then cn.Open()
 
-            Me.lblProgress.Text = ""
+                    ' clear the timeout
+                    bulkCopy.BulkCopyTimeout = 0
+                    bulkCopy.DestinationTableName = tblName
+
+                    ' setup the progress indicator
+                    bulkCopy.NotifyAfter = CInt(tbl.Rows.Count / 200)
+                    AddHandler bulkCopy.SqlRowsCopied, AddressOf OnSqlRowsCopied
+
+                    Try
+                        bulkCopy.WriteToServer(tbl, DataRowState.Unchanged)
+                        My.Application.DoEvents()
+                    Catch ex As Exception
+                        Console.WriteLine(ex.Message)
+                        retVal = False
+                    End Try
+                End Using
+            End If
+
+            Me.lblStatus2.Text = ""
             My.Application.DoEvents()
 
         Catch ex As Exception
-            Dim s As String = ex.ToString
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.FileProcessor, Me.chkUseSandboxDb.Checked))
+            retVal = False
         Finally
             cn.Close()
-            cn1.Close()
         End Try
-    End Sub
+
+        Return retVal
+    End Function
 
     Private Sub tmrTimer_Tick(sender As Object, e As EventArgs) Handles tmrTimer.Tick
-        If Now.Hour = 0 And Now.Minute = 0 Then
+        If Now.Minute = 0 Then
             ' autorun at midnight
             btnProcess_Click(Nothing, New EventArgs)
         End If
+    End Sub
+
+    Private Sub OnSqlRowsCopied(ByVal sender As Object, ByVal e As SqlClient.SqlRowsCopiedEventArgs)
+        If e.RowsCopied < Me.pbrProgress.Maximum Then
+            Me.pbrProgress.Value = e.RowsCopied
+        Else Me.pbrProgress.Value = Me.pbrProgress.Maximum
+        End If
+
+        Me.lblProgress.Text = "Record " & Me.pbrProgress.Value & "/" & Me.pbrProgress.Maximum & " (" & FormatPercent(Me.pbrProgress.Value / Me.pbrProgress.Maximum, 1) & ")"
+        My.Application.DoEvents()
+        'Console.WriteLine("Copied {0} so far...", e.RowsCopied)
     End Sub
 End Class

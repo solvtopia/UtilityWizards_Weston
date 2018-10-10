@@ -275,10 +275,10 @@ Public Class ModuleView
 
                             Dim col As New GridBoundColumn()
                             grd.Columns.Add(col)
-                            col.DataField = fe.FieldName
+                            col.DataField = fe.MasterFeedFieldName
                             col.HeaderText = fe.DisplayText
 
-                            dt.Columns.Add(fe.FieldName)
+                            dt.Columns.Add(fe.MasterFeedFieldName)
                             dtValues(y) = "&nbsp;"
                         Next
                         dt.Rows.Add(dtValues)

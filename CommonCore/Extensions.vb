@@ -233,14 +233,26 @@ Public Module Extensions
     End Function
 
     <Extension()> Public Function FindFieldExtras(ByVal lst As List(Of FieldExtras), ByVal fieldName As String) As FieldExtras
+        Return FindFieldExtras(lst, "", fieldName)
+    End Function
+    <Extension()> Public Function FindFieldExtras(ByVal lst As List(Of FieldExtras), ByVal importTable As String, ByVal fieldName As String) As FieldExtras
         Dim retVal As New FieldExtras
 
-        For Each fe As FieldExtras In lst
-            If fe.FieldName.ToLower = fieldName.ToLower Then
-                retVal = fe
-                Exit For
-            End If
-        Next
+        If importTable = "" Then
+            For Each fe As FieldExtras In lst
+                If fe.MasterFeedFieldName.ToLower = fieldName.ToLower Then
+                    retVal = fe
+                    Exit For
+                End If
+            Next
+        Else
+            For Each fe As FieldExtras In lst
+                If fe.ImportTableName.ToLower = importTable.ToLower And fe.ImportFieldName = fieldName Then
+                    retVal = fe
+                    Exit For
+                End If
+            Next
+        End If
 
         Return retVal
     End Function

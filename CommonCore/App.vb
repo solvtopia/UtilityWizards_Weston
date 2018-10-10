@@ -135,35 +135,7 @@ Public Class App
     Public Shared ReadOnly Property FieldExtras As List(Of FieldExtras)
         Get
             If HttpContext.Current.Session("FieldInfoLookup") Is Nothing Then
-                Dim lst As New List(Of FieldExtras)
-
-                Dim cn As New SqlClient.SqlConnection([Shared].Common.ConnectionString(App.UseSandboxDb))
-
-                Try
-                    Dim cmd As New SqlClient.SqlCommand("select fe.FieldName, fe.DisplayText, c.Data_Type as DataType from _MasterFeedFieldExtras fe inner join information_schema.columns c on c.COLUMN_NAME = fe.FieldName ORDER BY fe.FieldName", cn)
-                    If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-                    Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
-                    Do While rs.Read
-                        Dim fe As New FieldExtras
-                        fe.FieldName = rs("FieldName").ToString
-                        If Not IsDBNull(rs("DisplayText")) Then
-                            fe.DisplayText = rs("DisplayText").ToString
-                        Else fe.DisplayText = rs("FieldName").ToString
-                        End If
-                        fe.DataType = rs("DataType").ToString
-
-                        lst.Add(fe)
-                    Loop
-                    cmd.Cancel()
-                    rs.Close()
-
-                Catch ex As Exception
-                    ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, UseSandboxDb))
-                Finally
-                    cn.Close()
-                End Try
-
-                HttpContext.Current.Session("FieldInfoLookup") = lst
+                HttpContext.Current.Session("FieldInfoLookup") = [Shared].Common.GetFieldExtras(UseSandboxDb)
             End If
 
             Return CType(HttpContext.Current.Session("FieldInfoLookup"), List(Of FieldExtras))

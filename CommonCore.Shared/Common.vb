@@ -164,4 +164,48 @@ Public Class Common
             cn.Close()
         End Try
     End Sub
+
+    Public Shared Function GetFieldExtras(ByVal UseSandboxDb As Boolean) As List(Of FieldExtras)
+        Dim retVal As New List(Of FieldExtras)
+
+        Dim cn As New SqlClient.SqlConnection([Shared].Common.ConnectionString(UseSandboxDb))
+
+        Try
+            Dim cmd As New SqlClient.SqlCommand("procGetFieldExtras", cn)
+            If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+            cmd.CommandType = CommandType.StoredProcedure
+            Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+            Do While rs.Read
+                Dim fe As New FieldExtras
+                fe.MasterFeedFieldName = rs("FieldName").ToString
+                If Not IsDBNull(rs("DisplayText")) Then
+                    fe.DisplayText = rs("DisplayText").ToString
+                Else fe.DisplayText = rs("FieldName").ToString
+                End If
+                If Not IsDBNull(rs("ImportTableName")) Then
+                    fe.ImportTableName = rs("ImportTableName").ToString
+                End If
+                If Not IsDBNull(rs("ImportFieldName")) Then
+                    fe.ImportFieldName = rs("ImportFieldName").ToString
+                End If
+                If Not IsDBNull(rs("Description")) Then
+                    fe.Description = rs("Description").ToString
+                End If
+                If Not IsDBNull(rs("DataType")) Then
+                    fe.DataType = rs("DataType").ToString
+                End If
+
+                retVal.Add(fe)
+            Loop
+            cmd.Cancel()
+            rs.Close()
+
+        Catch ex As Exception
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, UseSandboxDb))
+        Finally
+            cn.Close()
+        End Try
+
+        Return retVal
+    End Function
 End Class

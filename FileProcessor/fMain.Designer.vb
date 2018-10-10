@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class fMain
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,24 +20,24 @@ Partial Class fMain
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Me.btnProcess = New System.Windows.Forms.Button()
         Me.lblStatus = New System.Windows.Forms.Label()
         Me.pbrProgress = New System.Windows.Forms.ProgressBar()
         Me.lblProgress = New System.Windows.Forms.Label()
-        Me.chkCustomers = New System.Windows.Forms.CheckBox()
-        Me.chkLocations = New System.Windows.Forms.CheckBox()
-        Me.rbAllDupllicates = New System.Windows.Forms.RadioButton()
-        Me.rbSelectedDuplicates = New System.Windows.Forms.RadioButton()
-        Me.tmrTimer = New System.Windows.Forms.Timer(Me.components)
         Me.chkUseSandboxDb = New System.Windows.Forms.CheckBox()
+        Me.rbTruncate = New System.Windows.Forms.RadioButton()
+        Me.rbAppend = New System.Windows.Forms.RadioButton()
+        Me.tmrTimer = New System.Windows.Forms.Timer(Me.components)
+        Me.lblStatus2 = New System.Windows.Forms.Label()
+        Me.txtLog = New System.Windows.Forms.TextBox()
         Me.SuspendLayout()
         '
         'btnProcess
         '
-        Me.btnProcess.Location = New System.Drawing.Point(484, 12)
+        Me.btnProcess.Location = New System.Drawing.Point(545, 12)
         Me.btnProcess.Name = "btnProcess"
         Me.btnProcess.Size = New System.Drawing.Size(100, 23)
         Me.btnProcess.TabIndex = 0
@@ -55,91 +55,88 @@ Partial Class fMain
         '
         'pbrProgress
         '
-        Me.pbrProgress.Location = New System.Drawing.Point(13, 46)
+        Me.pbrProgress.Location = New System.Drawing.Point(12, 66)
         Me.pbrProgress.Name = "pbrProgress"
-        Me.pbrProgress.Size = New System.Drawing.Size(449, 23)
+        Me.pbrProgress.Size = New System.Drawing.Size(513, 23)
         Me.pbrProgress.TabIndex = 2
         '
         'lblProgress
         '
         Me.lblProgress.AutoSize = True
-        Me.lblProgress.Location = New System.Drawing.Point(13, 76)
+        Me.lblProgress.Location = New System.Drawing.Point(12, 96)
         Me.lblProgress.Name = "lblProgress"
         Me.lblProgress.Size = New System.Drawing.Size(39, 13)
         Me.lblProgress.TabIndex = 3
         Me.lblProgress.Text = "Label1"
         '
-        'chkCustomers
+        'chkUseSandboxDb
         '
-        Me.chkCustomers.AutoSize = True
-        Me.chkCustomers.Checked = True
-        Me.chkCustomers.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkCustomers.Location = New System.Drawing.Point(12, 138)
-        Me.chkCustomers.Name = "chkCustomers"
-        Me.chkCustomers.Size = New System.Drawing.Size(105, 17)
-        Me.chkCustomers.TabIndex = 4
-        Me.chkCustomers.Text = "Customers Table"
-        Me.chkCustomers.UseVisualStyleBackColor = True
+        Me.chkUseSandboxDb.AutoSize = True
+        Me.chkUseSandboxDb.Checked = True
+        Me.chkUseSandboxDb.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkUseSandboxDb.Location = New System.Drawing.Point(12, 122)
+        Me.chkUseSandboxDb.Name = "chkUseSandboxDb"
+        Me.chkUseSandboxDb.Size = New System.Drawing.Size(90, 17)
+        Me.chkUseSandboxDb.TabIndex = 5
+        Me.chkUseSandboxDb.Text = "Use Sandbox"
+        Me.chkUseSandboxDb.UseVisualStyleBackColor = True
         '
-        'chkLocations
+        'rbTruncate
         '
-        Me.chkLocations.AutoSize = True
-        Me.chkLocations.Checked = True
-        Me.chkLocations.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkLocations.Location = New System.Drawing.Point(12, 162)
-        Me.chkLocations.Name = "chkLocations"
-        Me.chkLocations.Size = New System.Drawing.Size(102, 17)
-        Me.chkLocations.TabIndex = 5
-        Me.chkLocations.Text = "Locations Table"
-        Me.chkLocations.UseVisualStyleBackColor = True
+        Me.rbTruncate.AutoSize = True
+        Me.rbTruncate.Location = New System.Drawing.Point(12, 146)
+        Me.rbTruncate.Name = "rbTruncate"
+        Me.rbTruncate.Size = New System.Drawing.Size(165, 17)
+        Me.rbTruncate.TabIndex = 6
+        Me.rbTruncate.Text = "Truncate Tables before Insert"
+        Me.rbTruncate.UseVisualStyleBackColor = True
         '
-        'rbAllDupllicates
+        'rbAppend
         '
-        Me.rbAllDupllicates.AutoSize = True
-        Me.rbAllDupllicates.Checked = True
-        Me.rbAllDupllicates.Location = New System.Drawing.Point(12, 186)
-        Me.rbAllDupllicates.Name = "rbAllDupllicates"
-        Me.rbAllDupllicates.Size = New System.Drawing.Size(133, 17)
-        Me.rbAllDupllicates.TabIndex = 6
-        Me.rbAllDupllicates.TabStop = True
-        Me.rbAllDupllicates.Text = "Combine All Duplicates"
-        Me.rbAllDupllicates.UseVisualStyleBackColor = True
-        '
-        'rbSelectedDuplicates
-        '
-        Me.rbSelectedDuplicates.AutoSize = True
-        Me.rbSelectedDuplicates.Location = New System.Drawing.Point(12, 210)
-        Me.rbSelectedDuplicates.Name = "rbSelectedDuplicates"
-        Me.rbSelectedDuplicates.Size = New System.Drawing.Size(188, 17)
-        Me.rbSelectedDuplicates.TabIndex = 7
-        Me.rbSelectedDuplicates.Text = "Combine Selected Duplicates Only"
-        Me.rbSelectedDuplicates.UseVisualStyleBackColor = True
+        Me.rbAppend.AutoSize = True
+        Me.rbAppend.Checked = True
+        Me.rbAppend.Location = New System.Drawing.Point(183, 146)
+        Me.rbAppend.Name = "rbAppend"
+        Me.rbAppend.Size = New System.Drawing.Size(105, 17)
+        Me.rbAppend.TabIndex = 7
+        Me.rbAppend.TabStop = True
+        Me.rbAppend.Text = "Append Records"
+        Me.rbAppend.UseVisualStyleBackColor = True
         '
         'tmrTimer
         '
         Me.tmrTimer.Enabled = True
         Me.tmrTimer.Interval = 60000
         '
-        'chkUseSandboxDb
+        'lblStatus2
         '
-        Me.chkUseSandboxDb.AutoSize = True
-        Me.chkUseSandboxDb.Location = New System.Drawing.Point(484, 52)
-        Me.chkUseSandboxDb.Name = "chkUseSandboxDb"
-        Me.chkUseSandboxDb.Size = New System.Drawing.Size(90, 17)
-        Me.chkUseSandboxDb.TabIndex = 8
-        Me.chkUseSandboxDb.Text = "Use Sandbox"
-        Me.chkUseSandboxDb.UseVisualStyleBackColor = True
+        Me.lblStatus2.AutoSize = True
+        Me.lblStatus2.Location = New System.Drawing.Point(12, 39)
+        Me.lblStatus2.Name = "lblStatus2"
+        Me.lblStatus2.Size = New System.Drawing.Size(39, 13)
+        Me.lblStatus2.TabIndex = 8
+        Me.lblStatus2.Text = "Label1"
+        '
+        'txtLog
+        '
+        Me.txtLog.Location = New System.Drawing.Point(12, 169)
+        Me.txtLog.Multiline = True
+        Me.txtLog.Name = "txtLog"
+        Me.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
+        Me.txtLog.Size = New System.Drawing.Size(633, 323)
+        Me.txtLog.TabIndex = 9
+        Me.txtLog.WordWrap = False
         '
         'fMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(596, 255)
+        Me.ClientSize = New System.Drawing.Size(657, 504)
+        Me.Controls.Add(Me.txtLog)
+        Me.Controls.Add(Me.lblStatus2)
+        Me.Controls.Add(Me.rbAppend)
+        Me.Controls.Add(Me.rbTruncate)
         Me.Controls.Add(Me.chkUseSandboxDb)
-        Me.Controls.Add(Me.rbSelectedDuplicates)
-        Me.Controls.Add(Me.rbAllDupllicates)
-        Me.Controls.Add(Me.chkLocations)
-        Me.Controls.Add(Me.chkCustomers)
         Me.Controls.Add(Me.lblProgress)
         Me.Controls.Add(Me.pbrProgress)
         Me.Controls.Add(Me.lblStatus)
@@ -158,10 +155,10 @@ Partial Class fMain
     Friend WithEvents lblStatus As Label
     Friend WithEvents pbrProgress As ProgressBar
     Friend WithEvents lblProgress As Label
-    Friend WithEvents chkCustomers As CheckBox
-    Friend WithEvents chkLocations As CheckBox
-    Friend WithEvents rbAllDupllicates As RadioButton
-    Friend WithEvents rbSelectedDuplicates As RadioButton
-    Friend WithEvents tmrTimer As Timer
     Friend WithEvents chkUseSandboxDb As CheckBox
+    Friend WithEvents rbTruncate As RadioButton
+    Friend WithEvents rbAppend As RadioButton
+    Friend WithEvents tmrTimer As Timer
+    Friend WithEvents lblStatus2 As Label
+    Friend WithEvents txtLog As TextBox
 End Class

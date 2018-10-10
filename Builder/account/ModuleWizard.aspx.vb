@@ -197,14 +197,14 @@ Public Class ModuleWizard
             Me.ddlMasterFeedFieldNumericFormula.Items.Add(New ListItem(""))
             Me.cblDataGridFields.Items.Clear()
             For Each fe As FieldExtras In lstExtras
-                If fe.FieldName.ToLower = "filedate" Then Continue For
+                If fe.MasterFeedFieldName.ToLower = "filedate" Then Continue For
 
-                Me.ddlMasterFeedField.Items.Add(New ListItem(fe.DisplayText, fe.FieldName))
-                Me.ddlMasterFeedFieldTextFormula.Items.Add(New ListItem(fe.DisplayText, fe.FieldName))
-                Me.cblDataGridFields.Items.Add(New ListItem(fe.DisplayText, fe.FieldName))
+                Me.ddlMasterFeedField.Items.Add(New ListItem(fe.DisplayText, fe.MasterFeedFieldName))
+                Me.ddlMasterFeedFieldTextFormula.Items.Add(New ListItem(fe.DisplayText, fe.MasterFeedFieldName))
+                Me.cblDataGridFields.Items.Add(New ListItem(fe.DisplayText, fe.MasterFeedFieldName))
                 Select Case fe.DataType.ToLower
                     Case "float"
-                        Me.ddlMasterFeedFieldNumericFormula.Items.Add(New ListItem(fe.DisplayText, fe.FieldName))
+                        Me.ddlMasterFeedFieldNumericFormula.Items.Add(New ListItem(fe.DisplayText, fe.MasterFeedFieldName))
                 End Select
             Next
 
