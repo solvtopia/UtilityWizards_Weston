@@ -276,7 +276,7 @@ Public Class ModuleView
                             Dim col As New GridBoundColumn()
                             grd.Columns.Add(col)
                             col.DataField = fe.MasterFeedFieldName
-                            col.HeaderText = fe.DisplayText
+                            col.HeaderText = fe.MasterFeedFieldName
 
                             dt.Columns.Add(fe.MasterFeedFieldName)
                             dtValues(y) = "&nbsp;"

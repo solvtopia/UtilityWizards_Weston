@@ -169,7 +169,7 @@ Public Class ModuleWizard
 
     Private Sub LoadLists()
         Dim lstExtras As List(Of FieldExtras) = App.FieldExtras
-        lstExtras = lstExtras.OrderBy(Function(q) q.DisplayText).ToList
+        lstExtras = lstExtras.OrderBy(Function(q) q.MasterFeedFieldName).ToList
 
         Dim cn As New SqlClient.SqlConnection(Common.ConnectionString)
 
@@ -199,12 +199,12 @@ Public Class ModuleWizard
             For Each fe As FieldExtras In lstExtras
                 If fe.MasterFeedFieldName.ToLower = "filedate" Then Continue For
 
-                Me.ddlMasterFeedField.Items.Add(New ListItem(fe.DisplayText, fe.MasterFeedFieldName))
-                Me.ddlMasterFeedFieldTextFormula.Items.Add(New ListItem(fe.DisplayText, fe.MasterFeedFieldName))
-                Me.cblDataGridFields.Items.Add(New ListItem(fe.DisplayText, fe.MasterFeedFieldName))
+                Me.ddlMasterFeedField.Items.Add(New ListItem(fe.MasterFeedFieldName, fe.MasterFeedFieldName))
+                Me.ddlMasterFeedFieldTextFormula.Items.Add(New ListItem(fe.MasterFeedFieldName, fe.MasterFeedFieldName))
+                Me.cblDataGridFields.Items.Add(New ListItem(fe.MasterFeedFieldName, fe.MasterFeedFieldName))
                 Select Case fe.DataType.ToLower
                     Case "float"
-                        Me.ddlMasterFeedFieldNumericFormula.Items.Add(New ListItem(fe.DisplayText, fe.MasterFeedFieldName))
+                        Me.ddlMasterFeedFieldNumericFormula.Items.Add(New ListItem(fe.MasterFeedFieldName, fe.MasterFeedFieldName))
                 End Select
             Next
 

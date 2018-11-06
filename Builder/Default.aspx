@@ -129,14 +129,14 @@
                                             <div class="box box-info">
                                                 <div class="box-body">
                                                     <table class="nav-justified">
-                                                        <tr>
+                                                        <%--<tr>
                                                             <td colspan="3">Criteria</td>
                                                             <td>&nbsp;</td>
-                                                        </tr>
+                                                        </tr>--%>
                                                         <tr>
                                                             <td style="width: 100px;">Search Field:
                                                             </td>
-                                                            <td style="width: 130px;">
+                                                            <%--<td style="width: 130px;">
                                                                 <telerik:RadComboBox runat="server" ID="ddlSearchField" Width="120px">
                                                                     <Items>
                                                                         <telerik:RadComboBoxItem Text="LN#" Value="[Standard_ACCOUNT_NUMBER]" Selected="true" />
@@ -149,7 +149,7 @@
                                                                         <telerik:RadComboBoxItem Text="Property" Value="[Standard_PROPERTY_ADDRESS_1]" />
                                                                     </Items>
                                                                 </telerik:RadComboBox>
-                                                            </td>
+                                                            </td>--%>
                                                             <td>
                                                                 <telerik:RadTextBox ID="txtSearch" runat="server" Skin="Metro" Width="100%">
                                                                 </telerik:RadTextBox>
@@ -176,7 +176,7 @@
                                                                 <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="" SelectCommand="procSearchAccounts" SelectCommandType="StoredProcedure">
                                                                     <SelectParameters>
                                                                         <asp:ControlParameter ControlID="txtSearch" DefaultValue="" Name="search" PropertyName="Text" Type="String" />
-                                                                        <asp:ControlParameter ControlID="ddlSearchField" Name="field" PropertyName="SelectedValue" Type="String" />
+                                                                        <%--<asp:ControlParameter ControlID="ddlSearchField" Name="field" PropertyName="SelectedValue" Type="String" />--%>
                                                                     </SelectParameters>
                                                                 </asp:SqlDataSource>
                                                             </td>

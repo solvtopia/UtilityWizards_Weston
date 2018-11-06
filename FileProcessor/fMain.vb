@@ -4,11 +4,14 @@ Imports System.Collections.ObjectModel
 
 Public Class fMain
 
+    Private FirstRunProcessed As List(Of String)
+
     Private Sub fMain_Load(sender As Object, e As EventArgs) Handles Me.Load
         Me.txtLog.Text = ""
         Me.lblProgress.Text = ""
         Me.lblStatus.Text = ""
         Me.lblStatus2.Text = ""
+        Me.FirstRunProcessed = New List(Of String)
         Me.tmrTimer.Enabled = True
     End Sub
 
@@ -33,22 +36,15 @@ Public Class fMain
         My.Application.DoEvents()
 
         ' make sure the temp folder exists
-        Dim tmpS3Path As String = "C:\Users\James\Google Drive\Projects\UtilityWizards_Weston\FileProcessor\S3Temp"
-        'Dim tmpS3Path As String = My.Computer.FileSystem.CombinePath(My.Application.Info.DirectoryPath, "S3Temp")
-        'If Not My.Computer.FileSystem.DirectoryExists(tmpS3Path) Then My.Computer.FileSystem.CreateDirectory(tmpS3Path)
-
-        ' delete any files in the folder
-        'For Each deleteFile In Directory.GetFiles(tmpS3Path, "*.txt", SearchOption.TopDirectoryOnly)
-        '    File.Delete(deleteFile)
-        'Next
+        If Not My.Computer.FileSystem.DirectoryExists(My.Settings.LocalTempDir) Then My.Computer.FileSystem.CreateDirectory(My.Settings.LocalTempDir)
 
         ' download the files from the S3 bucket to the temp folder
         'Dim lstS3Files As ObservableCollection(Of String) = aws.ListingFiles()
         'For Each f As String In lstS3Files
-        '    aws.DownloadFile("", f, tmpS3Path)
+        '    aws.DownloadFile("", f, My.Settings.LocalTempDir)
         'Next
 
-        Dim dir As List(Of FileInfo) = SearchDir(tmpS3Path, "*.txt", Enums.FileSort.Name)
+        Dim dir As List(Of FileInfo) = SearchDir(My.Settings.LocalTempDir, "*.txt", Enums.FileSort.Name)
 
         Me.lblStatus.Text = "Found " & dir.Count & " Files To Process ..."
         Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus.Text & vbCrLf & vbCrLf)
@@ -91,7 +87,7 @@ Public Class fMain
             If tblName <> "" Then
                 Dim hasBeenProcessed As Boolean = False
 
-                Me.lblStatus.Text = "Processing " & f.Name & " into [" & tblName & "] " & If(Me.chkUseSandboxDb.Checked, "on the Sandbox", "") & " ..."
+                Me.lblStatus.Text = "Processing " & f.Name & " into [" & tblName & "] ..."
                 Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus.Text & vbCrLf)
                 My.Application.DoEvents()
 
@@ -111,11 +107,18 @@ Public Class fMain
                 End If
 
                 If hasBeenProcessed Then
+                    ' keep track of the tables that have been processed so we only truncate on the first run
+                    If Not Me.FirstRunProcessed.Contains(tblName) Then Me.FirstRunProcessed.Add(tblName)
+
                     ' rename the file as processed so we don't import the same file again
                     My.Computer.FileSystem.RenameFile(f.FullName, f.Name & ".processed")
                     Me.txtLog.AppendText(Now.ToString & ": " & "Finished Processing " & f.Name & vbCrLf & vbCrLf)
+                    Me.txtLog.AppendText(Now.ToString & ": " & "Waiting 10 Seconds ..." & vbCrLf & vbCrLf)
                     My.Application.DoEvents()
 
+                    Threading.Thread.Sleep(10000)
+                Else
+                    Me.txtLog.AppendText(Now.ToString & ": " & "Error Processing " & f.Name & "!" & vbCrLf & vbCrLf)
                     Me.txtLog.AppendText(Now.ToString & ": " & "Waiting 10 Seconds ..." & vbCrLf & vbCrLf)
                     My.Application.DoEvents()
 
@@ -125,17 +128,13 @@ Public Class fMain
         Next
 
         Me.lblStatus.Text = "Finished Processing Files."
-        Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus.Text & vbCrLf)
+        Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus.Text & vbCrLf & vbCrLf & vbCrLf)
         Me.lblStatus2.Text = ""
         Me.lblProgress.Text = ""
 
 
         Dim strFile As String = "Processor_" & Now.Date.ToString("MM/dd/yyyy").Replace("/", "") & ".log"
-        'Dim fileExists As Boolean = File.Exists(My.Computer.FileSystem.CombinePath(tmpS3Path, strFile))
-        'Using sw As New StreamWriter(File.Open(My.Computer.FileSystem.CombinePath(tmpS3Path, strFile), FileMode.OpenOrCreate))
-        '    sw.WriteLine(Me.txtLog.Text)
-        'End Using
-        My.Computer.FileSystem.WriteAllText(My.Computer.FileSystem.CombinePath(tmpS3Path, strFile), Me.txtLog.Text, True)
+        My.Computer.FileSystem.WriteAllText(My.Computer.FileSystem.CombinePath(My.Settings.LocalTempDir, strFile), Me.txtLog.Text, True)
 
         My.Application.DoEvents()
 
@@ -143,15 +142,16 @@ Public Class fMain
 
     Private Function ProcessFileToTable(ByVal fPath As String, ByVal tblName As String) As DataTable
         Dim retVal As New DataTable
-        Dim cn As New SqlClient.SqlConnection(ConnectionString(Me.chkUseSandboxDb.Checked))
+        Dim cnLive As New SqlClient.SqlConnection(ConnectionString(False))
+        Dim cnSandbox As New SqlClient.SqlConnection(ConnectionString(True))
 
         Try
-            Me.lblStatus2.Text = "Loading [" & tblName & "] Table Structure ..."
+            Me.lblStatus2.Text = "Loading Table Structure ..."
             Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus2.Text & vbCrLf)
             My.Application.DoEvents()
 
             ' build a table to store the records in
-            Dim cmd As New SqlClient.SqlCommand("select COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH from information_schema.columns where TABLE_NAME like '" & tblName & "'", cn)
+            Dim cmd As New SqlClient.SqlCommand("select COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH from information_schema.columns where TABLE_NAME like '" & tblName & "'", cnLive)
             If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
             Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader()
             Do While rs.Read
@@ -233,7 +233,14 @@ Public Class fMain
                     Else
                         If processTable Then
                             ' this is a data line so read all the values and assign them to their fields
+TrySplitAgain:
                             Dim rec As List(Of String) = s.Split(lineDelimiter).ToList
+                            If rec.Count < header.Count Then
+                                ' the record field count doesn't match the header count so add blanks until we match
+                                s &= lineDelimiter
+                                My.Application.DoEvents()
+                                GoTo TrySplitAgain
+                            End If
                             Dim r As DataRow = retVal.NewRow
                             For x As Integer = 0 To header.Count - 1
                                 If header(x) <> "" Then
@@ -271,8 +278,8 @@ Public Class fMain
                                             Me.txtLog.AppendText(Now.ToString & ": " & "Column [" & tblName & "].[" & header(x) & "] Does Not Exist!" & vbCrLf)
                                         End If
                                         My.Application.DoEvents()
-                                        End If
                                     End If
+                                End If
                             Next
 
                             ' add the record to the table
@@ -294,7 +301,8 @@ Public Class fMain
         Catch ex As Exception
             ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.FileProcessor, Me.chkUseSandboxDb.Checked))
         Finally
-            cn.Close()
+            cnLive.Close()
+            cnSandbox.Close()
         End Try
 
         Return retVal
@@ -303,79 +311,175 @@ Public Class fMain
     Private Function ImportTable(ByVal tbl As DataTable, ByVal tblName As String) As Boolean
         Dim retVal As Boolean = True
 
-        Dim cn As New SqlClient.SqlConnection(ConnectionString(Me.chkUseSandboxDb.Checked))
+        Dim cnLive As New SqlClient.SqlConnection(ConnectionString(False))
+        Dim cnSandbox As New SqlClient.SqlConnection(ConnectionString(True))
+
+        Dim tblNewLive As DataTable = tbl.Copy
+        Dim tblNewSandbox As DataTable = tbl.Copy
 
         Try
-            If (Me.rbTruncate.Checked Or tblName.ToLower = "_import_standard") And tbl.Rows.Count > 0 Then
-                ' if we are set to truncate, or working with the standard table and we have rows in the import table 
-                If tblName.ToLower <> "_import_board" Then
-                    Me.lblStatus2.Text = "Truncating Table [" & tblName & "] ..."
+            Dim GoodToTruncate As Boolean = False
+
+            ' truncate if the radio is selected under settings or if this is the standard table
+            GoodToTruncate = (Me.rbTruncate.Checked Or tblName.ToLower = "_import_standard")
+            ' check if we have rows in the import table
+            If GoodToTruncate Then GoodToTruncate = (tbl.Rows.Count > 0)
+            ' the board table is never truncated
+            If GoodToTruncate Then GoodToTruncate = (tblName.ToLower <> "_import_board")
+            ' we only truncate on the first run of a table
+            If GoodToTruncate Then GoodToTruncate = (Not Me.FirstRunProcessed.Contains(tblName))
+
+            If GoodToTruncate Then
+                ' we've passed all the checks so go ahead and truncate the table
+
+                Dim cmd As SqlClient.SqlCommand
+                If Not Me.chkUseSandboxDb.Checked Then
+                    ' update the live site if the check to use the sandbox only is not checked
+                    Me.lblStatus2.Text = "Truncating LIVE Table ..."
                     Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus2.Text & vbCrLf)
                     My.Application.DoEvents()
 
-                    ' never truncate the board table
-                    Dim cmd As New SqlClient.SqlCommand("TRUNCATE TABLE [" & tblName & "]", cn)
+                    cmd = New SqlClient.SqlCommand("TRUNCATE TABLE [" & tblName & "]", cnLive)
                     If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
                     cmd.CommandTimeout = 0
                     cmd.ExecuteNonQuery()
-                End If
-            End If
 
-            If tblName.ToLower = "_import_board" Then
-                Me.lblStatus2.Text = "Searching For New Board Records ..."
+                    Threading.Thread.Sleep(1000)
+                End If
+
+                ' sandbox always gets updated
+                Me.lblStatus2.Text = "Truncating SANDBOX Table ..."
                 Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus2.Text & vbCrLf)
                 My.Application.DoEvents()
 
+                cmd = New SqlClient.SqlCommand("TRUNCATE TABLE [" & tblName & "]", cnSandbox)
+                If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+                cmd.CommandTimeout = 0
+                cmd.ExecuteNonQuery()
+            End If
+
+            If tblName.ToLower = "_import_board" Then
                 ' board table only gets new records for accounts that are in the standard but not already
                 ' in the board
 
-                Dim lstNewAccounts As New List(Of String)
+                Dim lstNewLiveAccounts As New List(Of String)
+                Dim lstNewSandboxAccounts As New List(Of String)
 
                 ' get a list of accounts that exist in standard but not in board
-                Dim cmd As New SqlClient.SqlCommand("SELECT t1.[ACCOUNT_NUMBER] FROM [_import_Standard] t1 LEFT JOIN [_import_Board] t2 ON t2.[ACCOUNT_NUMBER] = t1.[ACCOUNT_NUMBER] WHERE t2.[ACCOUNT_NUMBER] IS NULL", cn)
+                Dim cmd As SqlClient.SqlCommand
+                Dim rs As SqlClient.SqlDataReader
+                If Not Me.chkUseSandboxDb.Checked Then
+                    ' update the live site if the check to use the sandbox only is not checked
+                    Me.lblStatus2.Text = "Searching For New LIVE Board Records ..."
+                    Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus2.Text & vbCrLf)
+                    My.Application.DoEvents()
+
+                    cmd = New SqlClient.SqlCommand("SELECT t1.[ACCOUNT_NUMBER] FROM [_import_Standard] t1 LEFT JOIN [_import_Board] t2 ON t2.[ACCOUNT_NUMBER] = t1.[ACCOUNT_NUMBER] WHERE t2.[ACCOUNT_NUMBER] IS NULL", cnLive)
+                    If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
+                    rs = cmd.ExecuteReader
+                    Do While rs.Read
+                        If Not lstNewLiveAccounts.Contains(rs("ACCOUNT_NUMBER").ToString) Then lstNewLiveAccounts.Add(rs("ACCOUNT_NUMBER").ToString)
+                        My.Application.DoEvents()
+                    Loop
+                    cmd.Cancel()
+                    rs.Close()
+
+                    ' remove all the rows from the table that aren't in the list of new accounts
+                    ' update the live site if the check to use the sandbox only is not checked
+                    tblNewLive.Rows.Clear()
+                    For Each r As DataRow In tbl.Rows
+                        If lstNewLiveAccounts.Contains(r("ACCOUNT_NUMBER").ToString) Then
+                            tblNewLive.ImportRow(r)
+                        End If
+                        My.Application.DoEvents()
+                    Next
+
+                    Threading.Thread.Sleep(1000)
+                End If
+
+                ' sandbox always gets updated
+                Me.lblStatus2.Text = "Searching For New SANDBOX Board Records ..."
+                Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus2.Text & vbCrLf)
+                My.Application.DoEvents()
+
+                cmd = New SqlClient.SqlCommand("SELECT t1.[ACCOUNT_NUMBER] FROM [_import_Standard] t1 LEFT JOIN [_import_Board] t2 ON t2.[ACCOUNT_NUMBER] = t1.[ACCOUNT_NUMBER] WHERE t2.[ACCOUNT_NUMBER] IS NULL", cnSandbox)
                 If cmd.Connection.State = ConnectionState.Closed Then cmd.Connection.Open()
-                Dim rs As SqlClient.SqlDataReader = cmd.ExecuteReader
+                rs = cmd.ExecuteReader
                 Do While rs.Read
-                    If Not lstNewAccounts.Contains(rs("ACCOUNT_NUMBER").ToString) Then lstNewAccounts.Add(rs("ACCOUNT_NUMBER").ToString)
+                    If Not lstNewSandboxAccounts.Contains(rs("ACCOUNT_NUMBER").ToString) Then lstNewSandboxAccounts.Add(rs("ACCOUNT_NUMBER").ToString)
                     My.Application.DoEvents()
                 Loop
                 cmd.Cancel()
                 rs.Close()
 
-                ' remove all the rows from the table that aren't in the list of new accounts
-                Dim tblNew As DataTable = tbl.Copy
-                tblNew.Rows.Clear()
+                ' sandbox always gets updated
+                tblNewSandbox.Rows.Clear()
                 For Each r As DataRow In tbl.Rows
-                    If lstNewAccounts.Contains(r("ACCOUNT_NUMBER").ToString) Then
-                        tblNew.ImportRow(r)
+                    If lstNewSandboxAccounts.Contains(r("ACCOUNT_NUMBER").ToString) Then
+                        tblNewSandbox.ImportRow(r)
                     End If
                     My.Application.DoEvents()
                 Next
-
-                tbl = tblNew.Copy
             End If
 
-            If tbl.Rows.Count > 0 Then
-                Me.lblStatus2.Text = "Copying " & FormatNumber(tbl.Rows.Count, 0) & " Records to SQL Server ..."
-                Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus2.Text & vbCrLf)
-                Me.pbrProgress.Value = 0
-                Me.pbrProgress.Maximum = tbl.Rows.Count
-                My.Application.DoEvents()
-
+            If tblNewLive.Rows.Count > 0 Or tblNewSandbox.Rows.Count > 0 Then
                 ' use the bulk copy object to insert the records
-                Using bulkCopy As SqlClient.SqlBulkCopy = New SqlClient.SqlBulkCopy(cn)
-                    If cn.State = ConnectionState.Closed Then cn.Open()
+                Dim bulkCopy As SqlClient.SqlBulkCopy
+                If Not Me.chkUseSandboxDb.Checked Then
+                    ' update the live site if the check to use the sandbox only is not checked
+                    Me.lblStatus2.Text = "Copying " & FormatNumber(tblNewLive.Rows.Count, 0) & " Records to LIVE Table ..."
+                    Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus2.Text & vbCrLf)
+                    Me.pbrProgress.Value = 0
+                    Me.pbrProgress.Maximum = tblNewLive.Rows.Count
+                    My.Application.DoEvents()
+
+                    bulkCopy = New SqlClient.SqlBulkCopy(cnLive)
 
                     ' clear the timeout
                     bulkCopy.BulkCopyTimeout = 0
                     bulkCopy.DestinationTableName = tblName
 
                     ' setup the progress indicator
-                    bulkCopy.NotifyAfter = CInt(tbl.Rows.Count / 200)
+                    bulkCopy.NotifyAfter = CInt(tblNewLive.Rows.Count / 200)
                     AddHandler bulkCopy.SqlRowsCopied, AddressOf OnSqlRowsCopied
 
+                    Using bulkCopy
+                        If cnLive.State = ConnectionState.Closed Then cnLive.Open()
+
+                        Try
+                            bulkCopy.WriteToServer(tblNewLive, DataRowState.Unchanged)
+                            My.Application.DoEvents()
+                        Catch ex As Exception
+                            Console.WriteLine(ex.Message)
+                            retVal = False
+                        End Try
+                    End Using
+
+                    Threading.Thread.Sleep(5000)
+                End If
+
+                ' sandbox always gets updated
+                Me.lblStatus2.Text = "Copying " & FormatNumber(tblNewSandbox.Rows.Count, 0) & " Records to SANDBOX Table ..."
+                Me.txtLog.AppendText(Now.ToString & ": " & Me.lblStatus2.Text & vbCrLf)
+                Me.pbrProgress.Value = 0
+                Me.pbrProgress.Maximum = tblNewSandbox.Rows.Count
+                My.Application.DoEvents()
+
+                bulkCopy = New SqlClient.SqlBulkCopy(cnSandbox)
+
+                ' clear the timeout
+                bulkCopy.BulkCopyTimeout = 0
+                bulkCopy.DestinationTableName = tblName
+
+                ' setup the progress indicator
+                bulkCopy.NotifyAfter = CInt(tblNewSandbox.Rows.Count / 200)
+                AddHandler bulkCopy.SqlRowsCopied, AddressOf OnSqlRowsCopied
+
+                Using bulkCopy
+                    If cnSandbox.State = ConnectionState.Closed Then cnSandbox.Open()
+
                     Try
-                        bulkCopy.WriteToServer(tbl, DataRowState.Unchanged)
+                        bulkCopy.WriteToServer(tblNewSandbox, DataRowState.Unchanged)
                         My.Application.DoEvents()
                     Catch ex As Exception
                         Console.WriteLine(ex.Message)
@@ -391,15 +495,16 @@ Public Class fMain
             ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.FileProcessor, Me.chkUseSandboxDb.Checked))
             retVal = False
         Finally
-            cn.Close()
+            cnLive.Close()
+            cnSandbox.Close()
         End Try
 
         Return retVal
     End Function
 
     Private Sub tmrTimer_Tick(sender As Object, e As EventArgs) Handles tmrTimer.Tick
-        If Now.Minute = 0 Then
-            ' autorun at midnight
+        If Now.Minute >= 0 And Now.Minute <= 5 Then
+            ' autorun every hour
             btnProcess_Click(Nothing, New EventArgs)
         End If
     End Sub
@@ -413,5 +518,26 @@ Public Class fMain
         Me.lblProgress.Text = "Record " & Me.pbrProgress.Value & "/" & Me.pbrProgress.Maximum & " (" & FormatPercent(Me.pbrProgress.Value / Me.pbrProgress.Maximum, 1) & ")"
         My.Application.DoEvents()
         'Console.WriteLine("Copied {0} so far...", e.RowsCopied)
+    End Sub
+
+    Private Sub btnRenameProcessed_Click(sender As Object, e As EventArgs) Handles btnRenameProcessed.Click
+        Dim dir As List(Of FileInfo) = SearchDir(My.Settings.LocalTempDir, "*.processed", Enums.FileSort.Name)
+
+        For Each f As FileInfo In dir
+            My.Computer.FileSystem.RenameFile(f.FullName, f.Name.Replace(".processed", ""))
+        Next
+
+        MsgBox("All files have been reset to .txt")
+    End Sub
+
+    Private Sub btnPresignedUrls_Click(sender As Object, e As EventArgs) Handles btnPresignedUrls.Click
+        Dim aws As New AWSHelper
+
+        Me.txtExtras.Text = ""
+
+        Dim lst As List(Of AWSHelper.AwsFileInfo) = aws.ListFiles()
+        For Each f As AWSHelper.AwsFileInfo In lst
+            Me.txtExtras.AppendText(f.FullName & " > Expires " & f.PutUrlExpires & vbCrLf & f.PutUrl & vbCrLf & vbCrLf)
+        Next
     End Sub
 End Class

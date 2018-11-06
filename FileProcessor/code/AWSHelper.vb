@@ -7,9 +7,63 @@ Imports System.Collections.ObjectModel
 Imports System.IO
 
 Public Class AWSHelper
-    Const AWS_ACCESS_KEY As String = "AKIAILO4RJHZWPMRIARA"
-    Const AWS_SECRET_KEY As String = "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"
+    Const AWS_ACCESS_KEY As String = "AKIA5BE3HIKCUD2Y6UFY"
+    Const AWS_SECRET_KEY As String = "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"
     Const AWS_BUCKET_NAME As String = "wpg-file-upload"
+
+    Public Structure AwsFileInfo
+        Sub New(ByVal s3object As S3Object, ByVal folder As String)
+            If Not folder = "/" Then
+                If s3object.Key.ToString.StartsWith(folder) Then
+                    Dim replacementstring As String = Replace(s3object.Key, folder, "")
+                    If Not replacementstring = "" Then
+                        Me.Name = replacementstring
+                    End If
+                End If
+            Else Me.Name = s3object.Key.Replace(folder, "")
+            End If
+
+            Me.FullName = s3object.Key
+            Me.LastModified = s3object.LastModified
+            Me.Size = s3object.Size
+            Me.Directory = folder
+
+            Dim ext() As String = Me.Name.Split("."c)
+            Me.Extension = ext(ext.Length - 1)
+
+            Dim s3Client = New AmazonS3Client(AWS_ACCESS_KEY, AWS_SECRET_KEY, RegionEndpoint.USEast2)
+
+            Me.PutUrlExpires = Now.AddDays(7)
+            Dim request As GetPreSignedUrlRequest
+            request = New GetPreSignedUrlRequest With {
+                .BucketName = AWS_BUCKET_NAME,
+                .Key = Me.FullName,
+                .Verb = HttpVerb.PUT,
+                .Expires = Me.PutUrlExpires
+            }
+            Me.PutUrl = s3Client.GetPreSignedURL(request)
+
+            Me.GetUrlExpires = Now.AddDays(7)
+            request = New GetPreSignedUrlRequest With {
+                .BucketName = AWS_BUCKET_NAME,
+                .Key = Me.FullName,
+                .Verb = HttpVerb.GET,
+                .Expires = Me.GetUrlExpires
+            }
+            Me.GetUrl = s3Client.GetPreSignedURL(request)
+        End Sub
+
+        Public Name As String
+        Public FullName As String
+        Public Directory As String
+        Public LastModified As Date
+        Public Size As Long
+        Public Extension As String
+        Public PutUrl As String
+        Public PutUrlExpires As Date
+        Public GetUrl As String
+        Public GetUrlExpires As Date
+    End Structure
 
     Private Property s3Client As IAmazonS3
 
@@ -142,8 +196,8 @@ Public Class AWSHelper
         Return retVal
     End Function
 
-    Public Function ListingFiles(Optional foldername As String = "/") As ObservableCollection(Of String)
-        Dim obsv As New ObservableCollection(Of String)
+    Public Function ListFiles(Optional foldername As String = "/") As List(Of AwsFileInfo)
+        Dim obsv As New List(Of AwsFileInfo)
         Dim delimiter As String = "/"
         If Not foldername.EndsWith(delimiter) Then
             foldername = String.Format("{0}{1}", foldername, delimiter)
@@ -154,15 +208,7 @@ Public Class AWSHelper
                 Do
                     Dim response As ListObjectsResponse = s3Client.ListObjects(request)
                     For Each entry As S3Object In response.S3Objects
-                        If Not foldername = "/" Then
-                            If entry.Key.ToString.StartsWith(foldername) Then
-                                Dim replacementstring As String = Replace(entry.Key, foldername, "")
-                                If Not replacementstring = "" Then
-                                    obsv.Add(replacementstring)
-                                End If
-                            End If
-                        Else obsv.Add(Replace(entry.Key, foldername, ""))
-                        End If
+                        obsv.Add(New AwsFileInfo(entry, foldername))
                     Next
                     If (response.IsTruncated) Then
                         request.Marker = response.NextMarker
@@ -353,5 +399,4 @@ Public Class AWSHelper
 
         Return retVal
     End Function
-
 End Class

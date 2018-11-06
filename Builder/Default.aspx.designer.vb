@@ -158,15 +158,6 @@ Partial Public Class _Default4
     Protected WithEvents pnlCustomerSearch As Global.System.Web.UI.WebControls.Panel
     
     '''<summary>
-    '''ddlSearchField control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents ddlSearchField As Global.Telerik.Web.UI.RadComboBox
-    
-    '''<summary>
     '''txtSearch control.
     '''</summary>
     '''<remarks>

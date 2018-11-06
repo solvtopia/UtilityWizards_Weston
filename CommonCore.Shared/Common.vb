@@ -40,6 +40,9 @@ Public Class Common
     '    Return ConnectionString(False)
     'End Function
     Public Shared Function ConnectionString(ByVal UseSandbox As Boolean) As String
+        ' override the sandbox setting to force live database
+        UseSandbox = False
+
         If Not UseSandbox Then
             Return ConnectionString(Enums.DBName.UtilityWizards)
         Else Return ConnectionString(Enums.DBName.UtilityWizards_Sandbox)
