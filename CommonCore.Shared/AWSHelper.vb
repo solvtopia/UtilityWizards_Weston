@@ -163,8 +163,9 @@ Public Class AWSHelper
         Return retVal
     End Function
 
-    Public Function AddFileToFolder(FileName As String, folderName As String) As String
-        Dim retVal As String = ""
+    Public Function AddFileToFolder(FileName As String, folderName As String) As Boolean
+        Dim retVal As Boolean = True
+
         Try
             Try
                 If Not AmazonS3Util.DoesS3BucketExist(s3Client, AWS_BUCKET_NAME) Then
@@ -174,7 +175,11 @@ Public Class AWSHelper
                     Dim path As String = FileName
                     Dim file As FileInfo = New FileInfo(path)
 
-                    Dim key As String = String.Format("{0}/{1}", folderName, file.Name)
+                    Dim key As String = ""
+                    If folderName = "" Then
+                        key = file.Name
+                    Else key = String.Format("{0}/{1}", folderName, file.Name)
+                    End If
                     Dim por As PutObjectRequest = New PutObjectRequest()
                     por.BucketName = AWS_BUCKET_NAME
                     por.StorageClass = S3StorageClass.Standard
@@ -186,11 +191,11 @@ Public Class AWSHelper
                 End If
 
             Catch ex As Exception
-                retVal = ex.Message
+                retVal = False
             End Try
 
         Catch ex As AmazonS3Exception
-            retVal = ex.Message
+            retVal = False
         End Try
 
         Return retVal

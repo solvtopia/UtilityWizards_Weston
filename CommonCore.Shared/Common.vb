@@ -211,4 +211,58 @@ Public Class Common
 
         Return retVal
     End Function
+
+    Public Shared Function UploadFile(ByVal fName As String, ByVal fData As Byte(), ByVal UseSandboxDb As Boolean) As String
+        Dim retVal As String = fName
+
+        Try
+            ' save the file data
+            File.WriteAllBytes(fName, fData)
+
+        Catch ex As Exception
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, UseSandboxDb))
+            retVal = ex.ToString
+        End Try
+
+        Return retVal
+    End Function
+
+    Public Shared Function UploadFileToAWS(ByVal fName As String, ByVal fData As Byte(), ByVal UseSandboxDb As Boolean) As String
+        Dim retVal As String = ""
+
+        Try
+            ' save the file data
+            Dim tmpPath As String = UploadFile(fName, fData, UseSandboxDb)
+            Dim fi As New FileInfo(tmpPath)
+
+            ' move the file to aws
+            Dim aws As New AWSHelper
+            Dim awsMsg As Boolean = aws.AddFileToFolder(fi.FullName, "")
+
+            If awsMsg Then
+                Dim FoundIt As Boolean = False
+
+                ' pull a directory from aws to make sure the file is in the bucket
+                Dim dir As List(Of AWSHelper.AwsFileInfo) = aws.ListFiles()
+                For Each afi As AWSHelper.AwsFileInfo In dir
+                    If afi.Name.ToLower = fi.Name.ToLower Then
+                        FoundIt = True
+                        Exit For
+                    End If
+                Next
+
+                If FoundIt Then
+                    ' delete the local file on success
+                    My.Computer.FileSystem.DeleteFile(tmpPath)
+                End If
+            Else retVal = "Error uploading to AWS"
+            End If
+
+        Catch ex As Exception
+            ex.WriteToErrorLog(New ErrorLogEntry(Enums.ProjectName.CommonCoreShared, UseSandboxDb))
+            retVal = ex.ToString
+        End Try
+
+        Return retVal
+    End Function
 End Class

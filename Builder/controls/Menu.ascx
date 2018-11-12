@@ -33,6 +33,9 @@
             <li runat="server" id="liReports">
                 <asp:LinkButton runat="server" ID="lnkReports"><i class="fa fa-file-text-o"></i><span>System Reports</span></asp:LinkButton>
             </li>
+            <li runat="server" id="liUpload">
+                <asp:LinkButton runat="server" ID="lnkUpload"><i class="fa fa-cloud-upload"></i><span>Uploads</span></asp:LinkButton>
+            </li>
             <li runat="server" id="liLogs">
                 <asp:LinkButton runat="server" ID="lnkLogs"><i class="fa fa-file-code-o"></i><span>System Logs</span></asp:LinkButton>
             </li>

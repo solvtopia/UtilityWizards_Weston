@@ -1266,6 +1266,10 @@ Public Class SystemReport
 End Class
 
 Public Class ApiKeyResult
+    Sub New()
+        ' used for the api
+        Me.UseSandboxDb = False
+    End Sub
     Sub New(ByVal UseSandboxDb As Boolean)
         Me.UseSandboxDb = UseSandboxDb
     End Sub
@@ -1315,6 +1319,10 @@ Public Class ApiKeyResult
 End Class
 
 Public Class ApiResponse
+    Sub New()
+        ' used for the api
+        Me.UseSandboxDb = False
+    End Sub
     Sub New(ByVal UseSandboxDb As Boolean)
         Me.responseCode = ApiResultCode.success
         Me.responseMessage = ""
@@ -1328,6 +1336,10 @@ Public Class ApiResponse
 End Class
 
 Public Class ApiRequest
+    Sub New()
+        ' used for the api
+        Me.UseSandboxDb = False
+    End Sub
     Sub New(ByVal UseSandboxDb As Boolean)
         Me.UseSandboxDb = UseSandboxDb
     End Sub
